@@ -1,7 +1,7 @@
 export function NarrativeBlock({ eyebrow, heading, body }) {
   const paragraphs = Array.isArray(body) ? body : [body];
   return (
-    <section className="border-t border-white/5 py-24 md:py-32">
+    <section className="gradient-divider py-24 md:py-32">
       <div className="mx-auto max-w-3xl px-6">
         {eyebrow && (
           <span className="mono mb-5 block text-xs uppercase tracking-[0.08em] text-white/40">

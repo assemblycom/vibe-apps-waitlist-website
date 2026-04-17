@@ -1,6 +1,6 @@
 export function Benefits({ eyebrow, heading, items = [] }) {
   return (
-    <section className="border-t border-white/5 py-20 md:py-24">
+    <section className="gradient-divider py-20 md:py-24">
       <div className="mx-auto max-w-4xl px-6">
         <div className="mb-12 text-center">
           {eyebrow && (

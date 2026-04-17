@@ -4,7 +4,7 @@
 export const HOME_CONTENT = {
   hero: {
     eyebrow: "Early access — beta",
-    heading: "The platform layer for AI-native service firms.",
+    heading: "The platform layer for\nAI-native service firms",
     subheading:
       "You're not a legacy firm adopting AI. You're building something new. Assembly is the operating system — so you can focus on what makes your firm different. Not another AI app builder. One that actually ships to clients.",
   },
@@ -95,22 +95,30 @@ export const HOME_CONTENT = {
 
   testimonials: {
     eyebrow: "From the alpha",
-    heading: "Early teams shipping on Studio today.",
+    heading: "The firms shipping on Studio today.",
+    subheading:
+      "Early partners building client-ready apps on the Assembly platform — in days, not months.",
     quotes: [
       {
+        segment: "Advisory",
         body: "We replaced three contractors and two weeks of Zapier glue with a single Studio prompt. Our clients never saw the seam.",
         name: "Dana Reyes",
-        title: "Founder, Northstar Advisory",
+        title: "Founder",
+        company: "Northstar Advisory",
       },
       {
+        segment: "Legal",
         body: "Studio feels like the platform we would have built internally if we'd had two years and an engineering team. We didn't. We shipped anyway.",
         name: "Marcus Lin",
-        title: "Managing Partner, Runway Legal",
+        title: "Managing Partner",
+        company: "Runway Legal",
       },
       {
+        segment: "Consulting",
         body: "Auth, billing, the client portal — all of it was already there. I described the workflow, clients were using it by Friday.",
         name: "Priya Shah",
-        title: "Principal, Helio",
+        title: "Principal",
+        company: "Helio",
       },
     ],
   },

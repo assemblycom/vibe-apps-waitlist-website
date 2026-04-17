@@ -6,7 +6,7 @@ export function ComparisonTable({
   rows = [],
 }) {
   return (
-    <section className="border-t border-white/5 py-20 md:py-24">
+    <section className="gradient-divider py-20 md:py-24">
       <div className="mx-auto max-w-4xl px-6">
         <div className="mb-12 text-center">
           {eyebrow && (
@@ -21,8 +21,12 @@ export function ComparisonTable({
           )}
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-white/10">
-          <div className="grid grid-cols-2 border-b border-white/10 bg-white/[0.02]">
+        <div className="relative overflow-hidden rounded-2xl border border-white/10">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-white/[0.03] to-transparent"
+          />
+          <div className="relative grid grid-cols-2 border-b border-white/10 bg-white/[0.02]">
             <div className="mono px-5 py-4 text-xs uppercase tracking-[0.08em] text-white/40">
               {leftLabel}
             </div>
@@ -33,7 +37,7 @@ export function ComparisonTable({
           {rows.map(([left, right], i) => (
             <div
               key={i}
-              className="grid grid-cols-2 border-b border-white/5 last:border-b-0"
+              className="relative grid grid-cols-2 border-b border-white/5 transition-colors duration-200 last:border-b-0 hover:bg-white/[0.02]"
             >
               <div className="px-5 py-4 text-sm text-white/55">{left}</div>
               <div className="border-l border-white/10 px-5 py-4 text-sm text-white">

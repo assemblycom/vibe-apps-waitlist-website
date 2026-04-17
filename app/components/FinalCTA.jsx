@@ -2,7 +2,7 @@ import { CTAButton } from "./CTAButton";
 
 export function FinalCTA({ heading, subheading }) {
   return (
-    <section className="border-t border-white/5 py-24 md:py-32">
+    <section className="gradient-divider py-24 md:py-32">
       <div className="mx-auto max-w-3xl px-6 text-center">
         <h3 className="mb-5 text-3xl font-semibold leading-tight tracking-[-0.02em] text-white md:text-[2.5rem]">
           {heading}

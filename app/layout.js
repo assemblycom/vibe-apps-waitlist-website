@@ -1,4 +1,6 @@
 import "./globals.css";
+import { SmoothScroll } from "./components/SmoothScroll";
+import { ScrollProgress } from "./components/ScrollProgress";
 
 export const metadata = {
   title: "Assembly Studio — The platform layer for AI-native service firms",
@@ -9,7 +11,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SmoothScroll>{children}</SmoothScroll>
+        <ScrollProgress />
+      </body>
     </html>
   );
 }

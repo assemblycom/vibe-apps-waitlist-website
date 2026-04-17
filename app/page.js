@@ -10,6 +10,7 @@ import { Benefits } from "./components/Benefits";
 import { FAQ } from "./components/FAQ";
 import { FinalCTA } from "./components/FinalCTA";
 import { Footer } from "./components/Footer";
+import { Reveal } from "./components/Reveal";
 import { HOME_CONTENT } from "./content/home";
 
 export default function Home() {
@@ -24,52 +25,71 @@ export default function Home() {
         subheading={c.hero.subheading}
       />
 
-      <NarrativeBlock
-        eyebrow={c.whyAssemblyStudio.eyebrow}
-        heading={c.whyAssemblyStudio.heading}
-        body={c.whyAssemblyStudio.body}
-      />
+      <Reveal>
+        <NarrativeBlock
+          eyebrow={c.whyAssemblyStudio.eyebrow}
+          heading={c.whyAssemblyStudio.heading}
+          body={c.whyAssemblyStudio.body}
+        />
+      </Reveal>
 
       <LogoStrip label={c.logoStrip.label} logos={c.logoStrip.logos} />
 
-      <ValueProps items={c.valueProps} />
+      <Reveal>
+        <ValueProps items={c.valueProps} />
+      </Reveal>
 
-      <ComparisonTable
-        eyebrow={c.comparison.eyebrow}
-        heading={c.comparison.heading}
-        leftLabel={c.comparison.leftLabel}
-        rightLabel={c.comparison.rightLabel}
-        rows={c.comparison.rows}
-      />
+      <Reveal>
+        <ComparisonTable
+          eyebrow={c.comparison.eyebrow}
+          heading={c.comparison.heading}
+          leftLabel={c.comparison.leftLabel}
+          rightLabel={c.comparison.rightLabel}
+          rows={c.comparison.rows}
+        />
+      </Reveal>
 
-      <Steps
-        eyebrow={c.howItWorks.eyebrow}
-        heading={c.howItWorks.heading}
-        steps={c.howItWorks.steps}
-      />
+      <Reveal>
+        <Steps
+          eyebrow={c.howItWorks.eyebrow}
+          heading={c.howItWorks.heading}
+          steps={c.howItWorks.steps}
+        />
+      </Reveal>
 
-      <Testimonials
-        eyebrow={c.testimonials.eyebrow}
-        heading={c.testimonials.heading}
-        quotes={c.testimonials.quotes}
-      />
+      <Reveal>
+        <Testimonials
+          eyebrow={c.testimonials.eyebrow}
+          heading={c.testimonials.heading}
+          subheading={c.testimonials.subheading}
+          stat={c.testimonials.stat}
+          statCaption={c.testimonials.statCaption}
+          quotes={c.testimonials.quotes}
+        />
+      </Reveal>
 
-      <Benefits
-        eyebrow={c.benefits.eyebrow}
-        heading={c.benefits.heading}
-        items={c.benefits.items}
-      />
+      <Reveal>
+        <Benefits
+          eyebrow={c.benefits.eyebrow}
+          heading={c.benefits.heading}
+          items={c.benefits.items}
+        />
+      </Reveal>
 
-      <FAQ
-        eyebrow={c.faq.eyebrow}
-        heading={c.faq.heading}
-        items={c.faq.items}
-      />
+      <Reveal>
+        <FAQ
+          eyebrow={c.faq.eyebrow}
+          heading={c.faq.heading}
+          items={c.faq.items}
+        />
+      </Reveal>
 
-      <FinalCTA
-        heading={c.finalCta.heading}
-        subheading={c.finalCta.subheading}
-      />
+      <Reveal>
+        <FinalCTA
+          heading={c.finalCta.heading}
+          subheading={c.finalCta.subheading}
+        />
+      </Reveal>
 
       <Footer
         copyright={c.footer.copyright}
