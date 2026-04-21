@@ -69,6 +69,7 @@ export default function Home() {
         <ComparisonTable
           eyebrow={c.comparison.eyebrow}
           heading={c.comparison.heading}
+          firstColumnLabel={c.comparison.firstColumnLabel}
           leftLabel={c.comparison.leftLabel}
           rightLabel={c.comparison.rightLabel}
           rows={c.comparison.rows}
@@ -110,12 +111,13 @@ export default function Home() {
         />
       </Reveal>
 
-      <Reveal>
-        <FinalCTA
-          heading={c.finalCta.heading}
-          subheading={c.finalCta.subheading}
-        />
-      </Reveal>
+      {/* FinalCTA drives its own scroll-reveal (fiasco.design-style
+          slide-up + fade + subtle scale); no outer Reveal so the two
+          animations don't fight. */}
+      <FinalCTA
+        heading={c.finalCta.heading}
+        subheading={c.finalCta.subheading}
+      />
 
         <Footer
           copyright={c.footer.copyright}

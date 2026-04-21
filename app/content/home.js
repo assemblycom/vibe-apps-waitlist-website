@@ -73,15 +73,22 @@ export const HOME_CONTENT = {
 
   comparison: {
     eyebrow: "How Studio differs",
-    heading: "Not another AI app builder",
+    // Heading intentionally differs from the whyAssemblyStudio heading
+    // ("Not another app builder") so the page doesn't repeat itself.
+    heading: "Built for clients, not prototypes",
+    firstColumnLabel: "Where we differ",
     leftLabel: "Lovable / Replit",
     rightLabel: "Assembly Studio",
+    // Rows are [rowLabel, competitor, assembly]. Copy kept tight —
+    // labels in the left column carry the axis, so the cells just
+    // need a sharp phrase, not a sentence.
     rows: [
-      ["Builds app UI", "Builds + ships client-ready apps"],
-      ["You handle auth", "Auth included"],
-      ["No client scoping", "Client scoping built in"],
-      ["Prototype-level", "Production-ready"],
-      ["You host & operate", "Runs on Assembly platform"],
+      ["Who it's for", "Anyone building software", "AI-native service firms"],
+      ["What it's for", "Prototypes & internal tools", "Client-facing experiences"],
+      ["Where it lives", "Standalone app at its own URL", "Inside your branded portal"],
+      ["What's included", "You build the stack", "CRM, portal, auth, billing, notifications"],
+      ["How apps connect", "Siloed, one-off apps", "Organized in folders, trigger each other"],
+      ["Best fit for", "A one-off tool", "A consolidated client experience"],
     ],
   },
 

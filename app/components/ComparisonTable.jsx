@@ -1,6 +1,7 @@
 export function ComparisonTable({
   eyebrow,
   heading,
+  firstColumnLabel,
   leftLabel,
   rightLabel,
   rows = [],
@@ -21,25 +22,35 @@ export function ComparisonTable({
           )}
         </div>
 
+        {/* 3-col grid: row label | left (competitor) | right (us). The
+            label column is narrower and quieter; the accent shading
+            stays on the right half to keep the "us" column visually
+            dominant. */}
         <div className="relative overflow-hidden rounded-2xl border border-white/10">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-white/[0.03] to-transparent"
           />
-          <div className="relative grid grid-cols-2 border-b border-white/10 bg-white/[0.02]">
-            <div className="mono px-5 py-4 text-xs uppercase tracking-[0.08em] text-white/40">
+          <div className="relative grid grid-cols-[minmax(120px,180px)_1fr_1fr] border-b border-white/10 bg-white/[0.02]">
+            <div className="px-5 py-4 text-sm text-white/45">
+              {firstColumnLabel}
+            </div>
+            <div className="border-l border-white/10 px-5 py-4 text-sm text-white/50">
               {leftLabel}
             </div>
-            <div className="mono border-l border-white/10 px-5 py-4 text-xs uppercase tracking-[0.08em] text-white">
+            <div className="border-l border-white/10 px-5 py-4 text-sm text-white">
               {rightLabel}
             </div>
           </div>
-          {rows.map(([left, right], i) => (
+          {rows.map(([label, left, right], i) => (
             <div
               key={i}
-              className="relative grid grid-cols-2 border-b border-white/5 transition-colors duration-200 last:border-b-0 hover:bg-white/[0.02]"
+              className="relative grid grid-cols-[minmax(120px,180px)_1fr_1fr] border-b border-white/5 transition-colors duration-200 last:border-b-0 hover:bg-white/[0.02]"
             >
-              <div className="px-5 py-4 text-sm text-white/55">{left}</div>
+              <div className="px-5 py-4 text-sm text-white/45">{label}</div>
+              <div className="border-l border-white/10 px-5 py-4 text-sm text-white/55">
+                {left}
+              </div>
               <div className="border-l border-white/10 px-5 py-4 text-sm text-white">
                 {right}
               </div>
