@@ -50,7 +50,7 @@ export const HOME_CONTENT = {
       menuLabel: "Client experience",
       heading: "Where your apps meet your clients",
       body: "Every client sees a portal built from native Assembly apps and the ones you built yourself, organized into folders, scoped per client, branded as yours.",
-      visualKey: "infrastructure",
+      visualKey: "clientPortal",
     },
     {
       layout: "stacked",

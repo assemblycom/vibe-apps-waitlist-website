@@ -6,12 +6,14 @@ import { PromptCardVisual } from "./visuals/PromptCardVisual";
 import { StudioAppCardVisual } from "./visuals/StudioAppCardVisual";
 import { InfrastructureCardVisual } from "./visuals/InfrastructureCardVisual";
 import { ThreeStepsVisual } from "./visuals/ThreeStepsVisual";
+import { ClientPortalVisual } from "./visuals/ClientPortalVisual";
 
 const VISUALS = {
   promptCard: PromptCardVisual,
   studioApp: StudioAppCardVisual,
   infrastructure: InfrastructureCardVisual,
   threeSteps: ThreeStepsVisual,
+  clientPortal: ClientPortalVisual,
 };
 
 // Short menu labels — falls back to eyebrow if not provided.

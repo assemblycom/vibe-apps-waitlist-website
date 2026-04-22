@@ -6,6 +6,7 @@ import { PromptCardVisual } from "./visuals/PromptCardVisual";
 import { StudioAppCardVisual } from "./visuals/StudioAppCardVisual";
 import { InfrastructureCardVisual } from "./visuals/InfrastructureCardVisual";
 import { ThreeStepsVisual } from "./visuals/ThreeStepsVisual";
+import { ClientPortalVisual } from "./visuals/ClientPortalVisual";
 
 // Map content `visualKey` values to their concrete visual components so
 // the content file can stay plain data (no JSX).
@@ -14,6 +15,7 @@ const VISUALS = {
   studioApp: StudioAppCardVisual,
   infrastructure: InfrastructureCardVisual,
   threeSteps: ThreeStepsVisual,
+  clientPortal: ClientPortalVisual,
 };
 
 function renderVisual(key) {
