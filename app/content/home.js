@@ -12,8 +12,8 @@ export const HOME_CONTENT = {
     // Display headline is split in two: the primary statement renders at
     // full weight, and the `callout` continues inline at reduced opacity
     // (V7-style).
-    heading: "Not another app builder",
-    callout: "We built the platform layer",
+    heading: "Assembly Studio is not",
+    callout: "another app builder",
     body: [
       "Other app builders are great for internal tools, prototypes, and websites. But if you're serving real paying clients, you don't need one vibe-coded app. You need a polished, branded, secure, and consolidated client experience.",
       "Our app builder is the only one that understands your business. Describe what you want: a custom intake flow, a progress tracker, a proposal tool. It builds an app that works with your existing contacts and companies, respects your permissions, and integrates with email and in-product notifications. Every app deploys straight into your client experience, not as a standalone tool on a separate URL, but as a native part of your firm.",
