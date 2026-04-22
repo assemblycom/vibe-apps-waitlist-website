@@ -115,38 +115,13 @@ function SideMenu({ items, activeIndex, allCompleted, visible, onSelect }) {
     >
       <div className="sticky top-24">
         <div className="w-full">
-          {/* Header — slim progress bar + mono counter */}
-          <div className="mb-4 flex items-center justify-between gap-3 px-2">
-            <span className="text-[12px] font-medium text-white/80">
-              Overview
-            </span>
-            <div className="flex items-center gap-2">
-              <div className="relative h-[3px] w-14 overflow-hidden rounded-full bg-white/10">
-                <div
-                  className="absolute inset-y-0 left-0 rounded-full bg-white transition-[width] duration-500 ease-out"
-                  style={{ width: `${progressPct}%` }}
-                />
-              </div>
-              <span className="mono text-[10px] tracking-[0.08em] text-white/50">
-                {current}/{total}
-              </span>
-            </div>
-          </div>
-
-          {/* Items */}
+          {/* Items — text-only menu, selected row carries a soft pill
+              background. No header, no checkmarks, no counter. */}
           <ul className="flex flex-col gap-0.5">
             {items.map((item, i) => {
               const isLast = i === items.length - 1;
-              // The last row flips to done once the user has scrolled
-              // past the end of the value-props block.
-              const isDone =
-                i < activeIndex || (isLast && allCompleted);
+              const isDone = i < activeIndex || (isLast && allCompleted);
               const isActive = i === activeIndex && !isDone;
-              const state = isDone
-                ? "done"
-                : isActive
-                  ? "current"
-                  : "upcoming";
               const label =
                 item.menuLabel ?? item.eyebrow ?? `Step ${i + 1}`;
               return (
@@ -156,13 +131,12 @@ function SideMenu({ items, activeIndex, allCompleted, visible, onSelect }) {
                     onClick={() => onSelect(i)}
                     aria-current={isActive ? "true" : undefined}
                     className={clsx(
-                      "flex w-full items-center gap-3 rounded-[10px] px-2 py-2 text-left transition-colors duration-200",
+                      "flex w-full items-center rounded-[10px] px-3 py-2 text-left transition-colors duration-200",
                       isActive
                         ? "bg-white/[0.06]"
                         : "hover:bg-white/[0.03]",
                     )}
                   >
-                    <StatusGlyph state={state} />
                     <span
                       className={clsx(
                         "whitespace-nowrap text-[13px] transition-colors",

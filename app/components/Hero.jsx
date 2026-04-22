@@ -5,12 +5,16 @@ export function Hero({
   eyebrow,
   heading,
   subheading,
-  alphaLabel,
   alphaLogos,
 }) {
   return (
-    <section className="mx-auto flex min-h-screen max-w-6xl flex-col px-6 pb-20 pt-32 md:pb-28 md:pt-40">
-      <div>
+    <section className="mx-auto flex min-h-screen max-w-6xl flex-col px-6 pb-8 pt-32 md:pb-12 md:pt-40">
+      {/* Centered column — heading + subhead + CTA all align on the
+          vertical axis so the hero reads as a single focused stack. Each
+          child keeps its own max-width constraint; items-center lays them
+          out center-anchored, text-center carries through to multi-line
+          copy. */}
+      <div className="flex flex-col items-center text-center">
         {eyebrow && (
           <span className="mono mb-5 block text-xs uppercase tracking-[0.08em] text-white/40">
             {eyebrow}
@@ -19,7 +23,7 @@ export function Hero({
         <h1 className="mb-6 max-w-[900px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
           {heading}
         </h1>
-        <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55">
+        <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
           {subheading}
         </p>
         <EmailCTA />
@@ -30,12 +34,11 @@ export function Hero({
           first view. Uses the dark variant of LogoStrip so markup is
           shared but text colors flip for the dark hero surface. */}
       {alphaLogos && alphaLogos.length > 0 && (
-        <div className="mt-16 md:mt-24">
-          <LogoStrip
-            label={alphaLabel}
-            logos={alphaLogos}
-            variant="dark"
-          />
+        // Pinned to the bottom of the flex-column hero (`mt-auto`),
+        // centered, and kept narrow so the marquee reads as a grace
+        // note of social proof rather than a full-width chrome bar.
+        <div className="mx-auto mt-auto w-full max-w-[620px] pt-16 md:pt-20">
+          <LogoStrip logos={alphaLogos} variant="dark" />
         </div>
       )}
     </section>

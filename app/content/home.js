@@ -3,10 +3,9 @@
 
 export const HOME_CONTENT = {
   hero: {
-    heading:
-      "Deliver tailored client experiences without rebuilding the fundamentals",
+    heading: "Create tailored client experiences without starting over",
     subheading:
-      "Assembly Studio lets you deliver tailor-made client experiences with an app builder, on top of a foundation that includes a CRM, client portal, payments, messaging, and more.",
+      "Assembly Studio lets you deliver tailor-made client experiences on top of a built-in CRM, portal, payments, and messaging.",
   },
 
   whyAssemblyStudio: {
@@ -227,6 +226,12 @@ export const HOME_CONTENT = {
   waitlistModal: {
     heading: "You're on the list",
     subheading: "We'll be in touch as cohorts open.",
+    // Shown above the follow-ups to reframe them as a reward path.
+    perkEyebrow: "Earlier access",
+    perkHeading: "Want in sooner?",
+    perkBody:
+      "Complete the steps below and we'll bump you up to the next cohort.",
+    perkUnlocked: "Earlier access unlocked — you're on the next cohort.",
     items: [
       {
         id: "build",
@@ -251,7 +256,6 @@ export const HOME_CONTENT = {
         subtitle: "6 questions · ~2 min",
         actionLabel: "Take survey",
         completedLabel: "Submitted",
-        badge: "Onboarding by Assembly founder",
         submitLabel: "Submit",
         questions: [
           {

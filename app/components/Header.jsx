@@ -1,8 +1,32 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CTAButton } from "./CTAButton";
 import { SITE } from "../config/site";
+
+// Scroll to the hero email input and focus it. Single-source email entry
+// stays in the hero — the nav CTA just delivers the user there. Lenis
+// intercepts window.scrollTo by default, so this rides the site's
+// smooth-scroll; the focus fires after the scroll mostly settles so the
+// cursor doesn't "race" the animation.
+function scrollToHeroEmail() {
+  if (typeof window === "undefined") return;
+  const input = document.querySelector("[data-waitlist-email]");
+  // Prefer Lenis (if SmoothScroll mounted it on window) so the motion
+  // matches the rest of the page. Fall back to native smooth scroll if
+  // reduced-motion is on and Lenis isn't running.
+  if (window.__lenis) {
+    window.__lenis.scrollTo(0, { duration: 1.1 });
+  } else {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  if (!input) return;
+  // `preventScroll` — the scroll animation handles positioning; focus just
+  // lands the cursor in the input without a second jump. Delay roughly
+  // matches Lenis's 1.1s duration from a mid-page start.
+  window.setTimeout(() => {
+    input.focus({ preventScroll: true });
+  }, 900);
+}
 
 // Sticky nav — seam-safe.
 //
@@ -244,7 +268,13 @@ export function Header() {
             willChange: "opacity, transform",
           }}
         >
-          <CTAButton variant="primary" size="sm" />
+          <button
+            type="button"
+            onClick={scrollToHeroEmail}
+            className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#D9ED92] px-4 py-2 text-[13px] font-medium text-[#101010] transition-all duration-200 hover:bg-[#C7DA86]"
+          >
+            {SITE.cta}
+          </button>
         </span>
       </div>
     </header>

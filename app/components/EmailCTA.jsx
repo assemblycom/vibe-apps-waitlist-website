@@ -63,6 +63,11 @@ export function EmailCTA() {
           ].join(" ")}
         >
           <input
+            // `data-waitlist-email` is the target the nav CTA scrolls to
+            // and focuses. Using a data-attr instead of a global id keeps
+            // the selector unambiguous even if the component is rendered
+            // multiple times on the page (only the first match is used).
+            data-waitlist-email
             type="email"
             required
             value={email}

@@ -21,70 +21,80 @@ function LogoItem({ name, variant }) {
   );
 }
 
+// Reusable horizontally-scrolling marquee. Logos render twice inside a
+// flex track that translates -50%, so the second copy lands exactly where
+// the first started and the loop is seamless. Edge fades via mask-image
+// so logos ease in and out instead of hard-clipping.
+function LogoMarquee({ logos, variant, ariaLabel }) {
+  return (
+    <div
+      className="relative overflow-hidden"
+      style={{
+        WebkitMaskImage:
+          "linear-gradient(to right, transparent 0, black 12%, black 88%, transparent 100%)",
+        maskImage:
+          "linear-gradient(to right, transparent 0, black 12%, black 88%, transparent 100%)",
+      }}
+      aria-label={ariaLabel}
+    >
+      <div className="logo-marquee-track flex w-max items-center gap-x-12 md:gap-x-16">
+        {logos.map((logo) => (
+          <div key={`a-${logo.name}`} className="flex-none">
+            <LogoItem name={logo.name} variant={variant} />
+          </div>
+        ))}
+        {/* Duplicate set — aria-hidden so SR users don't hear logos
+            announced twice. */}
+        {logos.map((logo) => (
+          <div
+            key={`b-${logo.name}`}
+            className="flex-none"
+            aria-hidden="true"
+          >
+            <LogoItem name={logo.name} variant={variant} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // variant "light" (default): renders as a standalone section with
-// off-white bg, used as the tail of the NarrativeBlock chapter.
-// variant "dark": renders bare markup (no <section>, no bg), for use
-// inside an existing dark-themed container like the Hero.
+// off-white bg, used as the tail of the NarrativeBlock chapter. Static
+// centered wrap.
+// variant "dark": bare markup for use inside an existing dark container
+// (the Hero). Always a centered scrolling marquee with fades on both
+// ends, so the row feels alive instead of a static left-aligned list.
 export function LogoStrip({ label, logos = [], variant = "light" }) {
   const dark = variant === "dark";
 
-  const labelEl = label && (
-    <p
-      className={`mono mb-6 text-[11px] uppercase tracking-[0.08em] md:mb-8 ${
-        dark ? "text-white/40" : "text-center text-[#1A1A1A]/45"
-      }`}
-    >
-      {label}
-    </p>
-  );
+  if (dark) {
+    return (
+      <>
+        {label && (
+          <p className="mono mb-6 text-center text-[11px] uppercase tracking-[0.08em] text-white/40 md:mb-8">
+            {label}
+          </p>
+        )}
+        <LogoMarquee logos={logos} variant={variant} ariaLabel="Alpha users" />
+      </>
+    );
+  }
 
   const strip = (
     <>
-      {labelEl}
+      <p className="mono mb-6 text-center text-[11px] uppercase tracking-[0.08em] text-[#1A1A1A]/45 md:mb-8">
+        {label}
+      </p>
 
-      {/* Mobile — continuous auto-scrolling marquee. Logos render twice
-          inside a flex track that translates -50%, so the second copy
-          lands exactly where the first started and the loop is seamless.
-          Edge fades via mask-image so logos ease in and out instead of
-          hard-clipping at the container edge. */}
-      <div
-        className="relative overflow-hidden md:hidden"
-        style={{
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent 0, black 8%, black 92%, transparent 100%)",
-          maskImage:
-            "linear-gradient(to right, transparent 0, black 8%, black 92%, transparent 100%)",
-        }}
-        aria-label="Alpha users"
-      >
-        <div className="logo-marquee-track flex w-max items-center gap-x-12">
-          {logos.map((logo) => (
-            <div key={`a-${logo.name}`} className="flex-none">
-              <LogoItem name={logo.name} variant={variant} />
-            </div>
-          ))}
-          {/* Duplicate set — aria-hidden so SR users don't hear logos
-              announced twice. */}
-          {logos.map((logo) => (
-            <div
-              key={`b-${logo.name}`}
-              className="flex-none"
-              aria-hidden="true"
-            >
-              <LogoItem name={logo.name} variant={variant} />
-            </div>
-          ))}
-        </div>
+      {/* Mobile — marquee, same pattern as the dark variant. */}
+      <div className="md:hidden">
+        <LogoMarquee logos={logos} variant={variant} ariaLabel="Alpha users" />
       </div>
 
-      {/* Desktop — static, centered wrap in the off-white section,
-          left-aligned inside the hero. Each logo fades in with a
+      {/* Desktop — static, centered wrap. Each logo fades in with a
           stagger via Reveal. */}
-      <div
-        className={`hidden items-center gap-x-10 gap-y-6 md:flex md:flex-wrap ${
-          dark ? "" : "justify-center"
-        }`}
-      >
+      <div className="hidden items-center justify-center gap-x-10 gap-y-6 md:flex md:flex-wrap">
         {logos.map((logo, i) => (
           <Reveal key={logo.name} delay={i * 60}>
             <LogoItem name={logo.name} variant={variant} />
@@ -93,11 +103,6 @@ export function LogoStrip({ label, logos = [], variant = "light" }) {
       </div>
     </>
   );
-
-  if (dark) {
-    // Bare markup — parent supplies the wrapper / spacing.
-    return strip;
-  }
 
   return (
     // `bg-[#F5F5F0]` + `pt-0` stitches this section onto the bottom of

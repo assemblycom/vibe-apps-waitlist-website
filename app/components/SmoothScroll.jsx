@@ -24,6 +24,10 @@ export function SmoothScroll({ children }) {
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
       });
+      // Expose so non-Lenis-aware components (like the nav CTA) can drive
+      // a smooth scroll without reaching inside this component. Any caller
+      // should defensively check for its presence before use.
+      window.__lenis = lenis;
 
       const loop = (time) => {
         lenis.raf(time);
@@ -36,6 +40,9 @@ export function SmoothScroll({ children }) {
       cancelled = true;
       if (raf) cancelAnimationFrame(raf);
       if (lenis) lenis.destroy();
+      if (typeof window !== "undefined" && window.__lenis === lenis) {
+        delete window.__lenis;
+      }
     };
   }, []);
 
