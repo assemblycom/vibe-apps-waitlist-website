@@ -40,7 +40,7 @@ function FaqItem({ q, a }) {
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left"
       >
-        <span className="text-[1rem] font-normal leading-snug text-white">
+        <span className="text-[1rem] leading-snug text-white">
           {q}
         </span>
         <Chevron open={open} />
@@ -52,7 +52,7 @@ function FaqItem({ q, a }) {
         )}
       >
         <div className="overflow-hidden">
-          <p className="px-6 pb-5 pr-12 text-[0.9rem] leading-[1.65] text-white/60">
+          <p className="px-6 pb-5 pr-12 text-[14px] leading-[1.6] text-white/55">
             {a}
           </p>
         </div>
@@ -67,12 +67,12 @@ export function FAQ({ eyebrow, heading, items = [] }) {
       <div className="mx-auto max-w-3xl px-6">
         <div className="mb-12 text-center">
           {eyebrow && (
-            <span className="mono mb-4 block text-xs uppercase tracking-[0.08em] text-white/40">
+            <span className="mono mb-4 block text-[11px] uppercase tracking-[0.08em] text-white/40">
               {eyebrow}
             </span>
           )}
           {heading && (
-            <h3 className="text-2xl font-semibold leading-tight tracking-[-0.02em] text-white [text-wrap:balance] md:text-[2rem]">
+            <h3 className="text-[1.75rem] font-normal leading-[1.05] tracking-[-0.025em] text-white [text-wrap:balance] md:text-[2.375rem] md:tracking-[-0.03em]">
               {heading}
             </h3>
           )}

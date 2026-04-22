@@ -25,7 +25,7 @@ export function Footer() {
       <button
         type="button"
         onClick={scrollToTop}
-        className="inline-flex items-center gap-1.5 text-sm text-white/70 transition-colors duration-200 hover:text-white"
+        className="inline-flex items-center gap-1.5 text-[13px] text-white/55 transition-colors duration-200 hover:text-white"
       >
         Back to the top
         <span aria-hidden="true">↑</span>

@@ -3,15 +3,17 @@
 
 export const HOME_CONTENT = {
   hero: {
-    eyebrow: "Early access beta",
     heading: "The platform layer for AI\u2011native service firms",
     subheading:
       "You're building something new. Assembly is the system behind it, so you can focus on what makes your firm different. Not another AI app builder, one that actually ships to clients.",
   },
 
   whyAssemblyStudio: {
-    eyebrow: "Why Assembly Studio",
-    heading: "Not another app builder",
+    heading: "Not another app builder.",
+    // Dimmed coda shown inline after the main heading (V7-style). Fades
+    // to a quieter weight so the eye reads the statement first, then the
+    // restatement second.
+    callout: "We built the platform layer.",
     body: [
       "Other app builders are great for internal tools, prototypes, and websites. But if you're serving real paying clients, you don't need one vibe-coded app. You need a polished, branded, secure, and consolidated client experience.",
       "Our app builder is the only one that understands your business. Describe what you want, a custom intake flow, a progress tracker, a proposal tool, and it builds an app that works with your existing contacts and companies, respects your permissions, and integrates with email and in-product notifications. Every app deploys straight into your client experience, not as a standalone tool on a separate URL, but as a native part of your firm.",
@@ -37,7 +39,6 @@ export const HOME_CONTENT = {
     {
       layout: "split",
       orientation: "text-left",
-      eyebrow: "AI builder",
       menuLabel: "AI builder",
       heading: "Three steps to a shipped client app",
       body: "Start from a template or describe your own app in plain English. Assembly generates a secure app and publishes it to your client portal, no code, no deploy step, no infrastructure to wire up.",
@@ -46,7 +47,6 @@ export const HOME_CONTENT = {
     {
       layout: "split",
       orientation: "text-right",
-      eyebrow: "Client experience",
       menuLabel: "Client experience",
       heading: "Where your apps meet your clients",
       body: "Every client sees a portal built from native Assembly apps and the ones you built yourself, organized into folders, scoped per client, branded as yours.",
@@ -54,7 +54,6 @@ export const HOME_CONTENT = {
     },
     {
       layout: "stacked",
-      eyebrow: "Internal dashboard",
       menuLabel: "Internal dashboard",
       heading: "Your team's command center",
       body: "Behind the portal, your team's command center. A CRM with contacts and companies, custom fields, internal notes, a unified notification center, automations, and every custom app you built ships with an internal view for your team, too.",
@@ -63,7 +62,6 @@ export const HOME_CONTENT = {
   ],
 
   comparison: {
-    eyebrow: "How Studio differs",
     // Heading intentionally differs from the whyAssemblyStudio heading
     // ("Not another app builder") so the page doesn't repeat itself.
     heading: "Built for clients, not prototypes",
@@ -136,7 +134,6 @@ export const HOME_CONTENT = {
   },
 
   testimonials: {
-    eyebrow: "From the alpha",
     heading: "The firms shipping on Studio today",
     subheading:
       "Early partners building client-ready apps on the Assembly platform, in days not months.",
@@ -200,7 +197,6 @@ export const HOME_CONTENT = {
   },
 
   faq: {
-    eyebrow: "FAQ",
     heading: "Questions, answered",
     items: [
       {
@@ -227,7 +223,7 @@ export const HOME_CONTENT = {
   },
 
   finalCta: {
-    heading: "Reserve your seat.",
+    heading: "Reserve your seat",
     subheading:
       "The first signups get a personalized onboarding session. We'll sit with you, understand your firm, and help you craft the client experience your firm deserves.",
   },

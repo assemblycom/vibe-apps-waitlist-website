@@ -167,10 +167,10 @@ function SideMenu({ items, activeIndex, allCompleted, visible, onSelect }) {
                       className={clsx(
                         "whitespace-nowrap text-[13px] transition-colors",
                         isActive
-                          ? "font-medium text-white"
+                          ? "text-white"
                           : isDone
                             ? "text-white/55"
-                            : "text-white/45 hover:text-white/75",
+                            : "text-white/40 hover:text-white/75",
                       )}
                     >
                       {label}
@@ -200,18 +200,18 @@ function ValuePropPanel({ id, item, visual, sectionRef, index }) {
       <div className="flex flex-col gap-10">
         <div className="max-w-3xl">
           {item.eyebrow && (
-            <span className="mono mb-4 block text-xs uppercase tracking-[0.08em] text-white/40">
+            <span className="mono mb-4 block text-[11px] uppercase tracking-[0.08em] text-white/40">
               {item.eyebrow}
             </span>
           )}
-          <h3 className="mb-5 text-2xl font-semibold leading-tight tracking-[-0.02em] text-white [text-wrap:balance] md:text-[2rem]">
+          <h3 className="mb-5 text-[1.75rem] font-normal leading-[1.05] tracking-[-0.025em] text-white [text-wrap:balance] md:text-[2.375rem] md:tracking-[-0.03em]">
             {item.heading}
           </h3>
-          <p className="text-base leading-[1.65] text-white/70 md:text-[1.05rem]">
+          <p className="text-[1rem] leading-[1.6] text-white/55 md:text-[1.0625rem]">
             {item.body}
           </p>
         </div>
-        {visual && <div className="w-full max-w-3xl">{visual}</div>}
+        {visual && <div className="w-full max-w-[52rem]">{visual}</div>}
       </div>
     </section>
   );

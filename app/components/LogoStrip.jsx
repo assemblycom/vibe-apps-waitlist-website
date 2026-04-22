@@ -9,11 +9,11 @@ function LogoItem({ name, variant }) {
   const base =
     variant === "dark"
       ? "text-white/40 hover:text-white/80"
-      : "text-[#101010]/40 hover:text-[#101010]/80";
+      : "text-[#1A1A1A]/40 hover:text-[#1A1A1A]/80";
   return (
     <div className="flex h-8 items-center justify-center">
       <span
-        className={`whitespace-nowrap text-sm font-semibold tracking-tight transition-colors duration-200 ${base}`}
+        className={`whitespace-nowrap text-[14px] font-semibold tracking-[-0.01em] transition-colors duration-200 ${base}`}
       >
         {name}
       </span>
@@ -30,8 +30,8 @@ export function LogoStrip({ label, logos = [], variant = "light" }) {
 
   const labelEl = label && (
     <p
-      className={`mono mb-6 text-xs uppercase tracking-[0.08em] md:mb-8 ${
-        dark ? "text-white/40" : "text-center text-[#101010]/45"
+      className={`mono mb-6 text-[11px] uppercase tracking-[0.08em] md:mb-8 ${
+        dark ? "text-white/40" : "text-center text-[#1A1A1A]/45"
       }`}
     >
       {label}
@@ -106,7 +106,7 @@ export function LogoStrip({ label, logos = [], variant = "light" }) {
     // the Hero uses at full zoom — the boundary reads as a deliberate
     // card edge rather than a hard color cut. The dark page bg shows in
     // the corners beneath the curve.
-    <section className="gradient-divider bg-[#F5F5F0] pt-0 pb-16 rounded-b-[28px] md:pb-20 md:rounded-b-[36px]">
+    <section data-nav-theme="light" className="gradient-divider bg-[#F5F5F0] pt-0 pb-16 rounded-b-[28px] md:pb-20 md:rounded-b-[36px]">
       <div className="mx-auto max-w-6xl px-6">{strip}</div>
     </section>
   );

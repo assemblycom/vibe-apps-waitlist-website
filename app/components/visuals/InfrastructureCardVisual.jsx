@@ -14,7 +14,7 @@ const CARD_GRADIENT = [
 export function InfrastructureCardVisual() {
   return (
     <div
-      className="relative aspect-[3/2] w-full overflow-hidden rounded-[28px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)]"
+      className="relative aspect-[3/2] w-full overflow-hidden rounded-[16px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)]"
       style={{ backgroundImage: CARD_GRADIENT }}
     />
   );

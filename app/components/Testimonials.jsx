@@ -150,12 +150,12 @@ function HorizontalAccordion({ quotes, activeIndex, onActivate }) {
                   }`,
                 }}
               >
-                <blockquote className="text-[1.05rem] leading-[1.45] text-white md:text-[1.2rem]">
+                <blockquote className="text-[1.0625rem] leading-[1.5] text-white md:text-[1.1875rem]">
                   “{quote.body}”
                 </blockquote>
                 <div>
                   {quote.name && (
-                    <div className="text-[15px] font-medium leading-[1.3] text-white">
+                    <div className="text-[14px] leading-[1.3] text-white">
                       {quote.name}
                     </div>
                   )}
@@ -180,12 +180,12 @@ function HorizontalAccordion({ quotes, activeIndex, onActivate }) {
                 }}
               >
                 {quote.name && (
-                  <div className="truncate text-[14px] font-medium leading-[1.3] text-white">
+                  <div className="truncate text-[13px] leading-[1.3] text-white">
                     {quote.name}
                   </div>
                 )}
                 {quote.title && (
-                  <div className="mono mt-1 truncate text-[11px] leading-[1.3] text-white/50">
+                  <div className="mono mt-1 truncate text-[11px] leading-[1.3] text-white/55">
                     {quote.title}
                   </div>
                 )}
@@ -231,7 +231,7 @@ function VerticalAccordion({ quotes, activeIndex, onActivate }) {
                 <Avatar quote={quote} size={36} />
                 <div className="min-w-0">
                   {quote.name && (
-                    <div className="truncate text-[14px] font-medium text-white">
+                    <div className="truncate text-[13px] text-white">
                       {quote.name}
                     </div>
                   )}
@@ -254,7 +254,7 @@ function VerticalAccordion({ quotes, activeIndex, onActivate }) {
                   }`,
                 }}
               >
-                <blockquote className="text-[1rem] leading-[1.45] text-white">
+                <blockquote className="text-[1rem] leading-[1.55] text-white">
                   “{quote.body}”
                 </blockquote>
                 {attribution && (
@@ -280,17 +280,17 @@ export function Testimonials({ eyebrow, heading, subheading, quotes = [] }) {
         {/* Header */}
         <div className="mb-12 max-w-2xl">
           {eyebrow && (
-            <span className="mono mb-4 block text-xs uppercase tracking-[0.08em] text-white/40">
+            <span className="mono mb-4 block text-[11px] uppercase tracking-[0.08em] text-white/40">
               {eyebrow}
             </span>
           )}
           {heading && (
-            <h3 className="mb-4 text-2xl font-semibold leading-tight tracking-[-0.02em] text-white [text-wrap:balance] md:text-[2rem]">
+            <h3 className="mb-4 text-[1.75rem] font-normal leading-[1.05] tracking-[-0.025em] text-white [text-wrap:balance] md:text-[2.375rem] md:tracking-[-0.03em]">
               {heading}
             </h3>
           )}
           {subheading && (
-            <p className="text-base leading-[1.65] text-white/60">
+            <p className="text-[1rem] leading-[1.6] text-white/55">
               {subheading}
             </p>
           )}

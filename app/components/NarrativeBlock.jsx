@@ -5,11 +5,12 @@ import { useEffect, useRef, useState } from "react";
 // Subtle, unhurried ease — matches the rest of the site's motion curves.
 const EASE = "cubic-bezier(0.22, 0.61, 0.36, 1)";
 
-// Sunday.ai-style editorial moment: a display-scale headline that dwarfs
-// the Hero, wide breathing room, and a small, narrow supporting paragraph
-// column underneath. Staged reveal keeps the motion minimal — the headline
-// rises and fades in first, then the body settles in after a short pause.
-export function NarrativeBlock({ eyebrow, heading, body }) {
+// V7-style editorial moment: a left-aligned display headline where the
+// last phrase fades into a quieter "coda", followed by a two-column
+// body block underneath. Staged reveal keeps the motion minimal — the
+// headline words cascade in one by one, then the body settles in after
+// the last word lands.
+export function NarrativeBlock({ heading, callout, body }) {
   const paragraphs = Array.isArray(body) ? body : [body];
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
@@ -53,13 +54,18 @@ export function NarrativeBlock({ eyebrow, heading, body }) {
 
   // Headline words cascade in one after another — each word rises from
   // slightly below its resting line and fades in. Stagger is large enough
-  // (180ms) that the eye registers each word individually.
-  const words = heading.split(" ");
+  // (180ms) that the eye registers each word individually. The callout
+  // words continue the same cascade but render in a dimmer color, so the
+  // whole heading reads as one motion even though the visual weight
+  // shifts mid-sentence.
+  const headingWords = heading.split(" ");
+  const calloutWords = callout ? callout.split(" ") : [];
+  const allWordCount = headingWords.length + calloutWords.length;
   const WORD_STAGGER_MS = 180;
   const WORD_DURATION_MS = 800;
   // Body starts right as the last word finishes settling.
   const bodyDelayMs =
-    (words.length - 1) * WORD_STAGGER_MS + WORD_DURATION_MS * 0.6;
+    (allWordCount - 1) * WORD_STAGGER_MS + WORD_DURATION_MS * 0.6;
 
   const wordStyle = (index) => {
     const delay = index * WORD_STAGGER_MS;
@@ -86,47 +92,56 @@ export function NarrativeBlock({ eyebrow, heading, body }) {
     // by content cadence rather than color blending.
     <section
       ref={ref}
+      data-nav-theme="light"
       className="relative bg-[#F5F5F0] pt-20 pb-32 md:pt-24 md:pb-40"
     >
-      <div className="mx-auto max-w-5xl px-6">
-        {/* Eyebrow styled to match the Hero eyebrow exactly —
-            `mono text-xs uppercase tracking-[0.08em] text-white/40` —
-            just centered instead of left-aligned. */}
-        {eyebrow && (
-          <div
-            className="mb-5 flex justify-start md:mb-6 md:justify-center"
-            style={stageStyle(0)}
-          >
-            <span className="mono text-xs uppercase tracking-[0.08em] text-[#101010]/45">
-              {eyebrow}
-            </span>
-          </div>
-        )}
+      <div className="mx-auto max-w-6xl px-6">
         {/* Display-scale headline with a word-by-word cascade. Each word
             falls from ~0.35em above its resting line and fades in, offset
-            by `WORD_STAGGER_MS`. Using `inline-block` on each word lets us
-            transform it; `&nbsp;` after each word (except the last)
-            preserves the visual space without joining the spans. */}
-        {/* Capped at the same size as the Hero h1 so this heading has
-            presence without out-shouting the page's primary headline.
-            The cascade + centering + breathing room carry the emphasis. */}
-        <h2 className="mb-8 text-left text-[2.25rem] font-semibold leading-[1.1] tracking-[-0.03em] text-[#101010] [text-wrap:balance] md:mb-10 md:text-center md:text-[3rem]">
-          {words.map((word, i) => (
-            <span key={i} style={wordStyle(i)}>
+            by `WORD_STAGGER_MS`. The optional `callout` continues the
+            cascade but renders at reduced opacity, echoing the V7 pattern
+            of a bold statement followed by a quieter restatement. */}
+        <h2 className="mb-12 max-w-[1000px] text-left text-[2rem] font-normal leading-[1.05] tracking-[-0.025em] text-[#1A1A1A] [text-wrap:balance] md:mb-16 md:text-[2.875rem] md:tracking-[-0.03em]">
+          {headingWords.map((word, i) => (
+            <span key={`h-${i}`} style={wordStyle(i)}>
               {word}
-              {i < words.length - 1 && "\u00A0"}
+              {i < headingWords.length - 1 && "\u00A0"}
             </span>
           ))}
+          {callout && (
+            <>
+              {"\u00A0"}
+              {calloutWords.map((word, i) => {
+                const wordIndex = headingWords.length + i;
+                return (
+                  <span
+                    key={`c-${i}`}
+                    className="text-[#1A1A1A]/40"
+                    style={wordStyle(wordIndex)}
+                  >
+                    {word}
+                    {i < calloutWords.length - 1 && "\u00A0"}
+                  </span>
+                );
+              })}
+            </>
+          )}
         </h2>
-        {/* Narrow centered column for the body — the text itself stays
-            left-aligned so the multiple paragraphs read naturally, but
-            the column sits centered on the page below the headline. */}
+        {/* Two-column body below the headline, offset to the right so the
+            columns sit under the dimmed callout rather than spanning the
+            full heading width. Paragraphs flow across columns via CSS
+            columns — `break-inside-avoid` keeps each paragraph intact. */}
         <div
-          className="mx-auto max-w-[580px] space-y-5 text-[1.05rem] leading-[1.7] text-[#101010]/75"
+          className="md:ml-auto md:max-w-[780px] md:columns-2 md:gap-10"
           style={stageStyle(bodyDelayMs)}
         >
           {paragraphs.map((p, i) => (
-            <p key={i}>{p}</p>
+            <p
+              key={i}
+              className="mb-5 break-inside-avoid text-[1rem] leading-[1.6] text-[#1A1A1A]/55 last:mb-0"
+            >
+              {p}
+            </p>
           ))}
         </div>
       </div>

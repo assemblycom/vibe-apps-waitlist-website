@@ -80,7 +80,7 @@ export function ZoomHero({ children }) {
         // shrinks, so it reads as "pulling away from the page" rather
         // than floating down. `overflow-hidden` lets the border-radius
         // actually clip the hero contents (CTA button, eyebrow, etc.).
-        className="origin-top overflow-hidden bg-[var(--color-bg)]"
+        className="relative origin-top overflow-hidden bg-[var(--color-bg)]"
         style={{ willChange: "transform, border-radius" }}
       >
         {children}

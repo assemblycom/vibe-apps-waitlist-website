@@ -202,11 +202,11 @@ export function WaitlistModal({ open, onClose, content }) {
             </span>
             <h2
               id="waitlist-modal-heading"
-              className="text-[1.25rem] font-semibold tracking-[-0.02em] text-white md:text-[1.375rem]"
+              className="text-[1.25rem] font-normal leading-[1.2] tracking-[-0.02em] text-white md:text-[1.5rem] md:tracking-[-0.025em]"
             >
               {content.heading}
             </h2>
-            <p className="mt-1.5 text-[13.5px] leading-[1.55] text-white/55 [text-wrap:pretty]">
+            <p className="mt-1.5 text-[13px] leading-[1.55] text-white/55 [text-wrap:pretty]">
               {content.subheading}
             </p>
           </div>
@@ -216,10 +216,10 @@ export function WaitlistModal({ open, onClose, content }) {
           <div className="flex flex-col divide-y divide-white/[0.05]">
             {/* What would you build? */}
             <div className="py-5 first:pt-0">
-              <div className="text-[14.5px] font-medium text-white">
+              <div className="text-[14px] font-semibold text-white">
                 {buildItem.title}
               </div>
-              <p className="mt-0.5 text-[13px] text-white/45">
+              <p className="mt-0.5 text-[13px] text-white/55">
                 {buildItem.subtitle}
               </p>
               <form
@@ -255,10 +255,10 @@ export function WaitlistModal({ open, onClose, content }) {
 
             {/* Share */}
             <div className="py-5">
-              <div className="text-[14.5px] font-medium text-white">
+              <div className="text-[14px] font-semibold text-white">
                 {shareItem.title}
               </div>
-              <p className="mt-0.5 text-[13px] text-white/45">
+              <p className="mt-0.5 text-[13px] text-white/55">
                 {shareItem.subtitle}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -283,10 +283,10 @@ export function WaitlistModal({ open, onClose, content }) {
 
             {/* Survey */}
             <div className="py-5 last:pb-0">
-              <div className="text-[14.5px] font-medium text-white">
+              <div className="text-[14px] font-semibold text-white">
                 {surveyItem.title}
               </div>
-              <p className="mt-0.5 text-[13px] text-white/45">
+              <p className="mt-0.5 text-[13px] text-white/55">
                 {surveyItem.subtitle}
               </p>
               <div className="mt-3">
@@ -308,7 +308,7 @@ export function WaitlistModal({ open, onClose, content }) {
             <button
               type="button"
               onClick={onClose}
-              className="text-[13px] text-white/40 transition-colors hover:text-white/75"
+              className="text-[13px] text-white/55 transition-colors hover:text-white/90"
             >
               {content.dismissLabel}
             </button>

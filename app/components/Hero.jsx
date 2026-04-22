@@ -16,10 +16,10 @@ export function Hero({
             {eyebrow}
           </span>
         )}
-        <h1 className="mb-6 max-w-[900px] text-[2.25rem] font-semibold leading-[1.1] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3rem]">
+        <h1 className="mb-6 max-w-[900px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
           {heading}
         </h1>
-        <p className="mb-8 max-w-[620px] text-[1.05rem] leading-[1.6] text-white/65">
+        <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55">
           {subheading}
         </p>
         <EmailCTA />

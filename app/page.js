@@ -17,21 +17,29 @@ export default function Home() {
   const c = HOME_CONTENT;
   return (
     <div className="min-h-screen">
+      {/* Header is rendered OUTSIDE GradientReveal so its `position:
+          fixed` actually anchors to the viewport. GradientReveal
+          applies a `translate3d` to its content frame for the bottom-
+          overshoot gradient, which creates a new containing block and
+          would otherwise trap any fixed descendant inside it (the nav
+          would scroll with the page instead of sticking). It's also a
+          sibling of ZoomHero — not nested — so the nav stays visible
+          as the user scrolls past the hero. The seam/criss-cross bug
+          is avoided a different way now: the Header is *surfaceless*
+          (no bg/border/blur) while the hero is on screen, so there is
+          no pill layer to overlap with the hero card. The pill only
+          materializes once the hero has scrolled past, where it sits
+          over NarrativeBlock/ValueProps rather than the hero. See
+          Header.jsx for the fuller explanation. */}
+      <Header />
       {/* GradientReveal wraps all page content so it can translate the
           content upward during wheel/touch overshoot, revealing the brand
           gradient behind it. Footer and logos stay visible because they
           move with the content — the gradient appears under them, not
           on top. */}
       <GradientReveal>
-        <Header />
-
-        {/* Hero lives inside ZoomHero so it scales down + gets rounded
-            corners as the user scrolls, revealing the off-white backdrop
-            around it. That same off-white carries into the NarrativeBlock
-            below for a continuous color band. */}
         <ZoomHero>
           <Hero
-            eyebrow={c.hero.eyebrow}
             heading={c.hero.heading}
             subheading={c.hero.subheading}
             alphaLabel={c.logoStrip.label}
@@ -43,8 +51,8 @@ export default function Home() {
           body) — no outer <Reveal> wrapper so the two effects don't
           double-fade. */}
       <NarrativeBlock
-        eyebrow={c.whyAssemblyStudio.eyebrow}
         heading={c.whyAssemblyStudio.heading}
+        callout={c.whyAssemblyStudio.callout}
         body={c.whyAssemblyStudio.body}
       />
 
@@ -69,7 +77,6 @@ export default function Home() {
 
       <Reveal>
         <ComparisonTable
-          eyebrow={c.comparison.eyebrow}
           heading={c.comparison.heading}
           firstColumnLabel={c.comparison.firstColumnLabel}
           leftLabel={c.comparison.leftLabel}
@@ -80,7 +87,6 @@ export default function Home() {
 
       <Reveal>
         <Testimonials
-          eyebrow={c.testimonials.eyebrow}
           heading={c.testimonials.heading}
           subheading={c.testimonials.subheading}
           stat={c.testimonials.stat}
@@ -91,7 +97,6 @@ export default function Home() {
 
       <Reveal>
         <FAQ
-          eyebrow={c.faq.eyebrow}
           heading={c.faq.heading}
           items={c.faq.items}
         />

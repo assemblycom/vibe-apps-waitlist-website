@@ -101,11 +101,11 @@ export function FinalCTA({ heading, subheading }) {
         }}
         className="mx-auto max-w-3xl px-6 text-center"
       >
-        <h3 className="mb-5 text-3xl font-semibold leading-tight tracking-[-0.02em] text-white [text-wrap:balance] md:text-[2.5rem]">
+        <h3 className="mb-5 text-[1.875rem] font-normal leading-[1.05] tracking-[-0.025em] text-white [text-wrap:balance] md:text-[2.625rem] md:tracking-[-0.03em]">
           {heading}
         </h3>
         {subheading && (
-          <p className="mx-auto mb-8 max-w-xl text-[1.05rem] leading-[1.65] text-white/65">
+          <p className="mx-auto mb-8 max-w-xl text-[1.0625rem] leading-[1.55] text-white/55">
             {subheading}
           </p>
         )}
