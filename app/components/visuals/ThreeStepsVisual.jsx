@@ -350,120 +350,38 @@ function ThinkingPhase({ active }) {
 // the narrative moment is "your new app just appeared in the
 // sidebar", so the focus belongs there.
 
-// Compact inline icon set keyed by name. Simple outline glyphs at
-// 12px — Figma's icon assets are behind expiring URLs so we redraw
-// equivalents.
-const STUDIO_ICONS = {
-  dashboard: (
-    <g
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-      strokeLinejoin="round"
-    >
-      <circle cx="8" cy="8" r="6" />
-      <path d="M10.7 5.3 L9.1 9.1 L5.3 10.7 L6.9 6.9 Z" />
-    </g>
-  ),
-  crm: (
-    <g
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="8" cy="6" r="2.6" />
-      <path d="M3 14c.8-2.4 2.7-3.6 5-3.6s4.2 1.2 5 3.6" />
-    </g>
-  ),
-  bell: (
-    <g
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-      strokeLinejoin="round"
-      strokeLinecap="round"
-    >
-      <path d="M4.2 11.3c.4-.8 1.3-1.5 1.3-3.3a2.5 2.5 0 0 1 5 0c0 1.8.9 2.5 1.3 3.3H4.2Z" />
-      <path d="M7 13.5a1 1 0 0 0 2 0" />
-    </g>
-  ),
-  bolt: (
-    <path
-      d="M9 2 L4.5 8.6 H7.6 L6.8 14 L11.5 7.2 H8.3 L9 2 Z"
-      fill="currentColor"
-    />
-  ),
-  clock: (
-    <g
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M2.6 6A6 6 0 1 1 2 8.2" />
-      <path d="M2.6 3v3h3" />
-    </g>
-  ),
-  plus: (
-    <g
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-      strokeLinecap="round"
-    >
-      <path d="M8 3.5v9M3.5 8h9" />
-    </g>
-  ),
-  gear: (
-    <g
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.1"
-      strokeLinejoin="round"
-    >
-      <circle cx="8" cy="8" r="2" />
-      <path d="M8 1.8v1.6M8 12.6v1.6M14.2 8h-1.6M3.4 8H1.8M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1M12.4 12.4l-1.1-1.1M4.7 4.7 3.6 3.6" />
-    </g>
-  ),
-};
-
-// Items in render order. `active: true` marks the row that should be
-// highlighted (On-Boarding). `badge` shows a pill on the right.
-// Section headers are emitted when an item's `sectionLabel` is set —
-// the label renders above it.
-// Full Studio sidebar per the Figma reference. The panel is rendered
-// oversized relative to the card so the bottom items crop naturally
-// — the sidebar feels like a slice of a real product surface rather
-// than a squashed-to-fit summary.
+// Simplified Studio sidebar — uses real icon assets from
+// public/Icons/. On-Boarding is highlighted as the new draft.
 const STUDIO_NAV = [
-  { id: "dashboard", label: "Dashboard", icon: "dashboard" },
-  { id: "crm", label: "CRM", icon: "crm" },
-  { id: "notifications", label: "Notifications", icon: "bell" },
-  { id: "automation", label: "Automation", icon: "bolt" },
-  { id: "app1", label: "App 1", icon: "dashboard", sectionLabel: "Apps" },
-  { id: "app2", label: "App 2", icon: "crm" },
-  { id: "app3", label: "App 3", icon: "bell" },
-  { id: "app4", label: "App 4", icon: "bolt" },
+  { id: "dashboard", label: "Dashboard", icon: "/Icons/Dashboard.svg" },
+  { id: "crm", label: "CRM", icon: "/Icons/CRM.svg" },
+  {
+    id: "notifications",
+    label: "Notifications",
+    icon: "/Icons/Notifications.svg",
+  },
+  { id: "automation", label: "Automation", icon: "/Icons/Automations.svg" },
+  {
+    id: "pizzatracker",
+    label: "Pizzatracker",
+    icon: "/Icons/pizzatracker.svg",
+    sectionLabel: "Apps",
+  },
   {
     id: "onboarding",
     label: "On-Boarding",
-    icon: "clock",
+    icon: "/Icons/on-boarding.svg",
     active: true,
     badge: "Draft",
   },
-  { id: "add", label: "Add App", icon: "plus", muted: true },
+  { id: "add", label: "Add App", icon: "/Icons/add.svg", muted: true },
   {
-    id: "library",
-    label: "App Library",
-    icon: "dashboard",
+    id: "marketplace",
+    label: "Marketplace",
+    icon: "/Icons/marketplace.svg",
     sectionLabel: "Workspace",
   },
-  { id: "marketplace", label: "Marketplace", icon: "crm" },
-  { id: "branding", label: "Branding", icon: "bell" },
-  { id: "settings", label: "Settings", icon: "gear" },
+  { id: "settings", label: "Settings", icon: "/Icons/Settings.svg" },
 ];
 
 const WIZARD_FIELDS = [
@@ -558,22 +476,6 @@ function ResultPhase({ active }) {
             <span className="flex-1 text-[12px] font-medium text-[#212b36]">
               BrandMages
             </span>
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 10 10"
-              fill="none"
-              aria-hidden="true"
-              className="text-[#6b6f76]"
-            >
-              <path
-                d="M2.5 4L5 6.5L7.5 4"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
           </div>
 
           {/* Nav rows with inlined section labels. */}
@@ -603,12 +505,16 @@ function ResultPhase({ active }) {
                   <span
                     className={clsx(
                       "flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center",
-                      item.muted ? "text-[#6b6f76]" : "text-[#212b36]",
+                      item.muted ? "opacity-60" : "",
                     )}
                   >
-                    <svg width="14" height="14" viewBox="0 0 16 16">
-                      {STUDIO_ICONS[item.icon]}
-                    </svg>
+                    <img
+                      src={item.icon}
+                      alt=""
+                      aria-hidden="true"
+                      width={14}
+                      height={14}
+                    />
                   </span>
                   <span
                     className={clsx(
