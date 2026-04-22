@@ -299,7 +299,7 @@ function MessagesPanel() {
               <p className="text-[10px] leading-[1.5] text-[#212b36]">
                 It works!{" "}
                 <span className="text-[#6b6f76]">@BernardSimons</span> —
-                we'll have the demo deployed by EOD tomorrow.
+                we&apos;ll have the demo deployed by EOD tomorrow.
               </p>
             </div>
           </div>
