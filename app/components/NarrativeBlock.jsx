@@ -52,36 +52,11 @@ export function NarrativeBlock({ heading, callout, body }) {
     willChange: "opacity, transform",
   });
 
-  // Headline words cascade in one after another — each word rises from
-  // slightly below its resting line and fades in. Stagger is large enough
-  // (180ms) that the eye registers each word individually. The callout
-  // words continue the same cascade but render in a dimmer color, so the
-  // whole heading reads as one motion even though the visual weight
-  // shifts mid-sentence.
-  const headingWords = heading.split(" ");
-  const calloutWords = callout ? callout.split(" ") : [];
-  const allWordCount = headingWords.length + calloutWords.length;
-  const WORD_STAGGER_MS = 180;
-  const WORD_DURATION_MS = 800;
-  // Body starts right as the last word finishes settling.
-  const bodyDelayMs =
-    (allWordCount - 1) * WORD_STAGGER_MS + WORD_DURATION_MS * 0.6;
-
-  const wordStyle = (index) => {
-    const delay = index * WORD_STAGGER_MS;
-    return {
-      display: "inline-block",
-      opacity: visible ? 1 : 0,
-      // Rise from below (positive translateY) — matches the sunday.ai
-      // pattern of words "coming up into" their line.
-      transform: visible ? "translateY(0)" : "translateY(0.6em)",
-      transition: [
-        `opacity ${WORD_DURATION_MS}ms ${EASE} ${delay}ms`,
-        `transform ${WORD_DURATION_MS}ms ${EASE} ${delay}ms`,
-      ].join(", "),
-      willChange: "opacity, transform",
-    };
-  };
+  // The heading fades in as a single block (quiet, editorial tone) and
+  // the body follows a beat later. No per-word cascade — that read as
+  // too playful for this section.
+  const HEADING_DURATION_MS = 800;
+  const bodyDelayMs = 260;
 
   return (
     // NarrativeBlock closes the off-white chapter and hands off to the
@@ -96,34 +71,27 @@ export function NarrativeBlock({ heading, callout, body }) {
       className="relative bg-[#F5F5F0] pt-20 pb-32 md:pt-24 md:pb-40"
     >
       <div className="mx-auto max-w-6xl px-6">
-        {/* Display-scale headline with a word-by-word cascade. Each word
-            falls from ~0.35em above its resting line and fades in, offset
-            by `WORD_STAGGER_MS`. The optional `callout` continues the
-            cascade but renders at reduced opacity, echoing the V7 pattern
-            of a bold statement followed by a quieter restatement. */}
-        <h2 className="mb-12 max-w-[1000px] text-left text-[2rem] font-normal leading-[1.05] tracking-[-0.025em] text-[#1A1A1A] [text-wrap:balance] md:mb-16 md:text-[2.875rem] md:tracking-[-0.03em]">
-          {headingWords.map((word, i) => (
-            <span key={`h-${i}`} style={wordStyle(i)}>
-              {word}
-              {i < headingWords.length - 1 && "\u00A0"}
-            </span>
-          ))}
+        {/* Display-scale headline — the optional `callout` renders inline
+            at reduced opacity, echoing the V7 pattern of a bold statement
+            followed by a quieter restatement. The whole line fades in as
+            one block rather than cascading word-by-word. */}
+        <h2
+          className="mx-auto mb-12 max-w-[900px] text-center text-[2rem] font-normal leading-[1.05] tracking-[-0.025em] text-[#1A1A1A] [text-wrap:balance] md:mb-16 md:text-[2.875rem] md:tracking-[-0.03em]"
+          style={{
+            opacity: visible ? 1 : 0,
+            transform: visible ? "translateY(0)" : "translateY(8px)",
+            transition: [
+              `opacity ${HEADING_DURATION_MS}ms ${EASE}`,
+              `transform ${HEADING_DURATION_MS}ms ${EASE}`,
+            ].join(", "),
+            willChange: "opacity, transform",
+          }}
+        >
+          {heading}
           {callout && (
             <>
-              {"\u00A0"}
-              {calloutWords.map((word, i) => {
-                const wordIndex = headingWords.length + i;
-                return (
-                  <span
-                    key={`c-${i}`}
-                    className="text-[#1A1A1A]/40"
-                    style={wordStyle(wordIndex)}
-                  >
-                    {word}
-                    {i < calloutWords.length - 1 && "\u00A0"}
-                  </span>
-                );
-              })}
+              <br />
+              <span className="text-[#1A1A1A]/40">{callout}</span>
             </>
           )}
         </h2>
@@ -132,13 +100,13 @@ export function NarrativeBlock({ heading, callout, body }) {
             full heading width. Paragraphs flow across columns via CSS
             columns — `break-inside-avoid` keeps each paragraph intact. */}
         <div
-          className="md:ml-auto md:max-w-[780px] md:columns-2 md:gap-10"
+          className="mx-auto max-w-[640px] text-left"
           style={stageStyle(bodyDelayMs)}
         >
           {paragraphs.map((p, i) => (
             <p
               key={i}
-              className="mb-5 break-inside-avoid text-[1rem] leading-[1.6] text-[#1A1A1A]/55 last:mb-0"
+              className="mb-5 text-[1rem] leading-[1.6] text-[#1A1A1A]/55 last:mb-0"
             >
               {p}
             </p>
