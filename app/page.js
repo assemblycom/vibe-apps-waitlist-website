@@ -48,6 +48,16 @@ export default function Home() {
         body={c.whyAssemblyStudio.body}
       />
 
+      {/* No gradient and no added chapter-opener between the
+          NarrativeBlock and the dark ValueProps section. The transition
+          is carried purely by cadence: the light section exits with
+          generous bottom padding, a short dark spacer gives the eye a
+          beat to register the color shift, and ValueProps declares the
+          new chapter with its own first eyebrow ("AI BUILDER"), which
+          sits close enough to the seam to feel like content leading
+          you in rather than a void to traverse. */}
+      <div aria-hidden="true" className="h-12 bg-[#101010] md:h-16" />
+
       {/* All breakpoints — stacked value prop sections that scroll with
           the page. The old desktop story-mode (sticky menu + scroll
           markers) pinned content and took over native scroll, which

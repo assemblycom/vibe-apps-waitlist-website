@@ -232,6 +232,41 @@ export const HOME_CONTENT = {
       "The first signups get a personalized onboarding session. We'll sit with you, understand your firm, and help you craft the client experience your firm deserves.",
   },
 
+  // Post-submit modal that appears after the user enters an email in
+  // any EmailCTA instance. The email submit is confirmed in the modal
+  // header; this array drives three optional follow-ups below it.
+  waitlistModal: {
+    heading: "You're on the list",
+    subheading: "We'll be in touch as cohorts open.",
+    items: [
+      {
+        id: "build",
+        title: "What would you build first?",
+        subtitle: "One sentence is plenty.",
+        placeholder:
+          "e.g. a client intake form that routes to the right partner",
+        actionLabel: "Save",
+        completedLabel: "Saved",
+      },
+      {
+        id: "share",
+        title: "Share with your network",
+        subtitle: "Post a quick note on LinkedIn or X.",
+        actionLabel: "Share on LinkedIn",
+        actionLabelX: "Share on X",
+        completedLabel: "Shared",
+      },
+      {
+        id: "survey",
+        title: "Quick survey",
+        subtitle: "Five questions, about two minutes.",
+        actionLabel: "Take survey",
+        completedLabel: "Opened",
+      },
+    ],
+    dismissLabel: "Close",
+  },
+
   footer: {
     copyright: `© ${new Date().getFullYear()} Assembly Studio.`,
     legalLinks: [

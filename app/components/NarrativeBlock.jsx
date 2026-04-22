@@ -78,13 +78,15 @@ export function NarrativeBlock({ eyebrow, heading, body }) {
   };
 
   return (
-    // NarrativeBlock now closes the off-white chapter (LogoStrip was
-    // absorbed into the Hero), so the rounded bottom that used to live
-    // on LogoStrip moves here — same radii as before to keep the same
-    // card-edge read at the chapter boundary.
+    // NarrativeBlock closes the off-white chapter and hands off to the
+    // dark storytelling sections below. No gradient fade at the seam —
+    // the light section ends on its own color with generous bottom
+    // padding, and the dark chapter-opener that follows (in page.js)
+    // introduces its eyebrow early so the dark section declares itself
+    // by content cadence rather than color blending.
     <section
       ref={ref}
-      className="bg-[#F5F5F0] py-20 rounded-b-[28px] md:py-24 md:rounded-b-[36px]"
+      className="relative bg-[#F5F5F0] pt-20 pb-32 md:pt-24 md:pb-40"
     >
       <div className="mx-auto max-w-5xl px-6">
         {/* Eyebrow styled to match the Hero eyebrow exactly —
