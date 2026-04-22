@@ -3,26 +3,29 @@
 
 export const HOME_CONTENT = {
   hero: {
-    heading: "The platform layer for AI\u2011native service firms",
+    heading:
+      "Deliver tailored client experiences without rebuilding the fundamentals",
     subheading:
-      "You're building something new. Assembly is the system behind it, so you can focus on what makes your firm different. Not another AI app builder, one that actually ships to clients.",
+      "Assembly Studio lets you deliver tailor-made client experiences with an app builder, on top of a foundation that includes a CRM, client portal, payments, messaging, and more.",
   },
 
   whyAssemblyStudio: {
-    heading: "Not another app builder.",
-    // Dimmed coda shown inline after the main heading (V7-style). Fades
-    // to a quieter weight so the eye reads the statement first, then the
-    // restatement second.
-    callout: "We built the platform layer.",
+    // Display headline is split in two: the primary statement renders at
+    // full weight, and the `callout` continues inline at reduced opacity
+    // (V7-style). Together they read as one sentence — "Assembly Studio
+    // is not just another app builder" — with visual emphasis on the
+    // first half.
+    heading: "Assembly Studio is not",
+    callout: "just another app builder",
     body: [
       "Other app builders are great for internal tools, prototypes, and websites. But if you're serving real paying clients, you don't need one vibe-coded app. You need a polished, branded, secure, and consolidated client experience.",
-      "Our app builder is the only one that understands your business. Describe what you want, a custom intake flow, a progress tracker, a proposal tool, and it builds an app that works with your existing contacts and companies, respects your permissions, and integrates with email and in-product notifications. Every app deploys straight into your client experience, not as a standalone tool on a separate URL, but as a native part of your firm.",
+      "Our app builder is the only one that understands your business. Describe what you want: a custom intake flow, a progress tracker, a proposal tool. It builds an app that works with your existing contacts and companies, respects your permissions, and integrates with email and in-product notifications. Every app deploys straight into your client experience, not as a standalone tool on a separate URL, but as a native part of your firm.",
       "And underneath it all, a real platform. Assembly Studio gives you a CRM for your team, a branded portal for clients, integrated notifications, and permissions, plus a library of reviewed apps you can one-click enable. Every piece is designed to work together, so the client experience you deliver feels cohesive and complete.",
     ],
   },
 
   logoStrip: {
-    label: "Already used by early teams in alpha",
+    label: "Trusted by teams at",
     logos: [
       { name: "Capital One" },
       { name: "Collective" },
@@ -40,8 +43,8 @@ export const HOME_CONTENT = {
       layout: "split",
       orientation: "text-left",
       menuLabel: "AI builder",
-      heading: "Three steps to a shipped client app",
-      body: "Start from a template or describe your own app in plain English. Assembly generates a secure app and publishes it to your client portal, no code, no deploy step, no infrastructure to wire up.",
+      heading: "Describe an idea, watch it come alive",
+      body: "Start from a template or describe your own app in plain English. Assembly generates a secure app and publishes it to your client portal. No code, no deploy step, no infrastructure to wire up.",
       visualKey: "threeSteps",
     },
     {
@@ -134,49 +137,21 @@ export const HOME_CONTENT = {
   },
 
   testimonials: {
-    heading: "The firms shipping on Studio today",
-    subheading:
-      "Early partners building client-ready apps on the Assembly platform, in days not months.",
+    heading: "What alpha testers are saying",
+    // Subheading intentionally omitted — the design lands on the heading
+    // alone, no supporting line.
     quotes: [
       {
-        segment: "Advisory",
-        body: "We replaced three contractors and two weeks of Zapier glue with a single Studio prompt. Our clients never saw the seam.",
-        name: "Dana Reyes",
-        title: "Founder",
-        company: "Northstar Advisory",
-        photo: "/testimonials/Frame%202147223878.png",
-      },
-      {
-        segment: "Legal",
-        body: "Studio feels like the platform we would have built internally if we'd had two years and an engineering team. We didn't. We shipped anyway.",
-        name: "Marcus Lin",
-        title: "Managing Partner",
-        company: "Runway Legal",
-        photo: "/testimonials/Frame%202147223879.png",
-      },
-      {
-        segment: "Consulting",
-        body: "Auth, billing, the client portal: all of it was already there. I described the workflow, clients were using it by Friday.",
-        name: "Priya Shah",
-        title: "Principal",
-        company: "Helio",
-        photo: "/testimonials/image%2010.png",
-      },
-      {
-        segment: "Accounting",
-        body: "We went from spreadsheets and email threads to a branded client portal in under a week. Our retention jumped the month we shipped it.",
-        name: "Evelyn Park",
+        body: "We replaced three tools and a half-finished Lovable project with one Assembly Studio workspace. Clients see a polished portal, not a prototype.",
+        name: "Maya Chen",
         title: "Partner",
-        company: "Park & Co. CPAs",
-        photo: "/testimonials/image%2011.png",
+        company: "Archer & Co",
       },
       {
-        segment: "Agency",
-        body: "Studio collapses what used to be a three-month build into an afternoon prompt. Our margins on client work changed overnight.",
-        name: "Jordan Whitfield",
-        title: "Creative Director",
-        company: "Field Studio",
-        photo: "/testimonials/image%2012.png",
+        body: "Auth, permissions, billing. The stuff that normally kills a weekend project was just there.",
+        name: "Jordan Reyes",
+        title: "Founder",
+        company: "Pennant Advisory",
       },
     ],
   },
@@ -197,27 +172,27 @@ export const HOME_CONTENT = {
   },
 
   faq: {
-    heading: "Questions, answered",
+    heading: "Frequently asked questions",
     items: [
       {
         q: "How do I get access to Assembly Studio?",
-        a: "Join the waitlist. We're onboarding in waves and reaching out with cohort timing as capacity opens.",
+        a: "Assembly Studio is in pre-launch. Join the waitlist above with your work email and we'll open seats in waves, earliest firms first. Signing up before launch locks in $100 of build credits.",
       },
       {
         q: "What does it cost?",
-        a: "Flat per-workspace plan for the foundation (CRM, portal, auth, permissions, messaging, payments). Custom apps run on metered build credits. Waitlist members get $100 to start. Full pricing at launch.",
+        a: "Assembly Studio includes the full foundation (CRM, portal, auth, permissions, messaging, payments) on a flat per-workspace plan. Custom apps run on metered build credits; waitlist members get $100 to start. Full pricing will be published at launch.",
       },
       {
         q: "How secure is it?",
-        a: "Row-level client scoping on by default, magic-link and SSO auth, encryption at rest and in transit, audit logs. SOC 2 Type II in progress. Region-pinned data on Enterprise.",
+        a: "Every workspace runs on one permissions layer with row-level client scoping on by default, magic-link and SSO auth, encrypted data at rest and in transit, and audit logs. SOC 2 Type II is in progress; region-pinned data is available on Enterprise.",
       },
       {
         q: "Can I get help building features?",
-        a: "Yes. 21 reviewed apps enable with one click. For bespoke work, our solutions team and partner network build alongside you on the same platform.",
+        a: "Yes. Assembly Studio ships with a library of 21 reviewed apps you can enable with one click. For bespoke work, our solutions team and partner network can build alongside you, and everything they build lives on the same platform as the rest of your workspace.",
       },
       {
         q: "What if I already have an Assembly workspace?",
-        a: "Studio slots into your existing workspace. Same CRM, portal, clients. When access opens, it appears in your sidebar. No migration.",
+        a: "Assembly Studio slots directly into your existing workspace: same CRM, same portal, same clients. When you get access, you'll see it appear in your sidebar. No migration needed.",
       },
     ],
   },
