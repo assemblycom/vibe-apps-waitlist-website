@@ -225,18 +225,21 @@ export const HOME_CONTENT = {
   // header; this array drives three optional follow-ups below it.
   waitlistModal: {
     heading: "You're on the list",
-    subheading: "We'll be in touch as cohorts open.",
-    // Shown above the follow-ups to reframe them as a reward path.
-    perkEyebrow: "Earlier access",
-    perkHeading: "Want in sooner?",
-    perkBody:
-      "Complete the steps below and we'll bump you up to the next cohort.",
-    perkUnlocked: "Earlier access unlocked — you're on the next cohort.",
+    subheading:
+      "Unlock early access perks by completing the steps below.",
+    // First step is auto-complete: the email is already in. Subsequent
+    // steps each advertise the perk unlocked by completing them.
+    emailStep: {
+      title: "Email submitted",
+      subtitle: "You're on the waitlist!",
+    },
+    allCompleteLabel: "All perks unlocked — you're on the next cohort.",
     items: [
       {
         id: "build",
         title: "What would you build first?",
         subtitle: "One sentence is plenty.",
+        reward: "Even earlier access",
         placeholder:
           "e.g. a client intake form that routes to the right partner",
         actionLabel: "Save",
@@ -246,6 +249,7 @@ export const HOME_CONTENT = {
         id: "share",
         title: "Share with your network",
         subtitle: "Post a quick note on LinkedIn or X.",
+        reward: "Founding member plan",
         actionLabel: "Share on LinkedIn",
         actionLabelX: "Share on X",
         completedLabel: "Shared",
@@ -254,6 +258,7 @@ export const HOME_CONTENT = {
         id: "survey",
         title: "Quick survey",
         subtitle: "6 questions · ~2 min",
+        reward: "Onboarding by Assembly founder",
         actionLabel: "Take survey",
         completedLabel: "Submitted",
         submitLabel: "Submit",

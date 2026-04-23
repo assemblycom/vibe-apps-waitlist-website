@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { PlayPauseToggle } from "./PlayPauseToggle";
 
 // Third value prop ("Your team's command center") visual. Internal
 // team's view of the Studio workspace: Dashboard → CRM → Company
@@ -31,18 +32,22 @@ const INNER_CARD =
 const SIDEBAR_BG = "#f8f9fb";
 const SIDEBAR_ACTIVE_BG = "#e9ebee";
 
-// Animation loop starts at the CRM view — the user wanted to skip the
-// Dashboard intro. Every phase highlights CRM in the sidebar because
-// the whole sequence is a drill-in from Companies into a record.
+// Animation loop: Dashboard (analytics) → CRM (companies) → click into
+// a company's Messages tab (default) → click Onboarding tab (response
+// data visible). Sidebar highlights Dashboard for phase 0 and CRM for
+// the company-drill-in phases.
 const PHASES = [
+  { id: "dashboard", duration: 4200 },
   { id: "crm", duration: 4800 },
   { id: "messages", duration: 4200 },
-  { id: "onboarding", duration: 4200 },
-  { id: "chat", duration: 5400 },
+  { id: "onboarding", duration: 4800 },
 ];
 
 // ── Studio sidebar item — matches ThreeStepsVisual / ClientPortalVisual
-function SidebarItem({ label, iconSrc, iconNode, active, muted }) {
+// iconSize lets callers shrink 16-viewBox SVGs (whose glyphs fill the
+// whole box) so they read the same size as 20-viewBox SVGs (which have
+// built-in padding) at the default 16px render.
+function SidebarItem({ label, iconSrc, iconNode, iconSize = 16, active, muted }) {
   return (
     <div
       className="flex items-center gap-2 rounded-[4px] px-2 py-1 transition-colors duration-[350ms] ease-out"
@@ -52,7 +57,7 @@ function SidebarItem({ label, iconSrc, iconNode, active, muted }) {
     >
       <span
         className={clsx(
-          "flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center text-[#101010]",
+          "flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center text-[#101010]",
           muted && "opacity-60",
         )}
       >
@@ -61,8 +66,8 @@ function SidebarItem({ label, iconSrc, iconNode, active, muted }) {
             src={iconSrc}
             alt=""
             aria-hidden="true"
-            width={14}
-            height={14}
+            width={iconSize}
+            height={iconSize}
           />
         ) : (
           iconNode
@@ -70,7 +75,7 @@ function SidebarItem({ label, iconSrc, iconNode, active, muted }) {
       </span>
       <span
         className={clsx(
-          "flex-1 truncate text-[12px] leading-[16px]",
+          "flex-1 truncate text-[12px] leading-[18px]",
           muted ? "text-[#6b6f76]" : "text-[#101010]",
           active ? "font-medium" : "font-normal",
         )}
@@ -367,23 +372,7 @@ function CompaniesPanel({ cursorPhase }) {
   );
 }
 
-function StatusChip({ label }) {
-  const styles = {
-    Onboarding: { bg: "#dbe8fb", fg: "#3866c0" },
-    Active: { bg: "#dff5d3", fg: "#3d7d2d" },
-    Prospect: { bg: "#eef0f2", fg: "#6b6f76" },
-  }[label] || { bg: "#eef0f2", fg: "#6b6f76" };
-  return (
-    <span
-      className="inline-block rounded-full px-[6px] py-[1px] text-[9px] font-medium leading-[1.3]"
-      style={{ backgroundColor: styles.bg, color: styles.fg }}
-    >
-      {label}
-    </span>
-  );
-}
-
-// ── Company detail header (shared by Messages/Onboarding/chat phases) ──
+// ── Company detail header (shared by Messages/Onboarding phases) ───────
 // Matches the Assembly company-detail reference: a `CRM › Company` crumb
 // with the company name as the heading, a horizontal tab row
 // (Messages / Onboarding / Files / Contracts / Forms / Billing / + more),
@@ -596,154 +585,15 @@ function CompanyOnboardingBody() {
   );
 }
 
-// ── Right panels (phase 4): Properties → Internal chat ──────────────────
-function PropertyRow({ label, value, chip }) {
-  return (
-    <div className="flex items-center gap-2 py-1">
-      <span className="w-[70px] flex-shrink-0 text-[9px] uppercase tracking-[0.06em] text-[#6b6f76]">
-        {label}
-      </span>
-      <span className="min-w-0 flex-1 truncate text-[10px] text-[#212b36]">
-        {value}
-      </span>
-      {chip && <StatusChip label={chip} />}
-    </div>
-  );
-}
-
-function PropertiesRightPanel() {
-  return (
-    <div className="flex h-full flex-col">
-      {/* Panel tabs */}
-      <div className="flex items-center gap-3 border-b border-[#eef0f2] px-3 h-[36px]">
-        <span className="border-b-2 border-[#101010] py-1 text-[10px] font-medium text-[#101010]">
-          Properties
-        </span>
-        <span className="border-b-2 border-transparent py-1 text-[10px] text-[#6b6f76]">
-          Internal chat
-        </span>
-      </div>
-      <div className="flex-1 overflow-hidden px-3 py-2">
-        <PropertyRow label="Owner" value="Martin Sung" />
-        <PropertyRow label="Stage" value="Onboarding" chip="Onboarding" />
-        <PropertyRow label="Plan" value="Growth · Monthly" />
-        <PropertyRow label="Next step" value="Kickoff call · Thu 10:00" />
-        <PropertyRow label="Tags" value="Brand, Portal, Q3 launch" />
-      </div>
-    </div>
-  );
-}
-
-function InternalChatRightPanel() {
-  // Static message — the panel just appears with the message already
-  // written so nothing "slides" or types in on the last frame.
-  const message =
-    "Hey @Martin, Acme Legal finished onboarding. Let me know how the kickoff call goes.";
-
-  // Inline renderer that highlights @mentions in a muted teal.
-  const renderWithMentions = (body) => {
-    const parts = body.split(/(@\w+)/g);
-    return parts.map((p, i) =>
-      p.startsWith("@") ? (
-        <span key={i} className="text-[#3866c0]">
-          {p}
-        </span>
-      ) : (
-        <span key={i}>{p}</span>
-      ),
-    );
-  };
-
-  return (
-    <div className="flex h-full flex-col">
-      {/* Panel tabs — Internal chat is active now. */}
-      <div className="flex items-center gap-3 border-b border-[#eef0f2] px-3 h-[36px]">
-        <span className="border-b-2 border-transparent py-1 text-[10px] text-[#6b6f76]">
-          Properties
-        </span>
-        <span className="border-b-2 border-[#101010] py-1 text-[10px] font-medium text-[#101010]">
-          Internal chat
-        </span>
-      </div>
-
-      {/* Thread */}
-      <div className="flex-1 overflow-hidden px-3 py-2">
-        <div className="mb-1.5 text-[9px] uppercase tracking-[0.06em] text-[#6b6f76]">
-          Today
-        </div>
-        <div className="flex items-start gap-2">
-          <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center rounded-full bg-[#ffe2c9] text-[9px] font-medium text-[#b36a2d]">
-            PR
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 text-[10px] leading-[1.4]">
-              <span className="font-medium text-[#212b36]">Priya R.</span>
-              <span className="text-[#6b6f76]">now</span>
-            </div>
-            <p className="text-[10px] leading-[1.5] text-[#212b36]">
-              {renderWithMentions(message)}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Composer */}
-      <div className="border-t border-[#eef0f2] bg-white px-3 py-2">
-        <div className="rounded-[5px] border border-[#dfe1e4] bg-white px-2 py-1.5">
-          <p className="text-[9px] text-[#90959d]">Message your team</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Right sidebar — overlays the right edge of the main canvas during
-// the "chat" phase. It does NOT push the main canvas narrower, so the
-// onboarding fields underneath stay in their original positions (no
-// reflow when the panel appears).
-function RightSidebar({ visible, subPhase }) {
-  if (!visible) return null;
-  return (
-    <div className="absolute bottom-0 right-0 top-0 z-10 w-[220px] border-l border-[#eef0f2] bg-white">
-      <div className="relative h-full w-full">
-        {/* Properties panel — pure opacity crossfade, no translate. */}
-        <div
-          className={clsx(
-            "absolute inset-0 transition-opacity duration-[350ms] ease-out",
-            subPhase === "properties"
-              ? "visible opacity-100"
-              : "pointer-events-none invisible opacity-0",
-          )}
-        >
-          <PropertiesRightPanel />
-        </div>
-        {/* Internal chat panel — pure opacity crossfade, no translate. */}
-        <div
-          className={clsx(
-            "absolute inset-0 transition-opacity duration-[350ms] ease-out",
-            subPhase === "chat"
-              ? "visible opacity-100"
-              : "pointer-events-none invisible opacity-0",
-          )}
-        >
-          <InternalChatRightPanel />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Main canvas switcher ────────────────────────────────────────────────
 function MainCanvas({ phaseId, cursorPhase }) {
-  // Dashboard and CRM swap the whole body; the three company phases
+  // Dashboard and CRM swap the whole body; the two company phases
   // share the company header but swap the body area.
   if (phaseId === "dashboard") return <DashboardPanel />;
   if (phaseId === "crm") return <CompaniesPanel cursorPhase={cursorPhase} />;
 
-  // Company detail — determine which tab is active.
-  const activeTab = phaseId === "onboarding" || phaseId === "chat"
-    ? "onboarding"
-    : "messages";
+  // Company detail — Messages tab by default, Onboarding once clicked.
+  const activeTab = phaseId === "onboarding" ? "onboarding" : "messages";
   return (
     <div className="flex h-full flex-col">
       <CompanyHeader activeTab={activeTab} />
@@ -757,22 +607,22 @@ function MainCanvas({ phaseId, cursorPhase }) {
 }
 
 const NAV = [
-  { id: "dashboard", label: "Dashboard", iconSrc: "/Icons/Dashboard.svg" },
+  { id: "dashboard", label: "Dashboard", iconSrc: "/Icons/Dashboard.svg", iconSize: 13 },
   { id: "crm", label: "CRM", iconSrc: "/Icons/CRM.svg" },
   { id: "notifications", label: "Notifications", iconSrc: "/Icons/Notifications.svg" },
   { id: "automation", label: "Automation", iconSrc: "/Icons/Automations.svg" },
   { id: "pizzatracker", label: "Pizzatracker", iconSrc: "/Icons/pizzatracker.svg", sectionLabel: "Apps" },
-  { id: "onboarding", label: "On-Boarding", iconSrc: "/Icons/on-boarding.svg" },
+  { id: "onboarding", label: "Onboarding", iconSrc: "/Icons/on-boarding.svg" },
   { id: "add", label: "Add App", iconSrc: "/Icons/add.svg", muted: true },
   { id: "marketplace", label: "Marketplace", iconSrc: "/Icons/marketplace.svg", sectionLabel: "Workspace" },
   { id: "settings", label: "Settings", iconSrc: "/Icons/Settings.svg" },
 ];
 
-function StudioSurface({ phaseIndex, cursorPhase, rightPanel }) {
+function StudioSurface({ phaseIndex, cursorPhase }) {
   const activePhase = PHASES[phaseIndex].id;
-  // CRM is the active sidebar item for the entire loop.
-  const activeSidebar = "crm";
-  const showRightPanel = activePhase === "chat";
+  // Sidebar follows the flow: Dashboard lights up only during the
+  // analytics intro; every CRM-drill-in phase keeps CRM active.
+  const activeSidebar = activePhase === "dashboard" ? "dashboard" : "crm";
 
   return (
     <div
@@ -812,6 +662,7 @@ function StudioSurface({ phaseIndex, cursorPhase, rightPanel }) {
               <SidebarItem
                 label={item.label}
                 iconSrc={item.iconSrc}
+                iconSize={item.iconSize}
                 active={item.id === activeSidebar}
                 muted={item.muted}
               />
@@ -823,9 +674,6 @@ function StudioSurface({ phaseIndex, cursorPhase, rightPanel }) {
         <div className="relative min-w-0 flex-1 bg-white">
           <MainCanvas phaseId={activePhase} cursorPhase={cursorPhase} />
         </div>
-
-        {/* Right panel — only during chat phase */}
-        <RightSidebar visible={showRightPanel} subPhase={rightPanel} />
       </div>
     </div>
   );
@@ -835,12 +683,10 @@ function StudioSurface({ phaseIndex, cursorPhase, rightPanel }) {
 export function StudioAppCardVisual() {
   const [phase, setPhase] = useState(0);
   const [inView, setInView] = useState(false);
+  const [paused, setPaused] = useState(false);
   // Cursor animation for the CRM phase only. "hidden" outside CRM;
   // "entering" → "hovering" → "clicking" as the phase unfolds.
   const [cursorPhase, setCursorPhase] = useState("hidden");
-  // Right-panel sub-phase during the chat phase: "properties" is
-  // briefly visible first, then swaps to "chat".
-  const [rightPanel, setRightPanel] = useState("properties");
   const ref = useRef(null);
 
   // In-view detection — scroll-listener fallback to work inside the
@@ -861,14 +707,19 @@ export function StudioAppCardVisual() {
     return () => window.removeEventListener("scroll", check);
   }, []);
 
-  // Drive phase progression.
+  // Drive phase progression. Paused freezes the current phase; on
+  // resume the timer restarts for the current phase's full duration.
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || paused) return;
     const t = setTimeout(() => {
       setPhase((p) => (p + 1) % PHASES.length);
     }, PHASES[phase].duration);
     return () => clearTimeout(t);
-  }, [phase, inView]);
+  }, [phase, inView, paused]);
+
+  // Total loop duration — drives the progress ring's CSS keyframe so it
+  // completes one full revolution per video loop.
+  const loopMs = PHASES.reduce((s, p) => s + p.duration, 0);
 
   // Cursor choreography for the CRM phase (phase index 1).
   useEffect(() => {
@@ -887,29 +738,18 @@ export function StudioAppCardVisual() {
     return () => timers.forEach((t) => clearTimeout(t));
   }, [phase, inView]);
 
-  // Right-panel choreography during the chat phase.
-  useEffect(() => {
-    if (!inView) return;
-    const activeId = PHASES[phase].id;
-    if (activeId !== "chat") {
-      setRightPanel("properties");
-      return;
-    }
-    setRightPanel("properties");
-    const t = setTimeout(() => setRightPanel("chat"), 1400);
-    return () => clearTimeout(t);
-  }, [phase, inView]);
-
   return (
     <div
       ref={ref}
       className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[28px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
-      <StudioSurface
-        phaseIndex={phase}
-        cursorPhase={cursorPhase}
-        rightPanel={rightPanel}
+      <StudioSurface phaseIndex={phase} cursorPhase={cursorPhase} />
+      <PlayPauseToggle
+        paused={paused}
+        durationMs={loopMs}
+        active={inView}
+        onToggle={() => setPaused((p) => !p)}
       />
     </div>
   );

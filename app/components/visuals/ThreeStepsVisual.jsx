@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { PlayPauseToggle } from "./PlayPauseToggle";
 
 // App-generation flow for the first value prop: a calm, curated
 // animation that walks through describing an intake PDF, the model
@@ -27,11 +28,9 @@ const CARD_GRADIENT = [
 const PROMPT = "Turn this intake PDF into a digitized onboarding wizard";
 
 const THINKING_STEPS = [
-  "Analyzing PDF questionnaire",
-  "Categorizing questions into wizard steps",
-  "Polishing the client experience",
-  "Creating internal admin experience",
-  "Finalizing notification logic",
+  "Reading the intake PDF",
+  "Generating the client wizard",
+  "Generating the internal admin view",
 ];
 
 // Timing budget per phase (ms). Tuned so the viewer reads each beat
@@ -61,7 +60,7 @@ function Phase({ visible, children }) {
 }
 
 // ── Phase 0: Input box — placeholder → typing → attach PDF → armed ──
-function InputPhase({ active }) {
+function InputPhase({ active, paused }) {
   const [typed, setTyped] = useState(0);
   const [attached, setAttached] = useState(false);
   const [armed, setArmed] = useState(false);
@@ -77,6 +76,7 @@ function InputPhase({ active }) {
       setCursorPhase("hidden");
       return;
     }
+    if (paused) return; // Freeze choreography at current state.
 
     let cancelled = false;
     const timers = [];
@@ -117,7 +117,7 @@ function InputPhase({ active }) {
       cancelled = true;
       timers.forEach((t) => clearTimeout(t));
     };
-  }, [active]);
+  }, [active, paused]);
 
   const text = PROMPT.slice(0, typed);
   const isEmpty = typed === 0;
@@ -256,7 +256,7 @@ function InputPhase({ active }) {
 }
 
 // ── Phase 1: Thinking — short status lines crossfade one at a time ──
-function ThinkingPhase({ active }) {
+function ThinkingPhase({ active, paused }) {
   const [currentStep, setCurrentStep] = useState(-1);
 
   useEffect(() => {
@@ -264,15 +264,19 @@ function ThinkingPhase({ active }) {
       setCurrentStep(-1);
       return;
     }
-    setCurrentStep(0);
+    // First entry into the phase — kick off at step 0.
+    setCurrentStep((s) => (s < 0 ? 0 : s));
+    if (paused) return; // Freeze at current step.
+    // Tick one past the last step so the final row flips from circle
+    // to checkmark before phase 2 begins.
     const id = setInterval(() => {
-      setCurrentStep((s) => (s < THINKING_STEPS.length - 1 ? s + 1 : s));
+      setCurrentStep((s) => (s < THINKING_STEPS.length ? s + 1 : s));
     }, 920);
     return () => clearInterval(id);
-  }, [active]);
+  }, [active, paused]);
 
   return (
-    <div className={clsx(INNER_CARD, "px-5 py-5")}>
+    <div className={clsx(INNER_CARD, "px-5 pb-7 pt-5")}>
       {/* Thinking header — matches the item type size (13px) so the
           header and list read as one block. */}
       <div className="mb-3 flex items-center gap-2 text-[13px] leading-[1.4] text-[#101010]/45">
@@ -308,37 +312,38 @@ function ThinkingPhase({ active }) {
                 isPast && "text-[#101010]/45",
               )}
             >
-              {/* Soft check glyph — past steps read as "done", current
-                  as an outlined ring. No hard black dots. */}
+              {/* Step indicator — checkmark for done, circle outline for
+                  pending/current. Inlined so the glyph takes currentColor
+                  (softer than the source SVGs' hard black). */}
               <span
                 aria-hidden="true"
-                className="flex h-[12px] w-[12px] flex-shrink-0 items-center justify-center"
+                className={clsx(
+                  "flex h-[11px] w-[11px] flex-shrink-0 items-center justify-center transition-colors duration-300",
+                  isPast && "text-[#101010]/45",
+                  isCurrent && "text-[#101010]/55",
+                  !isPast && !isCurrent && "text-[#101010]/25",
+                )}
               >
                 {isPast ? (
                   <svg
-                    width="10"
+                    width="11"
                     height="10"
-                    viewBox="0 0 10 10"
-                    fill="none"
-                    className="text-[#101010]/40"
+                    viewBox="0 0 11 10"
+                    fill="currentColor"
+                    aria-hidden="true"
                   >
-                    <path
-                      d="M2 5.2 L4.2 7.4 L8 3.4"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
+                    <path d="M10.2668 0.105509C10.5199 0.285978 10.5762 0.63754 10.3957 0.890666L4.2082 9.51567C4.11211 9.64926 3.96211 9.73598 3.79805 9.7477C3.63398 9.75942 3.46992 9.70317 3.35273 9.58598L0.165234 6.39848C-0.0550781 6.17817 -0.0550781 5.82192 0.165234 5.60395C0.385547 5.38598 0.741797 5.38363 0.959766 5.60395L3.68086 8.32035L9.48164 0.234416C9.66211 -0.0187095 10.0137 -0.0749595 10.2668 0.105509Z" />
                   </svg>
                 ) : (
-                  <span
-                    className={clsx(
-                      "h-[7px] w-[7px] rounded-full border transition-colors duration-300",
-                      isCurrent
-                        ? "border-[#101010]/45"
-                        : "border-[#101010]/20",
-                    )}
-                  />
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 12 12"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M10.875 6C10.875 4.70707 10.3614 3.46709 9.44715 2.55285C8.53291 1.63861 7.29293 1.125 6 1.125C4.70707 1.125 3.46709 1.63861 2.55285 2.55285C1.63861 3.46709 1.125 4.70707 1.125 6C1.125 7.29293 1.63861 8.53291 2.55285 9.44715C3.46709 10.3614 4.70707 10.875 6 10.875C7.29293 10.875 8.53291 10.3614 9.44715 9.44715C10.3614 8.53291 10.875 7.29293 10.875 6ZM0 6C0 4.4087 0.632141 2.88258 1.75736 1.75736C2.88258 0.632141 4.4087 0 6 0C7.5913 0 9.11742 0.632141 10.2426 1.75736C11.3679 2.88258 12 4.4087 12 6C12 7.5913 11.3679 9.11742 10.2426 10.2426C9.11742 11.3679 7.5913 12 6 12C4.4087 12 2.88258 11.3679 1.75736 10.2426C0.632141 9.11742 0 7.5913 0 6Z" />
+                  </svg>
                 )}
               </span>
               {step}
@@ -350,57 +355,61 @@ function ThinkingPhase({ active }) {
   );
 }
 
-// ── Phase 2: Result — Studio sidebar with new On-Boarding draft ─────
+// ── Phase 2: Result — Client sidebar with new On-Boarding draft ─────
 //
-// Mirrors the Figma reference (node 164:58865): a "BrandMages"
-// workspace sidebar with core nav (Dashboard / CRM / Notifications /
-// Automation), an Apps list where the freshly-generated "On-Boarding"
-// app is highlighted as a Draft, and a Workspace section underneath.
-// The main canvas is intentionally blank apart from a header strip —
-// the narrative moment is "your new app just appeared in the
-// sidebar", so the focus belongs there.
+// Client-side view: lime-branded sidebar with Client Home / Messages /
+// Payments / Other folder. The freshly-generated On-Boarding app lands
+// inside "Other" (highlighted as Draft), alongside Helpdesk and
+// Schedule Call. Main-canvas content is unchanged — the narrative
+// moment is still "your new app just appeared in the sidebar".
 
-// Simplified Studio sidebar — uses real icon assets from
-// public/Icons/. On-Boarding is highlighted as the new draft.
+// Client-side sidebar palette — matches ClientPortalVisual so both
+// animations share the same lime chrome.
+const SIDEBAR_BG = "#d9ed92";
+const SIDEBAR_ACTIVE_BG = "#f1f9d8";
+
+// Client nav — Other is a folder; its children render indented.
+// `iconSize` normalises visual weight across SVGs with different
+// viewBoxes: clienthome.svg and call.svg are 16×16 (glyph fills the
+// whole box) while the rest are 20×20 (glyph sits inside ~2px padding).
+// Rendering them all at the same pixel size would make the 16-box ones
+// look ~25% larger, so those get a slightly smaller render size.
 const STUDIO_NAV = [
-  { id: "dashboard", label: "Dashboard", icon: "/Icons/Dashboard.svg" },
-  { id: "crm", label: "CRM", icon: "/Icons/CRM.svg" },
-  {
-    id: "notifications",
-    label: "Notifications",
-    icon: "/Icons/Notifications.svg",
-  },
-  { id: "automation", label: "Automation", icon: "/Icons/Automations.svg" },
-  {
-    id: "pizzatracker",
-    label: "Pizzatracker",
-    icon: "/Icons/pizzatracker.svg",
-    sectionLabel: "Apps",
-  },
+  { id: "home", label: "Home", icon: "/Icons/clienthome.svg", iconSize: 13 },
+  { id: "messages", label: "Messages", icon: "/Icons/messages.svg" },
+  { id: "payments", label: "Payments", icon: "/Icons/payments.svg" },
+  { id: "tasks", label: "Tasks", icon: "/Icons/tasks.svg" },
+  { id: "other", label: "Other", icon: "/Icons/other.svg" },
   {
     id: "onboarding",
-    label: "On-Boarding",
+    label: "Onboarding",
     icon: "/Icons/on-boarding.svg",
     active: true,
-    badge: "Draft",
+    indented: true,
   },
-  { id: "add", label: "Add App", icon: "/Icons/add.svg", muted: true },
   {
-    id: "marketplace",
-    label: "Marketplace",
-    icon: "/Icons/marketplace.svg",
-    sectionLabel: "Workspace",
+    id: "helpdesk",
+    label: "Helpdesk",
+    icon: "/Icons/helpdesk.svg",
+    indented: true,
   },
-  { id: "settings", label: "Settings", icon: "/Icons/Settings.svg" },
+  {
+    id: "schedule",
+    label: "Schedule Call",
+    icon: "/Icons/call.svg",
+    iconSize: 13,
+    indented: true,
+  },
 ];
 
 const WIZARD_FIELDS = [
   { label: "Business name", value: "Acme Legal" },
   { label: "Industry", value: "Law firm" },
   { label: "Team size", value: "5–10 people" },
+  { label: "Primary location", value: "New York, NY" },
 ];
 
-function ResultPhase({ active }) {
+function ResultPhase({ active, paused }) {
   const [revealCount, setRevealCount] = useState(0);
   const [badgeVisible, setBadgeVisible] = useState(false);
   const [wizardHeader, setWizardHeader] = useState(false);
@@ -414,6 +423,7 @@ function ResultPhase({ active }) {
       setFieldCount(0);
       return;
     }
+    if (paused) return; // Freeze cascade at current reveal.
 
     const timers = [];
     // Cascade the sidebar rows.
@@ -445,7 +455,7 @@ function ResultPhase({ active }) {
     });
 
     return () => timers.forEach((t) => clearTimeout(t));
-  }, [active]);
+  }, [active, paused]);
 
   return (
     // Oversized product surface. Anchored near the card's top-left so
@@ -459,8 +469,12 @@ function ResultPhase({ active }) {
       )}
     >
       <div className="flex h-full">
-        {/* Sidebar — matches Figma 164:58865. */}
-        <div className="flex w-[200px] flex-shrink-0 flex-col gap-[6px] overflow-hidden border-r border-[#dfe1e4] bg-[#f8f9fb] px-2 pt-2.5">
+        {/* Sidebar — lime-branded client view (matches
+            ClientPortalVisual's chrome). */}
+        <div
+          className="flex w-[200px] flex-shrink-0 flex-col gap-[6px] overflow-hidden px-2 pt-2.5"
+          style={{ backgroundColor: SIDEBAR_BG }}
+        >
           {/* Brand row */}
           <div
             className="flex items-center gap-2 rounded-[4px] px-2 py-1.5 transition-all duration-[400ms] ease-out"
@@ -498,17 +512,19 @@ function ResultPhase({ active }) {
                 )}
                 <div
                   className={clsx(
-                    "flex items-center gap-2 rounded-[4px] px-2 py-1 transition-all duration-[400ms] ease-out",
-                    item.active && shown && "bg-[#e9ebee]",
+                    "flex items-center gap-2 rounded-[4px] py-1 transition-all duration-[400ms] ease-out",
+                    item.indented ? "ml-3.5 px-2" : "px-2",
                   )}
                   style={{
                     opacity: shown ? 1 : 0,
                     transform: `translateX(${shown ? 0 : -4}px)`,
+                    backgroundColor:
+                      item.active && shown ? SIDEBAR_ACTIVE_BG : "transparent",
                   }}
                 >
                   <span
                     className={clsx(
-                      "flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center",
+                      "flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center",
                       item.muted ? "opacity-60" : "",
                     )}
                   >
@@ -516,13 +532,13 @@ function ResultPhase({ active }) {
                       src={item.icon}
                       alt=""
                       aria-hidden="true"
-                      width={14}
-                      height={14}
+                      width={item.iconSize ?? 16}
+                      height={item.iconSize ?? 16}
                     />
                   </span>
                   <span
                     className={clsx(
-                      "flex-1 truncate text-[12px] leading-[16px]",
+                      "flex-1 truncate text-[12px] leading-[18px]",
                       item.muted ? "text-[#6b6f76]" : "text-[#212b36]",
                     )}
                   >
@@ -553,13 +569,7 @@ function ResultPhase({ active }) {
               className="text-[11px] font-medium text-[#212b36] transition-opacity duration-[400ms]"
               style={{ opacity: wizardHeader ? 1 : 0 }}
             >
-              On-Boarding
-            </span>
-            <span
-              className="ml-2 rounded-full bg-[#f0f1f4] px-1.5 py-[1px] text-[9px] font-medium text-[#6b6f76] transition-opacity duration-[400ms]"
-              style={{ opacity: wizardHeader ? 1 : 0 }}
-            >
-              Draft
+              Onboarding
             </span>
           </div>
 
@@ -572,24 +582,19 @@ function ResultPhase({ active }) {
                 transform: `translateY(${wizardHeader ? 0 : 4}px)`,
               }}
             >
-              <div className="mb-2 text-[10px] uppercase tracking-[0.08em] text-[#90959d]">
+              {/* Progress — sentence-case meta label + one continuous
+                  bar. Feels like a calm product screen instead of the
+                  old caps-lock + segmented strip. */}
+              <div className="mb-2 text-[11px] text-[#6b6f76]">
                 Step 2 of 5
               </div>
-              <div className="mb-4 flex gap-[3px]">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="h-[3px] flex-1 rounded-full transition-colors duration-[500ms]"
-                    style={{
-                      backgroundColor:
-                        wizardHeader && i <= 1
-                          ? "rgba(16,16,16,0.85)"
-                          : "rgba(16,16,16,0.08)",
-                    }}
-                  />
-                ))}
+              <div className="mb-4 h-[2px] w-full overflow-hidden rounded-full bg-[#101010]/[0.08]">
+                <div
+                  className="h-full rounded-full bg-[#101010]/85 transition-[width] duration-[600ms] ease-out"
+                  style={{ width: wizardHeader ? "40%" : "0%" }}
+                />
               </div>
-              <div className="mb-4 text-[15px] font-semibold text-[#101010]">
+              <div className="mb-4 text-[13px] font-medium tracking-[-0.005em] text-[#101010]">
                 Tell us about your business
               </div>
             </div>
@@ -627,6 +632,7 @@ function ResultPhase({ active }) {
 export function ThreeStepsVisual() {
   const [phase, setPhase] = useState(0);
   const [inView, setInView] = useState(false);
+  const [paused, setPaused] = useState(false);
   const ref = useRef(null);
 
   // In-view detection — scroll-listener fallback matches the rest of
@@ -647,14 +653,18 @@ export function ThreeStepsVisual() {
     return () => window.removeEventListener("scroll", check);
   }, []);
 
-  // Advance phases in a loop.
+  // Advance phases in a loop. Paused freezes the current phase.
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || paused) return;
     const t = setTimeout(() => {
       setPhase((p) => (p + 1) % 3);
     }, PHASE_DURATIONS[phase]);
     return () => clearTimeout(t);
-  }, [phase, inView]);
+  }, [phase, inView, paused]);
+
+  // Total loop duration — drives the progress ring's CSS keyframe so it
+  // completes one full revolution per video loop.
+  const loopMs = PHASE_DURATIONS.reduce((a, b) => a + b, 0);
 
   return (
     <div
@@ -667,10 +677,10 @@ export function ThreeStepsVisual() {
       <div className="absolute left-1/2 top-1/2 w-[82%] max-w-[460px] -translate-x-1/2 -translate-y-1/2">
         <div className="grid items-center [&>*]:col-start-1 [&>*]:row-start-1">
           <Phase visible={phase === 0}>
-            <InputPhase active={inView && phase === 0} />
+            <InputPhase active={inView && phase === 0} paused={paused} />
           </Phase>
           <Phase visible={phase === 1}>
-            <ThinkingPhase active={inView && phase === 1} />
+            <ThinkingPhase active={inView && phase === 1} paused={paused} />
           </Phase>
         </div>
       </div>
@@ -687,8 +697,14 @@ export function ThreeStepsVisual() {
             : "pointer-events-none invisible scale-[0.985] opacity-0",
         )}
       >
-        <ResultPhase active={inView && phase === 2} />
+        <ResultPhase active={inView && phase === 2} paused={paused} />
       </div>
+      <PlayPauseToggle
+        paused={paused}
+        durationMs={loopMs}
+        active={inView}
+        onToggle={() => setPaused((p) => !p)}
+      />
     </div>
   );
 }

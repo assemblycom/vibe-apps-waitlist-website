@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { PlayPauseToggle } from "./PlayPauseToggle";
 
 // Second value prop ("Client experience") visual. A client's-eye view of
 // the portal their firm built in Assembly Studio. Follows Figma node
@@ -38,38 +39,68 @@ const INNER_CARD =
 const SIDEBAR_BG = "#d9ed92";
 const SIDEBAR_ACTIVE_BG = "#f1f9d8";
 
-// Each phase corresponds to a sidebar item. Durations tuned per-phase so
-// denser screens have more dwell time.
+// Each phase corresponds to a sidebar item. Helpdesk and Schedule Call
+// are visible in the sidebar but aren't part of the click-through
+// flow — the tour ends on Onboarding, which is the narrative payoff
+// (the folder opens to reveal the freshly-generated app).
 const PHASES = [
   { id: "home", duration: 5200 },
   { id: "messages", duration: 4600 },
-  { id: "onboarding", duration: 4000 },
   { id: "payments", duration: 4200 },
-  { id: "helpdesk", duration: 4400 },
+  { id: "tasks", duration: 4400 },
+  { id: "onboarding", duration: 4800 },
 ];
+
+// Phases that live inside the "Other" folder. When one of these is
+// active the folder auto-expands; otherwise it stays collapsed to its
+// folder icon.
+const CHILD_PHASE_IDS = new Set(["onboarding"]);
+
+// Fixed row positions inside the sidebar column (px, relative to the
+// sidebar's top-left). Used to drive the click-through cursor. y values
+// aim at the middle of each row; x puts the cursor tip over the label.
+// The child rows (onboarding, helpdesk, schedule) are only visited
+// while the "Other" folder is expanded.
+const CURSOR_POS = {
+  home: { x: 96, y: 54 },
+  messages: { x: 96, y: 86 },
+  payments: { x: 96, y: 118 },
+  tasks: { x: 96, y: 150 },
+  other: { x: 96, y: 182 },
+  onboarding: { x: 108, y: 224 },
+  // Helpdesk stays in the sidebar but isn't part of the cursor tour.
+};
 
 // ── Sidebar item ────────────────────────────────────────────────────────
 // Dimensions (width, gap, padding, icon size, label size/weight) are
 // intentionally locked to the Studio sidebar in ThreeStepsVisual so both
 // animations read as the same product.
-function SidebarItem({ label, iconSrc, iconNode, active }) {
+function SidebarItem({
+  label,
+  iconSrc,
+  iconNode,
+  iconSize = 16,
+  active,
+  background,
+}) {
   return (
     <div
       className={clsx(
-        "flex items-center gap-2 rounded-[4px] px-2 py-1 transition-colors duration-[350ms] ease-out",
+        "flex items-center gap-2 rounded-[4px] px-2 py-1 transition-colors duration-[320ms] ease-out",
       )}
       style={{
-        backgroundColor: active ? SIDEBAR_ACTIVE_BG : "transparent",
+        backgroundColor:
+          background ?? (active ? SIDEBAR_ACTIVE_BG : "transparent"),
       }}
     >
-      <span className="flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center text-[#101010]">
+      <span className="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center text-[#101010]">
         {iconSrc ? (
           <img
             src={iconSrc}
             alt=""
             aria-hidden="true"
-            width={14}
-            height={14}
+            width={iconSize}
+            height={iconSize}
           />
         ) : (
           iconNode
@@ -77,7 +108,7 @@ function SidebarItem({ label, iconSrc, iconNode, active }) {
       </span>
       <span
         className={clsx(
-          "flex-1 truncate text-[12px] leading-[16px] text-[#101010]",
+          "flex-1 truncate text-[12px] leading-[18px] text-[#101010]",
           active ? "font-medium" : "font-normal",
         )}
       >
@@ -124,8 +155,11 @@ function TaskIcon() {
   );
 }
 
-// Home panel — mirrors Figma node 227:11387. Welcome heading → hero
-// banner → Your-actions counters → About-us copy → Working-hours table.
+// Home panel — mirrors Figma node 227:11387. Personalised greeting →
+// hero banner → Your-actions counters → About-us copy → Working-hours
+// table. The greeting replaces the generic "Client Home" panel bar
+// the other screens use; the reference shows the greeting sitting at
+// the top of the canvas with no separator above it.
 function HomePanel() {
   // Invoices uses the Payments icon (closest semantic match from the
   // supplied asset pack); Tasks falls back to an inline tick-in-square.
@@ -140,22 +174,31 @@ function HomePanel() {
   ];
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <PanelHeader title="Client Home" />
-      <div className="flex-1 overflow-hidden px-5 py-3">
+      <div className="flex-1 overflow-hidden px-5 pt-4">
 
-      {/* Hero banner — lavender/blue gradient stands in for the Figma
-          image so we don't ship a photo asset. */}
+      {/* Greeting — 13px medium title + 10px gray subcopy. */}
+      <div className="mb-3">
+        <div className="text-[13px] font-medium leading-[1.3] text-[#101010]">
+          Good morning, Ana
+        </div>
+        <div className="mt-0.5 text-[10px] text-[#6b6f76]">
+          Here&apos;s what needs your attention today
+        </div>
+      </div>
+
+      {/* Hero banner — playful multi-stop gradient (blue → violet →
+          peach) standing in for the Figma photo. */}
       <div
-        className="mb-3 h-[80px] w-full overflow-hidden rounded-[6px]"
+        className="mb-3 h-[110px] w-full overflow-hidden rounded-[6px]"
         style={{
           background:
-            "linear-gradient(135deg, rgb(125,164,255) 0%, rgb(176,147,230) 55%, rgb(102,126,234) 100%)",
+            "linear-gradient(135deg, #7da4ff 0%, #a18cd1 45%, #fbc2eb 75%, #ffd6a5 100%)",
         }}
       />
 
       {/* Your actions */}
       <div className="mb-3 rounded-[4px] border border-[#eaecf0] bg-[#f8f9fb] p-2">
-        <div className="mb-1.5 text-[9px] font-medium text-[#212b36]">
+        <div className="mb-1.5 text-[10px] font-medium text-[#212b36]">
           Your actions
         </div>
         <div className="grid grid-cols-4 gap-[5px]">
@@ -176,11 +219,11 @@ function HomePanel() {
                 ) : (
                   a.iconNode
                 )}
-                <span className="text-[9px] font-medium text-[#6b6f76]">
+                <span className="text-[10px] font-medium text-[#6b6f76]">
                   {a.label}
                 </span>
               </div>
-              <span className="text-[9px] text-[#212b36]">{a.count}</span>
+              <span className="text-[10px] text-[#212b36]">{a.count}</span>
             </div>
           ))}
         </div>
@@ -188,13 +231,24 @@ function HomePanel() {
 
       {/* About us */}
       <div className="mb-3">
-        <div className="mb-1 text-[11px] font-medium leading-[1.4] text-[#212b36]">
+        <div className="mb-1 text-[11px] font-medium leading-[1.4] text-[#101010]">
           About us
         </div>
-        <p className="max-w-[440px] text-[9px] leading-[1.5] text-[#212b36]">
-          BrandMages — a full-service marketing agency helping businesses
-          grow their brand, attract new customers, and stand out in a
-          crowded marketplace.
+        <p className="text-[10px] leading-[1.5] text-[#212b36]">
+          BrandMages, a full-service marketing agency that helps businesses
+          increase their brand awareness and online presence. We
+          specialize in crafting unique and effective marketing strategies
+          that align with your business goals and stand out in a crowded
+          marketplace. Our team blends brand storytelling, performance
+          campaigns, and always-on content to turn first impressions into
+          long-term customers.
+        </p>
+        <p className="mt-1.5 text-[10px] leading-[1.5] text-[#212b36]">
+          We&apos;ve launched brands across SaaS, retail, legal, and
+          wellness, and every engagement starts the same way — a short
+          discovery call to understand your audience, a tailored roadmap
+          within a week, and a dedicated team who treats your brand like
+          it&apos;s our own.
         </p>
       </div>
 
@@ -241,86 +295,31 @@ function Avatar({ initials, bg, fg }) {
 
 function DateChip({ label }) {
   return (
-    <div className="flex items-center justify-center py-1">
-      <div className="rounded-[4px] border border-[#eff1f4] bg-white px-1.5 py-[1px] text-[9px] text-[#212b36]">
+    <div className="flex items-center justify-center py-2">
+      <div className="rounded-[4px] border border-[#eff1f4] bg-white px-2 py-[2px] text-[10px] text-[#6b6f76]">
         {label}
       </div>
     </div>
   );
 }
 
-// Messages panel — mirrors Figma node 227:18962. Group-thread header →
-// date chips → messages with avatars, name+time, body (and an inline
-// continuation that hangs off the prior avatar) → composer at the bottom.
-function MessagesPanel() {
+// Messages panel — group thread. Header shows participant names;
+// body is a scroll of messages broken up by date chips. Long lines
+// use whitespace-nowrap + the panel's overflow-hidden so copy reads
+// like it runs off the right edge (matches Figma reference where a
+// real thread extends past the visible width).
+function MessageRow({ initials, avatarBg, avatarFg, name, time, children }) {
   return (
-    <div className="flex h-full flex-col">
-      <PanelHeader title="Messages" />
-
-      {/* Thread body */}
-      <div className="flex-1 overflow-hidden pt-2">
-        <DateChip label="Today" />
-
-        {/* Bernard Simons — opening message + continuation (no avatar
-            on the continuation row; it hangs off the prior avatar). */}
-        <div className="px-4 py-1">
-          <div className="flex items-start gap-2">
-            <Avatar initials="BS" bg="#dff3f9" fg="#649eaf" />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 text-[10px] leading-[1.4]">
-                <span className="font-medium text-[#212b36]">
-                  Bernard Simons
-                </span>
-                <span className="text-[#6b6f76]">1:34 PM</span>
-              </div>
-              <p className="text-[10px] leading-[1.5] text-[#212b36]">
-                Following up on your previous email — is there anything
-                you need feedback on?
-              </p>
-            </div>
+    <div className="px-4 py-1.5">
+      <div className="flex items-start gap-2">
+        <Avatar initials={initials} bg={avatarBg} fg={avatarFg} />
+        <div className="min-w-0 flex-1">
+          <div className="mb-0.5 flex items-center gap-1.5 text-[11px] leading-[1.4]">
+            <span className="font-medium text-[#212b36]">{name}</span>
+            <span className="text-[#6b6f76]">{time}</span>
           </div>
-          <p className="mt-0.5 pl-[30px] pr-2 text-[10px] leading-[1.5] text-[#212b36]">
-            The seminal designs looked great — seems we just need more
-            data to present. Let me know what you think!
-          </p>
-        </div>
-
-        {/* Martin Sung — reply with @mention */}
-        <div className="px-4 py-1">
-          <div className="flex items-start gap-2">
-            <Avatar initials="MS" bg="#f0eaff" fg="#7f69b5" />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 text-[10px] leading-[1.4]">
-                <span className="font-medium text-[#212b36]">
-                  Martin Sung
-                </span>
-                <span className="text-[#6b6f76]">2:20 PM</span>
-              </div>
-              <p className="text-[10px] leading-[1.5] text-[#212b36]">
-                It works!{" "}
-                <span className="text-[#6b6f76]">@BernardSimons</span> —
-                we&apos;ll have the demo deployed by EOD tomorrow.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Composer */}
-      <div className="border-t border-[#eef0f2] bg-white px-4 py-2">
-        <div className="rounded-[6px] border border-[#dfe1e4] bg-white px-2.5 py-1.5 shadow-[0_1px_2px_-1px_rgba(0,0,0,0.06)]">
-          <p className="text-[10px] text-[#90959d]">Message your client</p>
-          <div className="mt-1 flex items-center justify-between">
-            <span className="flex h-[14px] w-[14px] items-center justify-center text-[#90959d]">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-              </svg>
-            </span>
-            <span className="flex h-[16px] w-[16px] items-center justify-center rounded-[3px] bg-[#eff1f4] text-[#6b6f76]">
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
-            </span>
+          <div className="text-[11px] leading-[1.5] text-[#212b36]">
+            {children}
           </div>
         </div>
       </div>
@@ -328,44 +327,128 @@ function MessagesPanel() {
   );
 }
 
-function OnboardingPanel() {
+function MessagesPanel() {
   return (
     <div className="flex h-full flex-col">
-      <PanelHeader title="On-Boarding" />
-      <div className="flex-1 overflow-hidden px-5 py-3">
-        <div className="mb-1.5 text-[10px] uppercase tracking-[0.08em] text-[#90959d]">
-          Step 2 of 4
+      <PanelHeader title="Messages" />
+
+      {/* Thread body — three date sections, each with its own messages. */}
+      <div className="flex-1 overflow-hidden pt-2">
+        <DateChip label="September 18, 2025" />
+
+        <MessageRow
+          initials="BS"
+          avatarBg="#dff3f9"
+          avatarFg="#649eaf"
+          name="Bernard Simons"
+          time="1:34 PM"
+        >
+          <p className="whitespace-nowrap">
+            Following up on your previous email on the job, is there
+            anything that you need feedback on before the review?
+          </p>
+          {/* Continuation inside the same row so it aligns flush with
+              the first paragraph's left edge (both sit in the body
+              column, not at an arbitrary pl offset). */}
+          <p className="mt-2 whitespace-nowrap">
+            I had taken a look at some of the seminal designs and they
+            looked great, seems to me we just need more
+          </p>
+          <p className="whitespace-nowrap">
+            data to present, let me know what you think!
+          </p>
+        </MessageRow>
+
+        <MessageRow
+          initials="MS"
+          avatarBg="#f0eaff"
+          avatarFg="#7f69b5"
+          name="Martin Sung"
+          time="2:20 PM"
+        >
+          <p className="whitespace-nowrap">
+            It works! <span className="text-[#6b6f76]">@BernardSimons</span>{" "}
+            we&apos;ll have a copy of the demo app deployed and ready for
+            review tomorrow EOD.
+          </p>
+        </MessageRow>
+
+        <DateChip label="Yesterday" />
+
+        <MessageRow
+          initials="KM"
+          avatarBg="#fde2e4"
+          avatarFg="#c56277"
+          name="Kaitlyn Moore"
+          time="2:20 PM"
+        >
+          <p className="whitespace-nowrap">
+            <span className="text-[#6b6f76]">@BrianWilson</span> Check this
+            link, there seems to be a fix, you&apos;ll have to toy with it
+            a bit before it fully
+          </p>
+          <p className="whitespace-nowrap">
+            <a className="text-[#3866c0] underline" href="#">
+              meta.stackexchange.com/questions/43969/
+            </a>
+          </p>
+        </MessageRow>
+
+        <DateChip label="Today" />
+
+        <MessageRow
+          initials="MS"
+          avatarBg="#f0eaff"
+          avatarFg="#7f69b5"
+          name="Martin Sung"
+          time="1:45 PM"
+        >
+          <p className="whitespace-nowrap">
+            Following up on your previous email on the job, is there
+            anything that feedback on?
+          </p>
+        </MessageRow>
+      </div>
+    </div>
+  );
+}
+
+function OnboardingPanel() {
+  // Mirrors the onboarding wizard in ThreeStepsVisual (value prop 1)
+  // so both videos show the same product screen. Single continuous
+  // progress bar + sentence-case meta, 13px font-medium wizard title,
+  // four field rows with 30px tall inputs.
+  const fields = [
+    { label: "Business name", value: "Acme Legal" },
+    { label: "Industry", value: "Law firm" },
+    { label: "Team size", value: "5–10 people" },
+    { label: "Primary location", value: "New York, NY" },
+  ];
+  return (
+    <div className="flex h-full flex-col">
+      <PanelHeader title="Onboarding" />
+      <div className="flex-1 overflow-hidden px-6 py-5">
+        <div className="mb-2 text-[11px] text-[#6b6f76]">Step 2 of 5</div>
+        <div className="mb-4 h-[2px] w-full overflow-hidden rounded-full bg-[#101010]/[0.08]">
+          <div
+            className="h-full rounded-full bg-[#101010]/85"
+            style={{ width: "40%" }}
+          />
         </div>
-        <div className="mb-3 flex gap-[3px]">
-          {[0, 1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-[3px] flex-1 rounded-full"
-              style={{
-                backgroundColor:
-                  i <= 1 ? "rgba(16,16,16,0.85)" : "rgba(16,16,16,0.1)",
-              }}
-            />
-          ))}
-        </div>
-        <div className="mb-3 text-[13px] font-semibold text-[#101010]">
+        <div className="mb-4 text-[13px] font-medium tracking-[-0.005em] text-[#101010]">
           Tell us about your business
         </div>
-        <div className="space-y-2">
-          <div>
-            <div className="mb-0.5 text-[10px] text-[#6b6f76]">
-              Business name
+        <div className="space-y-2.5">
+          {fields.map((field) => (
+            <div key={field.label}>
+              <div className="mb-1 text-[10px] text-[#6b6f76]">
+                {field.label}
+              </div>
+              <div className="h-[30px] rounded-[4px] border border-[#eef0f2] bg-white px-2.5 text-[12px] leading-[30px] text-[#212b36]">
+                {field.value}
+              </div>
             </div>
-            <div className="h-[28px] rounded-[4px] border border-[#eef0f2] bg-white px-2 text-[11px] leading-[28px] text-[#212b36]">
-              Acme Legal
-            </div>
-          </div>
-          <div>
-            <div className="mb-0.5 text-[10px] text-[#6b6f76]">Industry</div>
-            <div className="h-[28px] rounded-[4px] border border-[#eef0f2] bg-white px-2 text-[11px] leading-[28px] text-[#212b36]">
-              Law firm
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
@@ -378,15 +461,15 @@ function StatusChip({ label, variant }) {
     // Soft pastel chips with matching text so the colour carries the
     // meaning — Figma uses a "Tag" component in brand-green, brand-blue,
     // and brand-grey tokens.
-    active: { bg: "#dff5d3", fg: "#3d7d2d" },
-    cancelled: { bg: "#eef0f2", fg: "#6b6f76" },
-    open: { bg: "#dbe8fb", fg: "#3866c0" },
-    paid: { bg: "#dff5d3", fg: "#3d7d2d" },
-    default: { bg: "#eef0f2", fg: "#6b6f76" },
+    active: { bg: "#dff5d3", fg: "#1e7c3a" },
+    cancelled: { bg: "#eef0f2", fg: "#2b2f36" },
+    open: { bg: "#dbe8fb", fg: "#2e57b0" },
+    paid: { bg: "#dff5d3", fg: "#1e7c3a" },
+    default: { bg: "#eef0f2", fg: "#2b2f36" },
   }[variant] || { bg: "#eef0f2", fg: "#6b6f76" };
   return (
     <span
-      className="inline-block rounded-full px-[6px] py-[1px] text-[9px] font-medium leading-[1.3]"
+      className="inline-block rounded-full px-2 py-[2px] text-[10px] font-medium leading-[1.3]"
       style={{ backgroundColor: styles.bg, color: styles.fg }}
     >
       {label}
@@ -394,35 +477,32 @@ function StatusChip({ label, variant }) {
   );
 }
 
-// Small Visa wordmark — inline so we don't ship an image. Proportioned
-// to read as "Visa" at the 16-18px height of the card row.
+// The supplied visa.svg and chasebank.svg already ship as dark tiles
+// with white glyphs baked in, so we render them at their native
+// aspect with no wrapper or filter.
 function VisaMark() {
   return (
-    <div className="flex h-[16px] w-[24px] items-center justify-center rounded-[2px] bg-white border border-[#eef0f2] text-[8px] font-bold italic tracking-tight text-[#1a1f71]">
-      VISA
-    </div>
+    <img
+      src="/Icons/visa.svg"
+      alt=""
+      aria-hidden="true"
+      width={20}
+      height={20}
+      className="flex-shrink-0"
+    />
   );
 }
 
-// Simplified bank glyph for the ACH row.
 function BankIcon() {
   return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-[#212b36]"
+    <img
+      src="/Icons/chasebank.svg"
+      alt=""
       aria-hidden="true"
-    >
-      <path d="M3 10 12 4l9 6" />
-      <path d="M5 10v8M9 10v8M15 10v8M19 10v8" />
-      <path d="M3 20h18" />
-    </svg>
+      width={20}
+      height={20}
+      className="flex-shrink-0"
+    />
   );
 }
 
@@ -464,7 +544,7 @@ function PaymentsPanel() {
             Subscriptions
           </div>
           <div className="overflow-hidden rounded-[4px]">
-            <div className="grid grid-cols-[1fr_1fr_80px] gap-2 border-b border-[#eef0f2] px-2 py-1.5 text-[9px] font-medium text-[#6b6f76]">
+            <div className="grid grid-cols-[90px_150px_1fr] gap-2 border-b border-[#eef0f2] px-2 py-1.5 text-[10px] text-[#6b6f76]">
               <span>Price</span>
               <span>Billing period</span>
               <span>Status</span>
@@ -475,11 +555,15 @@ function PaymentsPanel() {
             ].map((row) => (
               <div
                 key={row.price + row.period}
-                className="grid grid-cols-[1fr_1fr_80px] items-center gap-2 border-b border-[#f4f5f7] px-2 py-1.5 text-[10px] text-[#212b36] last:border-b-0"
+                className="grid grid-cols-[90px_150px_1fr] items-center gap-2 border-b border-[#f4f5f7] px-2 py-1.5 text-[10px] text-[#212b36] last:border-b-0"
               >
                 <span>{row.price}</span>
                 <span className="text-[#6b6f76]">{row.period}</span>
-                <StatusChip label={row.status} variant={row.variant} />
+                {/* Wrap chip so it keeps its content width instead of
+                    stretching to fill the grid cell. */}
+                <span>
+                  <StatusChip label={row.status} variant={row.variant} />
+                </span>
               </div>
             ))}
           </div>
@@ -491,7 +575,7 @@ function PaymentsPanel() {
             Invoices
           </div>
           <div className="overflow-hidden rounded-[4px]">
-            <div className="grid grid-cols-[80px_80px_1fr] gap-2 border-b border-[#eef0f2] px-2 py-1.5 text-[9px] font-medium text-[#6b6f76]">
+            <div className="grid grid-cols-[80px_80px_1fr] gap-2 border-b border-[#eef0f2] px-2 py-1.5 text-[10px] text-[#6b6f76]">
               <span>Price</span>
               <span>Status</span>
               <span>Invoice number</span>
@@ -507,12 +591,18 @@ function PaymentsPanel() {
               >
                 <span className="flex items-center gap-1">
                   <span>{row.price}</span>
-                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#90959d]" aria-hidden="true">
-                    <path d="M4 4v6h6M20 20v-6h-6" />
-                    <path d="M4 10a8 8 0 0 1 14-5M20 14a8 8 0 0 1-14 5" />
-                  </svg>
+                  <img
+                    src="/Icons/return.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={10}
+                    height={10}
+                    className="flex-shrink-0"
+                  />
                 </span>
-                <StatusChip label={row.status} variant={row.variant} />
+                <span>
+                  <StatusChip label={row.status} variant={row.variant} />
+                </span>
                 <span className="truncate text-[#6b6f76]">{row.inv}</span>
               </div>
             ))}
@@ -551,11 +641,113 @@ function HelpdeskPanel() {
   );
 }
 
+// ── Tasks sub-components ───────────────────────────────────────────────
+// Status dot — uses the supplied icon assets for todo / in-progress /
+// done. The SVGs are 24×24 with the glyph in the middle 16×16, so the
+// displayed size matches the icon's "ink" size rather than its bbox.
+const TASK_STATUS_ICONS = {
+  todo: "/Icons/todo.svg",
+  inProgress: "/Icons/inprogress.svg",
+  done: "/Icons/done.svg",
+};
+function TaskStatusDot({ status, size = 12 }) {
+  const src = TASK_STATUS_ICONS[status] || TASK_STATUS_ICONS.todo;
+  // Icons have a ~4px viewBox margin around the 16-unit glyph. Scale
+  // up so the rendered circle matches the requested visual size.
+  const render = Math.round(size * 1.5);
+  return (
+    <span
+      className="flex flex-shrink-0 items-center justify-center"
+      style={{ width: size, height: size }}
+    >
+      <img
+        src={src}
+        alt=""
+        aria-hidden="true"
+        width={render}
+        height={render}
+      />
+    </span>
+  );
+}
+
+// Client-side Tasks — matches the Figma reference. Tabs across the
+// top (All tasks / My tasks), a To Do count, and task cards that can
+// nest subtasks with mixed statuses. Styling mirrors the other client
+// panels (11px titles, 10px meta) so the whole family reads as one
+// product.
+function TasksPanel() {
+  const tasks = [
+    { title: "Share market research", due: "Apr 4" },
+    {
+      title: "Share design files",
+      due: "Apr 4",
+      subtasks: [
+        { label: "Attach the payment details to the project.", status: "todo" },
+        { label: "Export final design assets (Figma, PSD, etc.)", status: "todo" },
+        { label: "Check mobile vs. desktop versions", status: "inProgress" },
+        { label: "Double-check font and license compliance", status: "inProgress" },
+        { label: "Include any fonts or third-party assets used", status: "done" },
+        { label: "Confirm file access permissions for client", status: "done" },
+      ],
+    },
+  ];
+  return (
+    <div className="flex h-full flex-col">
+      <PanelHeader title="Tasks" />
+
+      <div className="flex-1 overflow-hidden px-5 py-3">
+        <div className="mb-2 text-[11px] text-[#101010]">
+          To Do
+          <span className="ml-1.5 text-[#6b6f76]">
+            {tasks.length}
+          </span>
+        </div>
+
+        {/* Cap the card list width so the right border lands inside
+            the visible canvas instead of getting clipped by the
+            oversized inner surface. */}
+        <div className="max-w-[440px] space-y-2">
+          {tasks.map((task, i) => (
+            <div
+              key={i}
+              className="rounded-[6px] border border-[#eef0f2] bg-white px-3 py-2"
+            >
+              <div className="flex items-center gap-2">
+                <TaskStatusDot status="todo" size={13} />
+                <span className="text-[12px] text-[#212b36]">{task.title}</span>
+              </div>
+              <div className="mt-0.5 pl-[22px] text-[11px] text-[#6b6f76]">
+                Due: {task.due}
+              </div>
+
+              {task.subtasks && (
+                <div className="mt-2 space-y-1 pl-[22px]">
+                  {task.subtasks.map((st, j) => (
+                    <div
+                      key={j}
+                      className="flex items-center gap-2 text-[11px] text-[#212b36]"
+                    >
+                      <TaskStatusDot status={st.status} size={12} />
+                      <span className="truncate">{st.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const PANELS = {
   home: HomePanel,
   messages: MessagesPanel,
   onboarding: OnboardingPanel,
   payments: PaymentsPanel,
+  tasks: TasksPanel,
   helpdesk: HelpdeskPanel,
 };
 
@@ -577,19 +769,151 @@ function MainPanel({ visible, phaseId }) {
   );
 }
 
-// Sidebar item order matches Figma 227:11329. Icon assets live under
-// public/Icons/.
+// Top-level sidebar rows. On-Boarding, Helpdesk and Schedule Call live
+// as children of the "Other" folder — see OTHER_CHILDREN. Matches the
+// client portal sidebar structure in Figma (BrandMages → Home →
+// Messages → Payments → Other ▾).
 const NAV = [
-  { id: "home", label: "Client Home", iconSrc: "/Icons/clienthome.svg" },
+  { id: "home", label: "Home", iconSrc: "/Icons/clienthome.svg", iconSize: 13 },
   { id: "messages", label: "Messages", iconSrc: "/Icons/messages.svg" },
-  { id: "onboarding", label: "On-Boarding", iconSrc: "/Icons/on-boarding.svg" },
   { id: "payments", label: "Payments", iconSrc: "/Icons/payments.svg" },
+  // Tasks sits just above the Other folder. It doesn't have a phase
+  // in this tour (no TasksPanel), so the cursor never clicks it — it
+  // just rounds out the sidebar to match the rest of the product.
+  { id: "tasks", label: "Tasks", iconSrc: "/Icons/tasks.svg" },
+];
+
+// Children revealed when the "Other" folder expands. Schedule Call is
+// present for completeness (it mirrors the first-value-prop visual) but
+// never goes active — there's no Schedule Call panel in this tour.
+const OTHER_CHILDREN = [
+  { id: "onboarding", label: "Onboarding", iconSrc: "/Icons/on-boarding.svg" },
   { id: "helpdesk", label: "Helpdesk", iconSrc: "/Icons/helpdesk.svg" },
+  { id: "schedule", label: "Schedule Call", iconSrc: "/Icons/call.svg", iconSize: 13 },
 ];
 
 // ── Portal surface — sidebar + main canvas ──────────────────────────────
-function PortalSurface({ phaseIndex }) {
-  const activeId = PHASES[phaseIndex].id;
+function PortalSurface({ phaseIndex, active, paused }) {
+  // phaseId drives the loop clock in the parent. displayId is what's
+  // actually shown in the main canvas and highlighted in the sidebar —
+  // it updates at the moment the cursor commits a click, so content
+  // never changes before the user "presses" the row.
+  const phaseId = PHASES[phaseIndex].id;
+  const [displayId, setDisplayId] = useState("home");
+  const [otherOpen, setOtherOpen] = useState(false);
+  const [cursorTarget, setCursorTarget] = useState("home");
+  const [cursorClicking, setCursorClicking] = useState(false);
+  const [cursorArrived, setCursorArrived] = useState(false);
+  const [cursorVisible, setCursorVisible] = useState(false);
+
+  // Click-through choreography. For each phase we queue one or two
+  // "click beats" — move the cursor to a row, hover, press, commit.
+  // The commit step is where the consequences of the click happen
+  // (folder opens, or main canvas panel swaps), so the content always
+  // lags the cursor by the hover → press beat. Onboarding is a
+  // two-step: first click Other to open the folder, then click
+  // Onboarding inside. Helpdesk reuses the single-step flow (folder
+  // is already open from the previous phase).
+  useEffect(() => {
+    if (!active) {
+      setCursorVisible(false);
+      setCursorClicking(false);
+      setCursorArrived(false);
+      setCursorTarget("home");
+      setDisplayId("home");
+      setOtherOpen(false);
+      return;
+    }
+    if (paused) return;
+
+    const timers = [];
+    timers.push(setTimeout(() => setCursorVisible(true), 60));
+
+    // MOVE_MS matches the cursor's CSS transition duration so the
+    // hover tint doesn't flash mid-flight. HOVER_MS is how long the
+    // row sits in the hover state before the press fires.
+    const MOVE_MS = 620;
+    const HOVER_MS = 240;
+    const PRESS_MS = 220;
+    const TAIL_MS = 260;
+
+    const steps =
+      phaseId === "onboarding"
+        ? [
+            {
+              target: "other",
+              commit: () => setOtherOpen(true),
+            },
+            {
+              target: "onboarding",
+              commit: () => setDisplayId("onboarding"),
+            },
+          ]
+        : [
+            {
+              target: phaseId,
+              commit: () => {
+                setDisplayId(phaseId);
+                // Collapse the folder when we land on a top-level
+                // phase. Done after the press so the folder closes
+                // just as the new panel reveals.
+                if (!CHILD_PHASE_IDS.has(phaseId)) setOtherOpen(false);
+              },
+            },
+          ];
+
+    let at = 140;
+    steps.forEach((step) => {
+      const moveAt = at;
+      const arriveAt = moveAt + MOVE_MS;
+      const pressAt = arriveAt + HOVER_MS;
+      const releaseAt = pressAt + PRESS_MS;
+
+      timers.push(
+        setTimeout(() => {
+          setCursorTarget(step.target);
+          setCursorArrived(false);
+          setCursorClicking(false);
+        }, moveAt),
+      );
+      timers.push(setTimeout(() => setCursorArrived(true), arriveAt));
+      timers.push(setTimeout(() => setCursorClicking(true), pressAt));
+      // Commit side-effect a beat into the press so the visible change
+      // looks caused-by-the-click, not simultaneous with it.
+      timers.push(setTimeout(step.commit, pressAt + 90));
+      timers.push(setTimeout(() => setCursorClicking(false), releaseAt));
+
+      at = releaseAt + TAIL_MS;
+    });
+
+    return () => timers.forEach((t) => clearTimeout(t));
+  }, [phaseIndex, active, paused, phaseId]);
+
+  const cursorPosKey = CURSOR_POS[cursorTarget] ? cursorTarget : "home";
+  const cursorPos = CURSOR_POS[cursorPosKey];
+
+  // The Other row's chevron is derived from cursor state: when the
+  // cursor is sitting on Other and the folder isn't open yet, show a
+  // chevron-right (hover hint); otherwise folder icon (closed) or
+  // chevron-down (open).
+  const hoverHint =
+    cursorTarget === "other" && cursorArrived && !otherOpen;
+
+  // Row background driver. Only two tints are visible: hover (pre-click)
+  // and active (post-click). Removing the dark "pressed" tint fixes a
+  // flicker where the eye caught three colors shifting in rapid
+  // succession (hover → dark press → hover → active). The click
+  // feedback is now carried by the cursor's scale press instead. Once
+  // a row is the active/selected one, it stays at the active tint
+  // even while the cursor is still sitting on it — no snap back to
+  // hover.
+  const ROW_HOVER_BG = "#e8f3b8";
+  const rowBg = (id) => {
+    if (id === displayId) return SIDEBAR_ACTIVE_BG;
+    if (cursorTarget === id && cursorArrived) return ROW_HOVER_BG;
+    return "transparent";
+  };
+
   return (
     <div
       className={clsx(
@@ -602,9 +926,44 @@ function PortalSurface({ phaseIndex }) {
             Width/gap/padding match ThreeStepsVisual's Studio sidebar so
             both animations share the same chassis. */}
         <div
-          className="flex w-[200px] flex-shrink-0 flex-col gap-[6px] px-2 pt-2.5"
+          className="relative flex w-[200px] flex-shrink-0 flex-col gap-[6px] px-2 pt-2.5"
           style={{ backgroundColor: SIDEBAR_BG }}
         >
+          {/* Click-through cursor — glides between sidebar rows and
+              presses each one. The "click" is now carried by the row
+              itself (hover tint → pressed tint → active), so the
+              cursor only does a subtle nudge-down on press. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-0 top-0 z-10 transition-[transform,opacity] duration-[620ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]"
+            style={{
+              opacity: cursorVisible ? 1 : 0,
+              transform: `translate(${cursorPos.x}px, ${cursorPos.y}px)`,
+              transformOrigin: "top left",
+            }}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              className="transition-transform duration-[160ms] ease-out"
+              style={{
+                filter: "drop-shadow(0 1px 2px rgba(16,16,16,0.28))",
+                transform: `scale(${cursorClicking ? 0.8 : 1})`,
+                transformOrigin: "top left",
+              }}
+            >
+              <path
+                d="M2.5 1.5 L2.5 14 L5.8 11 L8 15.2 L10 14.4 L7.8 10.2 L12.2 10.2 Z"
+                fill="#101010"
+                stroke="#ffffff"
+                strokeWidth="1"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+
           {/* Brand row — uses the uploaded BrandMages mark */}
           <div className="flex items-center gap-2 rounded-[4px] px-2 py-1.5">
             <img
@@ -626,18 +985,119 @@ function PortalSurface({ phaseIndex }) {
               label={item.label}
               iconSrc={item.iconSrc}
               iconNode={item.iconNode}
-              active={item.id === activeId}
+              iconSize={item.iconSize}
+              active={item.id === displayId}
+              background={rowBg(item.id)}
             />
           ))}
+
+          {/* "Other" folder — its own flex column so the collapsing
+              children don't leave a ghost gap behind the folder row. */}
+          <div className="flex flex-col">
+            <div
+              className="flex items-center gap-2 rounded-[4px] px-2 py-1 transition-colors duration-[320ms] ease-out"
+              style={{ backgroundColor: rowBg("other") }}
+            >
+              {/* Icon slot — all three glyphs live in the same stack
+                  and cross-fade + rotate between states for a smooth
+                  folder → chevron-right (hover) → chevron-down
+                  (expanded) transition. */}
+              <span className="relative flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center text-[#101010]">
+                <img
+                  src="/Icons/other.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width={16}
+                  height={16}
+                  className="absolute transition-opacity duration-[220ms] ease-out"
+                  style={{ opacity: otherOpen || hoverHint ? 0 : 1 }}
+                />
+                {/* Single caret asset that rotates between 0° (down,
+                    expanded) and -90° (right, hover). Rotating one
+                    element instead of swapping two SVGs keeps the
+                    motion continuous. */}
+                <img
+                  src="/Icons/arrowdown.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width={9}
+                  height={13}
+                  className="absolute transition-[opacity,transform] duration-[260ms] ease-out"
+                  style={{
+                    opacity: otherOpen || hoverHint ? 1 : 0,
+                    transform: `rotate(${otherOpen ? 0 : -90}deg)`,
+                  }}
+                />
+              </span>
+              <span className="flex-1 truncate text-[12px] font-normal leading-[18px] text-[#101010]">
+                Other
+              </span>
+            </div>
+
+            {/* Children — CSS-grid-rows accordion (0fr ↔ 1fr) gives
+                a buttery height transition without guessing a
+                max-height. Each child also fades + slides in on a
+                stagger so the reveal feels layered, not blocky. */}
+            <div
+              className="grid transition-[grid-template-rows] duration-[420ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+              style={{ gridTemplateRows: otherOpen ? "1fr" : "0fr" }}
+            >
+              <div className="overflow-hidden">
+                <div className="flex flex-col gap-[6px] pt-[6px]">
+                  {OTHER_CHILDREN.map((child, i) => {
+                    const active = child.id === displayId;
+                    // Stagger expand top-to-bottom, collapse
+                    // bottom-to-top so motion always reads as
+                    // flowing in the direction the tree is opening.
+                    const stagger = otherOpen
+                      ? i * 55
+                      : (OTHER_CHILDREN.length - 1 - i) * 35;
+                    return (
+                    <div
+                      key={child.id}
+                      className="ml-3.5 flex items-center gap-2 rounded-[4px] px-2 py-1"
+                      style={{
+                        backgroundColor: rowBg(child.id),
+                        opacity: otherOpen ? 1 : 0,
+                        transform: `translateY(${otherOpen ? 0 : -4}px)`,
+                        transition: `background-color 320ms ease-out, opacity 260ms ease-out ${stagger}ms, transform 260ms ease-out ${stagger}ms`,
+                      }}
+                    >
+                      <span className="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center text-[#101010]">
+                        <img
+                          src={child.iconSrc}
+                          alt=""
+                          aria-hidden="true"
+                          width={child.iconSize ?? 16}
+                          height={child.iconSize ?? 16}
+                        />
+                      </span>
+                      <span
+                        className={clsx(
+                          "flex-1 truncate text-[12px] leading-[18px] text-[#101010]",
+                          active ? "font-medium" : "font-normal",
+                        )}
+                      >
+                        {child.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          {/* end Other folder */}
+        </div>
+        {/* end sidebar */}
         </div>
 
         {/* Main canvas — every panel mounted so the crossfade doesn't flash
             a blank frame while React swaps in fresh markup. */}
         <div className="relative min-w-0 flex-1 bg-white">
-          {PHASES.map((phase, i) => (
+          {PHASES.map((phase) => (
             <MainPanel
               key={phase.id}
-              visible={i === phaseIndex}
+              visible={phase.id === displayId}
               phaseId={phase.id}
             />
           ))}
@@ -651,6 +1111,7 @@ function PortalSurface({ phaseIndex }) {
 export function ClientPortalVisual() {
   const [phase, setPhase] = useState(0);
   const [inView, setInView] = useState(false);
+  const [paused, setPaused] = useState(false);
   const ref = useRef(null);
 
   // In-view detection — scroll-listener fallback so it works inside the
@@ -672,14 +1133,18 @@ export function ClientPortalVisual() {
     return () => window.removeEventListener("scroll", check);
   }, []);
 
-  // Advance phases in a loop.
+  // Advance phases in a loop. Paused freezes the current phase.
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || paused) return;
     const t = setTimeout(() => {
       setPhase((p) => (p + 1) % PHASES.length);
     }, PHASES[phase].duration);
     return () => clearTimeout(t);
-  }, [phase, inView]);
+  }, [phase, inView, paused]);
+
+  // Total loop duration — drives the progress ring's CSS keyframe so it
+  // completes one full revolution per video loop.
+  const loopMs = PHASES.reduce((s, p) => s + p.duration, 0);
 
   return (
     <div
@@ -687,7 +1152,13 @@ export function ClientPortalVisual() {
       className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[28px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
-      <PortalSurface phaseIndex={phase} />
+      <PortalSurface phaseIndex={phase} active={inView} paused={paused} />
+      <PlayPauseToggle
+        paused={paused}
+        durationMs={loopMs}
+        active={inView}
+        onToggle={() => setPaused((p) => !p)}
+      />
     </div>
   );
 }

@@ -177,7 +177,7 @@ function SurveySelect({ value, placeholder, options, onChange, ariaLabel }) {
               >
                 <span>{opt}</span>
                 {selected && (
-                  <CheckIcon className="h-3.5 w-3.5 flex-none text-[#7DA4FF]" />
+                  <CheckIcon className="h-3.5 w-3.5 flex-none text-white" />
                 )}
               </button>
             );
@@ -189,12 +189,17 @@ function SurveySelect({ value, placeholder, options, onChange, ariaLabel }) {
 }
 
 // Clickable step row with expand/collapse header and a content panel.
-// Completion state lives in the progress bar above, so the row itself is
-// just title + subtitle + chevron — no per-row discs.
-function StepRow({ title, subtitle, done, open, onToggle, children }) {
-  const headerClickable = !done;
+// Every row carries a leading status dot so alignment stays consistent:
+// filled + check when done, empty outline while pending. Reward chip
+// (right) previews the perk each step unlocks.
+function StepRow({ title, subtitle, reward, done, open, onToggle, children }) {
+  const headerClickable = !done && Boolean(onToggle);
   return (
-    <div className="rounded-xl px-3 py-3 transition-colors hover:bg-white/[0.02]">
+    <div
+      className={`rounded-xl px-3 py-3.5 transition-colors ${
+        headerClickable ? "hover:bg-white/[0.03]" : ""
+      }`}
+    >
       <button
         type="button"
         onClick={() => headerClickable && onToggle()}
@@ -202,21 +207,49 @@ function StepRow({ title, subtitle, done, open, onToggle, children }) {
         disabled={!headerClickable}
         className="flex w-full items-start justify-between gap-3 text-left transition-opacity disabled:cursor-default disabled:opacity-100"
       >
-        <div className="min-w-0">
-          <div className="text-[15px] font-medium tracking-[-0.01em] text-white">
-            {title}
+        <div className="flex min-w-0 items-start gap-3">
+          {/* Leading status dot — always rendered so every row's title
+              aligns to the same column. */}
+          <span
+            aria-hidden="true"
+            className={`mt-0.5 inline-flex h-5 w-5 flex-none items-center justify-center rounded-full transition-colors ${
+              done
+                ? "bg-white/85 text-[#141414]"
+                : "border border-white/20 bg-transparent text-transparent"
+            }`}
+          >
+            <CheckIcon className="h-3 w-3" />
+          </span>
+          <div className="min-w-0">
+            <div
+              className={`text-[15px] font-medium tracking-[-0.01em] ${
+                done ? "text-white/75" : "text-white"
+              }`}
+            >
+              {title}
+            </div>
+            <p className="mt-1 text-[13.5px] leading-[1.5] text-white/50">
+              {subtitle}
+            </p>
           </div>
-          <p className="mt-1 text-[14px] leading-[1.5] text-white/55">
-            {subtitle}
-          </p>
         </div>
-        {!done && (
-          <ChevronIcon className="h-4 w-4 flex-none text-white/45" open={open} />
-        )}
+        <div className="flex flex-none items-center gap-2">
+          {reward && !done && (
+            <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[12px] font-medium leading-none tracking-[-0.005em] text-white/70">
+              {reward}
+            </span>
+          )}
+          {!done && (
+            <ChevronIcon
+              className="h-4 w-4 text-white/40"
+              open={open}
+            />
+          )}
+        </div>
       </button>
 
       {open && !done && (
-        <div className="mt-4 animate-fade-in">{children}</div>
+        <div className="ml-8 mt-4 animate-fade-in">{children}</div>
       )}
     </div>
   );
@@ -375,14 +408,15 @@ export function WaitlistModal({ open, onClose, content }) {
     setOpenStep(null);
   };
 
-  // Perk progress tracks the 3 optional follow-ups (build, share, survey).
-  // Completing all three unlocks earlier access — the email signup itself
-  // doesn't count toward the bump, it's what gets you on the list.
+  // Progress spans all 4 steps — email + 3 follow-ups. Email is auto-complete
+  // when the modal opens (they just submitted it), so the bar always starts
+  // at 1/4 rather than 0/4. All-complete unlocks the "Submit" terminal state.
   const perkIds = ["build", "share", "survey"];
   const perkDone = perkIds.filter((id) => completed.has(id)).length;
-  const perkTotal = perkIds.length;
-  const perkPct = Math.round((perkDone / perkTotal) * 100);
-  const perkUnlocked = perkDone === perkTotal;
+  const totalSteps = 1 + perkIds.length; // email + follow-ups
+  const stepsDone = 1 + perkDone; // email always counts
+  const progressPct = Math.round((stepsDone / totalSteps) * 100);
+  const allComplete = stepsDone === totalSteps;
 
   return createPortal(
     <div
@@ -429,46 +463,30 @@ export function WaitlistModal({ open, onClose, content }) {
               </p>
             </div>
 
-            {/* Perk block — reframes the follow-ups below as the path to
-                earlier access. Understated card with a single amber accent
-                carried by the eyebrow, pill, and progress fill. */}
-            <div className="mb-7 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 md:p-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="text-[1.125rem] font-normal leading-[1.2] tracking-[-0.02em] text-white md:text-[1.25rem]">
-                    {perkUnlocked ? "Earlier access unlocked" : content.perkHeading}
-                  </h3>
-                  <p className="mt-1.5 text-[14px] leading-[1.55] text-white/55 [text-wrap:pretty]">
-                    {perkUnlocked ? content.perkUnlocked : content.perkBody}
-                  </p>
-                </div>
-                <span
-                  className={`mono inline-flex flex-none items-center rounded-md px-2 py-1 text-[11px] font-medium leading-none tracking-[0.04em] transition-colors ${
-                    perkUnlocked
-                      ? "bg-[#7DA4FF] text-[#141414]"
-                      : "bg-[#7DA4FF]/[0.15] text-[#7DA4FF]"
-                  }`}
-                >
-                  {perkPct}%
-                </span>
+            {/* Progress meter — single bar spanning all 4 steps. Email is
+                auto-complete, so it starts at 1/4. */}
+            <div className="mb-5 flex items-center gap-4">
+              <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.08]">
+                <div
+                  className="h-full rounded-full bg-white/85 transition-[width] duration-500 ease-out"
+                  style={{ width: `${progressPct}%` }}
+                />
               </div>
-
-              {/* Progress meter — fills as follow-ups get completed. */}
-              <div className="mt-4">
-                <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06]">
-                  <div
-                    className="h-full rounded-full bg-[#7DA4FF] transition-[width] duration-500 ease-out"
-                    style={{ width: `${perkPct}%` }}
-                  />
-                </div>
-                <div className="mt-2 text-[13px] text-white/50">
-                  {perkDone} of {perkTotal} complete
-                </div>
+              <div className="flex-none text-[13px] text-white/50">
+                {stepsDone} of {totalSteps} complete
               </div>
             </div>
 
-            {/* Expandable follow-up rows. */}
+            {/* Expandable step rows — email first (pre-complete), then the
+                three follow-ups with reward chips. */}
             <div className="-mx-3 flex flex-col">
+              {/* Email — auto-complete, no expand. */}
+              <StepRow
+                title={content.emailStep.title}
+                subtitle={content.emailStep.subtitle}
+                done
+              />
+
               {/* What would you build? */}
               <StepRow
                 title={buildItem.title}
@@ -477,6 +495,7 @@ export function WaitlistModal({ open, onClose, content }) {
                     ? buildItem.completedLabel
                     : buildItem.subtitle
                 }
+                reward={buildItem.reward}
                 done={completed.has("build")}
                 open={openStep === "build"}
                 onToggle={() => toggleStep("build")}
@@ -513,6 +532,7 @@ export function WaitlistModal({ open, onClose, content }) {
                     ? shareItem.completedLabel
                     : shareItem.subtitle
                 }
+                reward={shareItem.reward}
                 done={completed.has("share")}
                 open={openStep === "share"}
                 onToggle={() => toggleStep("share")}
@@ -538,6 +558,7 @@ export function WaitlistModal({ open, onClose, content }) {
                     ? surveyItem.completedLabel
                     : surveyItem.subtitle
                 }
+                reward={surveyItem.reward}
                 done={completed.has("survey")}
                 open={openStep === "survey"}
                 onToggle={() => toggleStep("survey")}
@@ -613,8 +634,8 @@ export function WaitlistModal({ open, onClose, content }) {
               <button
                 type="button"
                 onClick={onClose}
-                disabled={!perkUnlocked}
-                className="inline-flex w-full items-center justify-center rounded-full bg-[#7DA4FF] px-6 py-3 text-sm font-medium text-[#101010] transition-all duration-200 hover:bg-[#9AB8FF] disabled:cursor-not-allowed disabled:bg-white/[0.08] disabled:text-white/40 disabled:hover:bg-white/[0.08] sm:w-auto sm:min-w-[180px]"
+                disabled={!allComplete}
+                className="inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium text-[#101010] transition-all duration-200 hover:bg-white/90 disabled:cursor-not-allowed disabled:bg-white/[0.08] disabled:text-white/40 disabled:hover:bg-white/[0.08] sm:w-auto sm:min-w-[180px]"
               >
                 Submit
               </button>
