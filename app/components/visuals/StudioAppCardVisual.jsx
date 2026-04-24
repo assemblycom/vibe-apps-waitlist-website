@@ -110,7 +110,7 @@ function StatCard({ label, value, delta, trend }) {
     <div className="rounded-[5px] border border-[#eef0f2] bg-white px-2.5 py-2">
       <div className="text-[9px] text-[#6b6f76]">{label}</div>
       <div className="mt-0.5 flex items-baseline gap-1">
-        <span className="text-[14px] font-semibold leading-none text-[#101010]">
+        <span className="text-[13px] font-semibold leading-none text-[#101010]">
           {value}
         </span>
         {delta && (
@@ -167,7 +167,7 @@ function TrendChart() {
           {yTicks.map((t) => (
             <span
               key={t.label}
-              className="absolute right-0 -translate-y-1/2 text-[7px] text-[#6b6f76]"
+              className="absolute right-0 -translate-y-1/2 text-[9px] text-[#6b6f76]"
               style={{ top: `${(t.y / 60) * 100}%` }}
             >
               {t.label}
@@ -210,7 +210,7 @@ function TrendChart() {
       </div>
       {/* X-axis labels — offset by Y-axis gutter so ticks align under chart */}
       <div className="mt-1 flex pl-[22px]">
-        <div className="flex flex-1 justify-between text-[7px] text-[#6b6f76]">
+        <div className="flex flex-1 justify-between text-[9px] text-[#6b6f76]">
           {xLabels.map((l) => (
             <span key={l}>{l}</span>
           ))}

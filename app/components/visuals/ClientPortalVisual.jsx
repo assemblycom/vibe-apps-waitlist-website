@@ -178,11 +178,10 @@ function TaskIcon() {
   );
 }
 
-// Home panel — mirrors Figma node 227:11387. Personalised greeting →
-// hero banner → Your-actions counters → About-us copy → Working-hours
-// table. The greeting replaces the generic "Client Home" panel bar
-// the other screens use; the reference shows the greeting sitting at
-// the top of the canvas with no separator above it.
+// Home panel — mirrors Figma node 227:11387. Standard "Home" top bar
+// (matches the other phases so the surrounding chrome stays constant
+// across the tour), then personalised greeting → hero banner →
+// Your-actions counters → About-us copy → Working-hours table.
 function HomePanel() {
   // Invoices uses the Payments icon (closest semantic match from the
   // supplied asset pack); Tasks falls back to an inline tick-in-square.
@@ -199,6 +198,7 @@ function HomePanel() {
   ];
   return (
     <div className="flex h-full flex-col overflow-hidden">
+      <PanelHeader title="Home" />
       <div className="flex-1 overflow-hidden px-5 pt-4">
 
       {/* Greeting — 13px medium title + 10px gray subcopy. */}
@@ -263,20 +263,11 @@ function HomePanel() {
           About us
         </div>
         <p className="text-[10px] leading-[1.5] text-[#212b36]">
-          BrandMages, a full-service marketing agency that helps businesses
-          increase their brand awareness and online presence. We
-          specialize in crafting unique and effective marketing strategies
-          that align with your business goals and stand out in a crowded
-          marketplace. Our team blends brand storytelling, performance
-          campaigns, and always-on content to turn first impressions into
-          long-term customers.
-        </p>
-        <p className="mt-1.5 text-[10px] leading-[1.5] text-[#212b36]">
-          We&apos;ve launched brands across SaaS, retail, legal, and
-          wellness, and every engagement starts the same way — a short
-          discovery call to understand your audience, a tailored roadmap
-          within a week, and a dedicated team who treats your brand like
-          it&apos;s our own.
+          BrandMages is a full-service marketing agency that helps
+          businesses grow their brand awareness through storytelling,
+          performance campaigns, and always-on content — every engagement
+          starts with a discovery call and a tailored roadmap within a
+          week.
         </p>
       </div>
 
@@ -723,7 +714,7 @@ function ScheduleCallPanel() {
           <div className="text-[10px] font-medium tracking-[0.01em] text-[#6b6f76]">
             BrandMages · Jennifer Rocha
           </div>
-          <div className="text-[14px] font-semibold leading-[1.25] text-[#101010]">
+          <div className="text-[13px] font-semibold leading-[1.25] text-[#101010]">
             Discovery call
           </div>
           <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[#212b36]">
