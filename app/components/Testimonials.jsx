@@ -280,7 +280,7 @@ export function Testimonials({ eyebrow, heading, subheading, quotes = [] }) {
         {/* Header */}
         <div className="mb-12 max-w-2xl">
           {eyebrow && (
-            <span className="mono mb-4 block text-[11px] uppercase tracking-[0.08em] text-white/40">
+            <span className="mono mb-4 block text-xs uppercase tracking-[0.08em] text-white/40">
               {eyebrow}
             </span>
           )}

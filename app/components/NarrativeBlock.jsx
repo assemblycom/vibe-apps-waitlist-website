@@ -1,9 +1,79 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  InlinePreview,
+  PortalMiniPreview,
+  AppMockPreview,
+  QualityBadgePreview,
+  ContactsPreview,
+  PermissionsPreview,
+  NotificationsPreview,
+  LibraryPreview,
+} from "./InlinePreview";
 
 // Subtle, unhurried ease — matches the rest of the site's motion curves.
 const EASE = "cubic-bezier(0.22, 0.61, 0.36, 1)";
+
+// Map of preview keys → rendered preview payloads. Content files
+// reference visuals by key (e.g. `visual: "portalMini"`) so home.js
+// stays as plain data and the visuals live next to the component.
+// Parameterized visuals accept a `visualProps` object from the payload.
+const PREVIEW_VISUALS = {
+  portalMini: () => <PortalMiniPreview />,
+  appMock: (props) => <AppMockPreview {...(props || {})} />,
+  qualityBadge: (props) => <QualityBadgePreview {...(props || {})} />,
+  contacts: () => <ContactsPreview />,
+  permissions: () => <PermissionsPreview />,
+  notifications: () => <NotificationsPreview />,
+  library: () => <LibraryPreview />,
+};
+
+function resolvePreview(preview) {
+  if (!preview) return null;
+  const { visual, visualProps, ...rest } = preview;
+  let resolvedVisual = visual;
+  if (typeof visual === "string") {
+    const factory = PREVIEW_VISUALS[visual];
+    resolvedVisual = factory ? factory(visualProps) : null;
+  }
+  return { ...rest, visual: resolvedVisual };
+}
+
+// A paragraph body can be a plain string (legacy) or an array of
+// segments: strings are rendered as-is, `{ u: "text" }` objects render
+// as underlined emphasis. Underline sits just below the baseline and
+// inherits the muted body color, so emphasized phrases read as an
+// editorial callout rather than a link. Segments can optionally include
+// a `preview` payload — when present, the phrase becomes an InlinePreview
+// that reveals a floating card on hover.
+function renderParagraph(p) {
+  if (typeof p === "string") return p;
+  if (!Array.isArray(p)) return p;
+  return p.map((seg, i) => {
+    if (typeof seg === "string") return seg;
+    if (seg && typeof seg === "object" && "u" in seg) {
+      if (seg.preview) {
+        return (
+          <InlinePreview
+            key={i}
+            text={seg.u}
+            preview={resolvePreview(seg.preview)}
+          />
+        );
+      }
+      return (
+        <span
+          key={i}
+          className="underline decoration-[#1A1A1A]/40 underline-offset-[3px]"
+        >
+          {seg.u}
+        </span>
+      );
+    }
+    return null;
+  });
+}
 
 // V7-style editorial moment: a left-aligned display headline where the
 // last phrase fades into a quieter "coda", followed by a two-column
@@ -108,7 +178,7 @@ export function NarrativeBlock({ heading, callout, body }) {
               key={i}
               className="mb-5 text-[1rem] leading-[1.6] text-[#1A1A1A]/55 last:mb-0"
             >
-              {p}
+              {renderParagraph(p)}
             </p>
           ))}
         </div>

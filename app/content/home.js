@@ -12,12 +12,125 @@ export const HOME_CONTENT = {
     // Display headline is split in two: the primary statement renders at
     // full weight, and the `callout` continues inline at reduced opacity
     // (V7-style).
-    heading: "Assembly Studio is not",
+    heading: "Assembly Studio is not just",
     callout: "another app builder",
+    // Body paragraphs support inline emphasis via `{ u: "text" }` segments,
+    // which render as underlined phrases. Plain strings are passed
+    // through as-is. NarrativeBlock flattens arrays paragraph-by-paragraph.
     body: [
-      "Other app builders are great for internal tools, prototypes, and websites. But if you're serving real paying clients, you don't need one vibe-coded app. You need a polished, branded, secure, and consolidated client experience.",
-      "Our app builder is the only one that understands your business. Describe what you want: a custom intake flow, a progress tracker, a proposal tool. It builds an app that works with your existing contacts and companies, respects your permissions, and integrates with email and in-product notifications. Every app deploys straight into your client experience, not as a standalone tool on a separate URL, but as a native part of your firm.",
-      "And underneath it all, a real platform. Assembly Studio gives you a CRM for your team, a branded portal for clients, integrated notifications, and permissions, plus a library of reviewed apps you can one-click enable. Every piece is designed to work together, so the client experience you deliver feels cohesive and complete.",
+      [
+        "Today's app builders are great for internal tools, prototypes, and websites. But if you're serving real paying clients, you don't want a single isolated app. You want a ",
+        {
+          u: "reliable",
+          preview: {
+            visual: "qualityBadge",
+            visualProps: { label: "99.9% uptime" },
+            body: "Runs on Assembly's platform — monitored, backed up, SOC 2 in progress.",
+          },
+        },
+        ", ",
+        {
+          u: "unified",
+          preview: {
+            visual: "qualityBadge",
+            visualProps: { label: "One workspace" },
+            body: "One CRM, one portal, one permissions model across every app.",
+          },
+        },
+        ", and ",
+        {
+          u: "polished",
+          preview: {
+            visual: "qualityBadge",
+            visualProps: { label: "Production-ready" },
+            body: "Branded, typography and spacing dialed in, empty states handled.",
+          },
+        },
+        " client experience.",
+      ],
+      [
+        "Describe what you want — a ",
+        {
+          u: "client onboarding wizard",
+          preview: {
+            visual: "appMock",
+            visualProps: {
+              title: "Onboarding",
+              rows: ["Company details", "KYC documents"],
+            },
+            body: "A guided intake flow that routes to the right teammate.",
+          },
+        },
+        ", a ",
+        {
+          u: "deliverable approval flow",
+          preview: {
+            visual: "appMock",
+            visualProps: {
+              title: "Approvals",
+              rows: ["Draft submitted", "Awaiting sign-off"],
+            },
+            body: "Drafts, reviews, and client sign-off with a clear paper trail.",
+          },
+        },
+        ", a ",
+        {
+          u: "client community space",
+          preview: {
+            visual: "appMock",
+            visualProps: {
+              title: "Community",
+              rows: ["Announcements", "Threads"],
+              accent: "none",
+            },
+            body: "A shared space for announcements, threads, and directory.",
+          },
+        },
+        ". From there, Assembly Studio generates an app that works with your ",
+        {
+          u: "existing contacts and team",
+          preview: {
+            visual: "contacts",
+            body: "Shares your CRM — update a contact once, every app follows.",
+          },
+        },
+        ", respects your ",
+        {
+          u: "permissions",
+          preview: {
+            visual: "permissions",
+            body: "Row-level access, enforced at the data layer.",
+          },
+        },
+        ", and seamlessly ",
+        {
+          u: "integrates notifications",
+          preview: {
+            visual: "notifications",
+            body: "One unified feed — email, in-product, and mobile.",
+          },
+        },
+        ". Every app deploys straight into your portal, not as a standalone tool on a separate URL, but as a ",
+        {
+          u: "native part of your client experience",
+          preview: {
+            visual: "portalMini",
+            body: "Ships into your branded portal — no separate URL or login.",
+          },
+        },
+        ". Authentication, permissions, client identity, branding — all handled automatically.",
+      ],
+      [
+        "And you don't have to build everything yourself. Assembly ships with a ",
+        {
+          u: "library of vetted apps",
+          preview: {
+            visual: "library",
+            body: "21 production-ready apps: messaging, payments, intake, proposals, and more.",
+          },
+        },
+        " that you can enable in one click — for client messaging, payments, proposals, project management, and more. Don't rebuild the 80% that's been perfected over years of iteration. Focus on the 20% that makes you different.",
+      ],
     ],
   },
 

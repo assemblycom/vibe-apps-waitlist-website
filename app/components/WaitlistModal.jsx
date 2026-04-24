@@ -244,12 +244,12 @@ function StepRow({ id, title, effort, reward, premium, subtitle, done, open, onT
               /* Completed: celebratory copy absorbs the full subtitle
                  line. No right-column reward — the prize is already in
                  the subtitle text ("Earlier access — locked in"). */
-              <p className="mt-1 text-[13.5px] leading-[1.5] text-white/55">
+              <p className="mt-1 text-[13px] leading-[1.5] text-white/55">
                 {subtitle}
               </p>
             ) : (
               effort && (
-                <p className="mt-1 text-[13.5px] leading-[1.5] text-white/45">
+                <p className="mt-1 text-[13px] leading-[1.5] text-white/45">
                   {effort}
                 </p>
               )

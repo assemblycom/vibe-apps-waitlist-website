@@ -176,7 +176,7 @@ function ValuePropPanel({ id, item, visual, sectionRef, index }) {
       <div className="flex flex-col gap-10">
         <div className="max-w-3xl">
           {item.eyebrow && (
-            <span className="mono mb-4 block text-[11px] uppercase tracking-[0.08em] text-white/40">
+            <span className="mono mb-4 block text-xs uppercase tracking-[0.08em] text-white/40">
               {item.eyebrow}
             </span>
           )}

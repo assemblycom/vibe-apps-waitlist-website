@@ -67,7 +67,7 @@ export function FAQ({ eyebrow, heading, items = [] }) {
       <div className="mx-auto max-w-3xl px-6">
         <div className="mb-12 text-center">
           {eyebrow && (
-            <span className="mono mb-4 block text-[11px] uppercase tracking-[0.08em] text-white/40">
+            <span className="mono mb-4 block text-xs uppercase tracking-[0.08em] text-white/40">
               {eyebrow}
             </span>
           )}
