@@ -661,41 +661,23 @@ function ThreadMessage({ name, time, body, avatar }) {
 }
 
 function CompanyMessagesBody() {
-  // Keep Bernard Simons' avatar in sync with his CRM-row chip (lavender)
-  // so the same person reads as the same person across screens.
-  const bernardAvatar = { initials: "BS", ...CONTACT_AVATARS[2] };
-  const charlotteAvatar = { initials: "CB", ...CONTACT_AVATARS[0] };
+  // Just the kickoff note from the BrandMages account lead (Jennifer
+  // Rocha — same person who hosts Schedule Call and writes the
+  // welcome in the client-portal visual). Bernard's reply is
+  // intentionally omitted here to keep the internal-dashboard tab
+  // focused on the agency-side message; the two-way exchange lives
+  // on the client-portal surface.
+  const jenniferAvatar = { initials: "JR", ...CONTACT_AVATARS[3] };
 
   return (
     <div className="flex-1 overflow-hidden px-5 py-3">
-      <MessageDateChip label="Wed, Sep 4" />
+      <MessageDateChip label="Today" />
       <div className="space-y-3 py-1.5">
         <ThreadMessage
-          name="Bernard Simons"
-          time="1:37 PM"
-          body="Hi Jennifer, can you tell me more about SEO?"
-          avatar={bernardAvatar}
-        />
-        <ThreadMessage
-          name="Charlotte Beaty"
-          time="1:56 PM"
-          body="Absolutely, Charles! SEO is about improving your website’s visibility — optimizing content, targeting the right keywords, and building links to boost credibility."
-          avatar={charlotteAvatar}
-        />
-      </div>
-      <MessageDateChip label="Fri, Sep 6" />
-      <div className="space-y-3 py-1.5">
-        <ThreadMessage
-          name="Bernard Simons"
-          time="1:37 PM"
-          body="That sounds interesting — what would make it work for a firm like ours? We mostly get clients through referrals today, so I want to understand where SEO fits in without pulling budget away from what already works."
-          avatar={bernardAvatar}
-        />
-        <ThreadMessage
-          name="Charlotte Beaty"
-          time="2:04 PM"
-          body="Great question — for firms like yours, SEO usually complements referrals rather than replacing them. We'd start with a content plan around the practice areas you want to grow."
-          avatar={charlotteAvatar}
+          name="Jennifer Rocha"
+          time="10:12 AM"
+          body="Hi Bernard — welcome to BrandMages! Before we kick off the brand sprint, a few quick things on your end: finish the onboarding form, settle your first invoice, and take a look at the task I assigned you. Once those are in we'll lock timelines and start on the positioning work."
+          avatar={jenniferAvatar}
         />
       </div>
     </div>
@@ -844,14 +826,20 @@ function MainCanvas({ phaseId, cursorPhase }) {
   );
 }
 
+// Apps listed here mirror the client-portal visual (value prop 2) so
+// the internal dashboard feels like the other side of the same
+// workspace: Onboarding, Helpdesk, Schedule Call are the apps
+// BrandMages enabled for their clients. "Automation", "Pizzatracker"
+// and the muted "Add App" row are intentionally dropped to keep the
+// sidebar uncluttered for the tour; the Workspace section at the
+// bottom can overflow the card if it doesn't fit.
 const NAV = [
   { id: "dashboard", label: "Dashboard", iconSrc: "/Icons/Dashboard.svg", iconSize: 13 },
   { id: "crm", label: "CRM", iconSrc: "/Icons/CRM.svg" },
   { id: "notifications", label: "Notifications", iconSrc: "/Icons/Notifications.svg" },
-  { id: "automation", label: "Automation", iconSrc: "/Icons/Automations.svg" },
-  { id: "pizzatracker", label: "Pizzatracker", iconSrc: "/Icons/pizzatracker.svg", sectionLabel: "Apps" },
-  { id: "onboarding", label: "Onboarding", iconSrc: "/Icons/on-boarding.svg" },
-  { id: "add", label: "Add App", iconSrc: "/Icons/add.svg", muted: true },
+  { id: "onboarding", label: "Onboarding", iconSrc: "/Icons/on-boarding.svg", sectionLabel: "Apps" },
+  { id: "helpdesk", label: "Helpdesk", iconSrc: "/Icons/helpdesk.svg" },
+  { id: "schedule", label: "Schedule Call", iconSrc: "/Icons/call.svg", iconSize: 13 },
   { id: "marketplace", label: "Marketplace", iconSrc: "/Icons/marketplace.svg", sectionLabel: "Workspace" },
   { id: "settings", label: "Settings", iconSrc: "/Icons/Settings.svg" },
 ];

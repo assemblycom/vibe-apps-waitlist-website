@@ -9,10 +9,14 @@ import { PlayPauseToggle } from "./PlayPauseToggle";
 // 227:11325 for sidebar + home layout (lime-green client-branded sidebar,
 // Good-morning banner, Your-actions counters, About-us block, working-
 // hours table). Tour steps walk through the sidebar one by one:
-// Client Home → Messages → On-Boarding → Payments → Helpdesk. Only the
-// sidebar highlight and the main canvas change between
-// phases; the sidebar itself stays mounted so the handoff reads as a real
-// user navigating, not a slide show.
+// Client Home → Messages → Onboarding → Payments → Tasks → Other ▸
+// Schedule Call. Onboarding is a top-level row (not inside "Other")
+// because it's important enough to surface directly; the tour still
+// opens the "Other" folder at the end to reveal a Calendly-like
+// Schedule-a-Call screen as the narrative payoff. Only the sidebar
+// highlight and the main canvas change between phases; the sidebar
+// itself stays mounted so the handoff reads as a real user navigating,
+// not a slide show.
 //
 // ── Shared type scale (Inter, applied via .font-inter on the root) ─────
 //   hero    15px  — app/brand title (not used here; see ThreeStepsVisual)
@@ -39,36 +43,43 @@ const INNER_CARD =
 const SIDEBAR_BG = "#d9ed92";
 const SIDEBAR_ACTIVE_BG = "#f1f9d8";
 
-// Each phase corresponds to a sidebar item. Helpdesk and Schedule Call
-// are visible in the sidebar but aren't part of the click-through
-// flow — the tour ends on Onboarding, which is the narrative payoff
-// (the folder opens to reveal the freshly-generated app).
+// Each phase corresponds to a sidebar item. Helpdesk lives inside the
+// "Other" folder and isn't part of the click-through flow — the tour
+// ends on Schedule Call, which is the narrative payoff (the folder
+// opens to reveal a Calendly-like booking screen). Onboarding sits at
+// the top level, so it's a simple one-step click.
 const PHASES = [
   { id: "home", duration: 5200 },
   { id: "messages", duration: 4600 },
+  { id: "onboarding", duration: 4600 },
   { id: "payments", duration: 4200 },
-  { id: "tasks", duration: 4400 },
-  { id: "onboarding", duration: 4800 },
+  { id: "tasks", duration: 4200 },
+  { id: "schedule", duration: 5200 },
 ];
 
 // Phases that live inside the "Other" folder. When one of these is
 // active the folder auto-expands; otherwise it stays collapsed to its
 // folder icon.
-const CHILD_PHASE_IDS = new Set(["onboarding"]);
+const CHILD_PHASE_IDS = new Set(["schedule"]);
 
 // Fixed row positions inside the sidebar column (px, relative to the
 // sidebar's top-left). Used to drive the click-through cursor. y values
 // aim at the middle of each row; x puts the cursor tip over the label.
-// The child rows (onboarding, helpdesk, schedule) are only visited
-// while the "Other" folder is expanded.
+// Onboarding sits between Messages and Payments at the top level; the
+// "Other" folder is the last row and its children (helpdesk, schedule)
+// reveal below it when expanded.
 const CURSOR_POS = {
   home: { x: 96, y: 54 },
   messages: { x: 96, y: 86 },
-  payments: { x: 96, y: 118 },
-  tasks: { x: 96, y: 150 },
-  other: { x: 96, y: 182 },
-  onboarding: { x: 108, y: 224 },
-  // Helpdesk stays in the sidebar but isn't part of the cursor tour.
+  onboarding: { x: 96, y: 118 },
+  payments: { x: 96, y: 150 },
+  tasks: { x: 96, y: 182 },
+  other: { x: 96, y: 214 },
+  // Children of "Other" — appear when the folder expands. Helpdesk is
+  // first, then Schedule Call. x is nudged right (+12) because the
+  // child rows are indented by ml-3.5.
+  helpdesk: { x: 108, y: 256 },
+  schedule: { x: 108, y: 288 },
 };
 
 // ── Sidebar item ────────────────────────────────────────────────────────
@@ -82,6 +93,7 @@ function SidebarItem({
   iconSize = 16,
   active,
   background,
+  badge,
 }) {
   return (
     <div
@@ -114,6 +126,17 @@ function SidebarItem({
       >
         {label}
       </span>
+      {badge != null && (
+        // Unread-count chip. Muted-lime fill sits naturally against both
+        // the idle and active row tints — darker than SIDEBAR_BG so it
+        // reads as a separate chip, but still within the client's
+        // brand palette rather than a harsh neutral grey. Square with
+        // a small corner radius (matches the surrounding row
+        // rounding).
+        <span className="flex h-[14px] min-w-[16px] flex-shrink-0 items-center justify-center rounded-[3px] bg-[#bdd180] px-1 text-[10px] font-medium leading-none text-[#2a3d0a]">
+          {badge}
+        </span>
+      )}
     </div>
   );
 }
@@ -166,11 +189,13 @@ function HomePanel() {
   // Neutral action-card styling — the sidebar is the client's lime brand,
   // but the action cards are app surface, so they read in greys. Counts
   // carry the "what needs attention" signal (100 invoices vs 5 contracts).
+  // Counts here must match the sidebar row badges below — the
+  // Your-actions card is the "what's pending" summary that each nav
+  // indicator links back to.
   const actions = [
-    { label: "Invoices", count: "100", iconSrc: "/Icons/payments.svg" },
-    { label: "Contracts", count: "5", iconSrc: "/Icons/contracts.svg" },
-    { label: "Forms", count: "10", iconSrc: "/Icons/forms.svg" },
-    { label: "Tasks", count: "50", iconNode: <TaskIcon /> },
+    { label: "Messages", count: "4", iconSrc: "/Icons/messages.svg" },
+    { label: "Billing", count: "2", iconSrc: "/Icons/payments.svg" },
+    { label: "Tasks", count: "7", iconNode: <TaskIcon /> },
   ];
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -201,7 +226,7 @@ function HomePanel() {
         <div className="mb-1.5 text-[10px] font-medium text-[#212b36]">
           Your actions
         </div>
-        <div className="grid grid-cols-4 gap-[5px]">
+        <div className="grid grid-cols-3 gap-[5px]">
           {actions.map((a) => (
             <div
               key={a.label}
@@ -331,85 +356,44 @@ function MessageRow({ initials, avatarBg, avatarFg, name, time, children }) {
 }
 
 function MessagesPanel() {
+  // Kickoff thread between the client (Ana — matches the HomePanel
+  // "Good morning, Ana" greeting) and her account lead at BrandMages
+  // (Jennifer Rocha — also the host on the Schedule Call panel, so
+  // the same person carries across the tour). One welcome note
+  // covering the three pending actions the client's portal surfaces
+  // (onboarding, first invoice, the task assigned to them), and a
+  // short "sounds good" reply.
   return (
     <div className="flex h-full flex-col">
       <PanelHeader title="Messages" />
 
-      {/* Thread body — three date sections, each with its own messages. */}
       <div className="flex-1 overflow-hidden pt-2">
-        <DateChip label="September 18, 2025" />
-
-        <MessageRow
-          initials="BS"
-          avatarBg="#dff3f9"
-          avatarFg="#649eaf"
-          name="Bernard Simons"
-          time="1:34 PM"
-        >
-          <p className="whitespace-nowrap">
-            Following up on your previous email on the job, is there
-            anything that you need feedback on before the review?
-          </p>
-          {/* Continuation inside the same row so it aligns flush with
-              the first paragraph's left edge (both sit in the body
-              column, not at an arbitrary pl offset). */}
-          <p className="mt-2 whitespace-nowrap">
-            I had taken a look at some of the seminal designs and they
-            looked great, seems to me we just need more
-          </p>
-          <p className="whitespace-nowrap">
-            data to present, let me know what you think!
-          </p>
-        </MessageRow>
-
-        <MessageRow
-          initials="MS"
-          avatarBg="#f0eaff"
-          avatarFg="#7f69b5"
-          name="Martin Sung"
-          time="2:20 PM"
-        >
-          <p className="whitespace-nowrap">
-            It works! <span className="text-[#6b6f76]">@BernardSimons</span>{" "}
-            we&apos;ll have a copy of the demo app deployed and ready for
-            review tomorrow EOD.
-          </p>
-        </MessageRow>
-
-        <DateChip label="Yesterday" />
-
-        <MessageRow
-          initials="KM"
-          avatarBg="#fde2e4"
-          avatarFg="#c56277"
-          name="Kaitlyn Moore"
-          time="2:20 PM"
-        >
-          <p className="whitespace-nowrap">
-            <span className="text-[#6b6f76]">@BrianWilson</span> Check this
-            link, there seems to be a fix, you&apos;ll have to toy with it
-            a bit before it fully
-          </p>
-          <p className="whitespace-nowrap">
-            <a className="text-[#3866c0] underline" href="#">
-              meta.stackexchange.com/questions/43969/
-            </a>
-          </p>
-        </MessageRow>
-
         <DateChip label="Today" />
 
         <MessageRow
-          initials="MS"
+          initials="JR"
           avatarBg="#f0eaff"
           avatarFg="#7f69b5"
-          name="Martin Sung"
-          time="1:45 PM"
+          name="Jennifer Rocha"
+          time="10:12 AM"
         >
-          <p className="whitespace-nowrap">
-            Following up on your previous email on the job, is there
-            anything that feedback on?
+          <p>
+            Hi Ana — welcome to BrandMages! Before we kick off the brand
+            sprint, a few quick things to wrap up on your end: finish the
+            onboarding form, settle your first invoice, and take a look at
+            the task I assigned you. Once those are in, we&apos;ll lock
+            timelines and start on the positioning work.
           </p>
+        </MessageRow>
+
+        <MessageRow
+          initials="A"
+          avatarBg="#fde2e4"
+          avatarFg="#c56277"
+          name="Ana"
+          time="10:18 AM"
+        >
+          <p>Sounds good, thanks!</p>
         </MessageRow>
       </div>
     </div>
@@ -510,69 +494,42 @@ function BankIcon() {
 }
 
 function PaymentsPanel() {
+  // Matches the client-onboarding story: Ana just joined, hasn't added
+  // a payment method or subscribed to ongoing services yet, and has a
+  // single first invoice waiting to be paid (the one Jennifer calls
+  // out in her welcome message).
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <PanelHeader title="Billing" />
       <div className="flex-1 overflow-hidden px-5 py-3 space-y-4">
-        {/* Payment Methods */}
+        {/* Payment Methods — empty state. The client hasn't added a
+            card or bank account yet; this is the first thing the
+            "pay your first invoice" flow will prompt. */}
         <section>
           <div className="mb-2 text-[11px] font-medium text-[#212b36]">
             Payment Methods
           </div>
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2 rounded-[5px] border border-[#eef0f2] bg-white px-2.5 py-1.5">
-              <VisaMark />
-              <span className="text-[10px] tracking-[0.1em] text-[#6b6f76]">
-                ••••
-              </span>
-              <span className="text-[10px] text-[#212b36]">2905</span>
-              <span className="ml-1">
-                <StatusChip label="Default" variant="default" />
-              </span>
-            </div>
-            <div className="flex items-center gap-2 rounded-[5px] border border-[#eef0f2] bg-white px-2.5 py-1.5">
-              <BankIcon />
-              <span className="text-[10px] text-[#212b36]">Chase Bank</span>
-              <span className="text-[10px] tracking-[0.1em] text-[#6b6f76]">
-                ••••
-              </span>
-              <span className="text-[10px] text-[#212b36]">3948</span>
-            </div>
+          <div className="flex items-center justify-center rounded-[5px] border border-dashed border-[#dfe1e4] bg-white px-3 py-4 text-[10px] text-[#6b6f76]">
+            No payment method on file yet.
           </div>
         </section>
 
-        {/* Subscriptions */}
+        {/* Subscriptions — empty state. Brand sprint is a one-time
+            engagement so far; ongoing retainers would appear here
+            once the client signs up for them. */}
         <section>
           <div className="mb-2 text-[11px] font-medium text-[#212b36]">
             Subscriptions
           </div>
-          <div className="overflow-hidden rounded-[4px]">
-            <div className="grid grid-cols-[90px_150px_1fr] gap-2 border-b border-[#eef0f2] px-2 py-1.5 text-[10px] text-[#6b6f76]">
-              <span>Price</span>
-              <span>Billing period</span>
-              <span>Status</span>
-            </div>
-            {[
-              { price: "$8,400", period: "Monthly", status: "Active", variant: "active" },
-              { price: "$14,500", period: "Yearly", status: "Cancelled", variant: "cancelled" },
-            ].map((row) => (
-              <div
-                key={row.price + row.period}
-                className="grid grid-cols-[90px_150px_1fr] items-center gap-2 border-b border-[#f4f5f7] px-2 py-1.5 text-[10px] text-[#212b36] last:border-b-0"
-              >
-                <span>{row.price}</span>
-                <span className="text-[#6b6f76]">{row.period}</span>
-                {/* Wrap chip so it keeps its content width instead of
-                    stretching to fill the grid cell. */}
-                <span>
-                  <StatusChip label={row.status} variant={row.variant} />
-                </span>
-              </div>
-            ))}
+          <div className="flex items-center justify-center rounded-[5px] border border-dashed border-[#dfe1e4] bg-white px-3 py-4 text-[10px] text-[#6b6f76]">
+            No active subscriptions.
           </div>
         </section>
 
-        {/* Invoices */}
+        {/* Invoices — exactly one open invoice (the first one from
+            the welcome message). Keeping the full table chrome so
+            the section still reads as a real billing surface, not a
+            bare empty state. */}
         <section>
           <div className="mb-2 text-[11px] font-medium text-[#212b36]">
             Invoices
@@ -584,9 +541,7 @@ function PaymentsPanel() {
               <span>Invoice number</span>
             </div>
             {[
-              { price: "$900", status: "Open", variant: "open", inv: "SUB-D8EF5DE9-0001" },
-              { price: "$1,400", status: "Paid", variant: "paid", inv: "D8EF5DE9-0001" },
-              { price: "$8,400", status: "Open", variant: "open", inv: "SUB-D8EF5DE9-0002" },
+              { price: "$900", status: "Open", variant: "open", inv: "INV-D8EF5DE9-0001" },
             ].map((row) => (
               <div
                 key={row.inv}
@@ -644,6 +599,183 @@ function HelpdeskPanel() {
   );
 }
 
+// ── Schedule Call panel (Calendly-style booking surface) ───────────────
+// Left rail carries the event metadata (host + title + duration +
+// conferencing blurb); right side is the Select-a-Date-&-Time block
+// with a month grid and a column of time slots. Rendered as the
+// narrative payoff at the end of the tour — the client just clicked
+// Other ▸ Schedule Call, and this is what they land on.
+function ScheduleCallPanel() {
+  // June 2026. Cells for week rows; blanks pad the leading empties so
+  // the 1st (Monday) lands in column 0. Monday-first week matches
+  // Calendly's default for the reference screenshot.
+  const weeks = [
+    [1, 2, 3, 4, 5, 6, 7],
+    [8, 9, 10, 11, 12, 13, 14],
+    [15, 16, 17, 18, 19, 20, 21],
+    [22, 23, 24, 25, 26, 27, 28],
+    [29, 30, null, null, null, null, null],
+  ];
+  // Only weekdays ≥ today (12th) are bookable; the 16th is picked.
+  const available = new Set([
+    12, 13, 15, 16, 17, 18, 19,
+    22, 23, 24, 25, 26, 29, 30,
+  ]);
+  const selected = 16;
+  const slots = ["9:00am", "9:30am", "10:00am", "10:30am", "11:30am"];
+  return (
+    <div className="flex h-full flex-col">
+      <PanelHeader title="Schedule a call" />
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        {/* Left rail — host, event title, meta rows. */}
+        <div className="flex w-[38%] flex-shrink-0 flex-col gap-2 border-r border-[#eef0f2] px-4 py-3">
+          <div className="text-[9px] font-medium uppercase tracking-[0.04em] text-[#6b6f76]">
+            BrandMages · Jennifer Rocha
+          </div>
+          <div className="text-[13px] font-semibold leading-[1.25] text-[#101010]">
+            Discovery call
+          </div>
+          <div className="mt-0.5 flex items-center gap-1.5 text-[10px] text-[#212b36]">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-[#6b6f76]"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            30 min
+          </div>
+          <div className="flex items-start gap-1.5 text-[10px] leading-[1.45] text-[#6b6f76]">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mt-[1px] flex-shrink-0"
+              aria-hidden="true"
+            >
+              <rect x="2" y="6" width="14" height="12" rx="2" />
+              <path d="m22 8-6 4 6 4V8Z" />
+            </svg>
+            <span>Web conferencing details provided upon confirmation.</span>
+          </div>
+        </div>
+
+        {/* Right side — date grid + time slot column. */}
+        <div className="flex min-w-0 flex-1 gap-3 px-4 py-3">
+          <div className="flex min-w-0 flex-1 flex-col">
+            <div className="mb-1.5 text-[11px] font-semibold text-[#101010]">
+              Select a Date &amp; Time
+            </div>
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-[10px] font-medium text-[#212b36]">
+                June 2026
+              </span>
+              <div className="flex items-center gap-0.5 text-[#6b6f76]">
+                <span className="rounded-[3px] px-1 text-[10px]">‹</span>
+                <span className="rounded-[3px] bg-[#eef2ff] px-1 text-[10px] text-[#2f6bff]">
+                  ›
+                </span>
+              </div>
+            </div>
+            {/* Day header */}
+            <div className="mb-0.5 grid grid-cols-7 text-center text-[8px] font-medium uppercase tracking-[0.04em] text-[#90959d]">
+              {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
+                <span key={i}>{d}</span>
+              ))}
+            </div>
+            {/* Calendar grid */}
+            <div className="flex flex-col gap-[2px]">
+              {weeks.map((row, rIdx) => (
+                <div key={rIdx} className="grid grid-cols-7 gap-[2px]">
+                  {row.map((day, cIdx) => {
+                    if (day === null) {
+                      return <span key={cIdx} />;
+                    }
+                    const isSel = day === selected;
+                    const isAvail = available.has(day);
+                    return (
+                      <span
+                        key={cIdx}
+                        className={clsx(
+                          "flex h-[18px] items-center justify-center rounded-full text-[9px]",
+                          isSel
+                            ? "bg-[#2f6bff] font-semibold text-white"
+                            : isAvail
+                              ? "bg-[#eef2ff] font-medium text-[#2f6bff]"
+                              : "text-[#c3c7cf]",
+                        )}
+                      >
+                        {day}
+                      </span>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            <div className="mt-2">
+              <div className="text-[9px] font-medium text-[#212b36]">
+                Time zone
+              </div>
+              <div className="mt-0.5 flex items-center gap-1 text-[9px] text-[#6b6f76]">
+                <svg
+                  width="9"
+                  height="9"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" />
+                </svg>
+                Eastern Time (3:01pm) ▾
+              </div>
+            </div>
+          </div>
+
+          {/* Time slots for the selected date. */}
+          <div className="flex w-[88px] flex-shrink-0 flex-col">
+            <div className="mb-1 text-[10px] font-medium text-[#101010]">
+              Fri, Jun 16
+            </div>
+            <div className="flex flex-col gap-[4px]">
+              {slots.map((s, i) => (
+                <div
+                  key={i}
+                  className={clsx(
+                    "flex h-[22px] items-center justify-center rounded-[4px] text-[10px] font-medium",
+                    i === 0
+                      ? "bg-[#2f6bff] text-white"
+                      : "border border-[#d3ddff] text-[#2f6bff]",
+                  )}
+                >
+                  {s}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Tasks sub-components ───────────────────────────────────────────────
 // Status dot — uses the supplied icon assets for todo / in-progress /
 // done. The SVGs are 24×24 with the glyph in the middle 16×16, so the
@@ -680,18 +812,24 @@ function TaskStatusDot({ status, size = 12 }) {
 // panels (11px titles, 10px meta) so the whole family reads as one
 // product.
 function TasksPanel() {
+  // Marketing-agency → client handoff checklist. BrandMages can't
+  // start the brand sprint without basic inputs from Ana's side, so
+  // these are the questions and asset uploads the agency routinely
+  // assigns a new client during onboarding. Subtasks all roll up
+  // sensibly under their parent (every child of "Share brand
+  // assets" is an actual asset the client can upload).
   const tasks = [
-    { title: "Share market research", due: "Apr 4" },
+    { title: "Complete brand questionnaire", due: "Apr 4" },
     {
-      title: "Share design files",
+      title: "Share existing brand assets",
       due: "Apr 4",
       subtasks: [
-        { label: "Attach the payment details to the project.", status: "todo" },
-        { label: "Export final design assets (Figma, PSD, etc.)", status: "todo" },
-        { label: "Check mobile vs. desktop versions", status: "inProgress" },
-        { label: "Double-check font and license compliance", status: "inProgress" },
-        { label: "Include any fonts or third-party assets used", status: "done" },
-        { label: "Confirm file access permissions for client", status: "done" },
+        { label: "Upload current logo files (SVG or AI)", status: "todo" },
+        { label: "Share existing brand guidelines PDF", status: "todo" },
+        { label: "Provide approved brand colors and fonts", status: "inProgress" },
+        { label: "Link product and lifestyle photography", status: "inProgress" },
+        { label: "Attach prior marketing collateral", status: "done" },
+        { label: "Share voice and tone examples", status: "done" },
       ],
     },
   ];
@@ -752,6 +890,7 @@ const PANELS = {
   payments: PaymentsPanel,
   tasks: TasksPanel,
   helpdesk: HelpdeskPanel,
+  schedule: ScheduleCallPanel,
 };
 
 function MainPanel({ visible, phaseId }) {
@@ -772,25 +911,31 @@ function MainPanel({ visible, phaseId }) {
   );
 }
 
-// Top-level sidebar rows. On-Boarding, Helpdesk and Schedule Call live
-// as children of the "Other" folder — see OTHER_CHILDREN. Matches the
-// client portal sidebar structure in Figma (BrandMages → Home →
-// Messages → Payments → Other ▾).
+// Top-level sidebar rows. Onboarding sits at the top level (directly
+// under Messages) because it's the narrative payoff — the whole tour
+// ends on it. Helpdesk and Schedule Call live as children of the
+// "Other" folder — see OTHER_CHILDREN. Matches the client portal
+// sidebar structure in Figma (BrandMages → Home → Messages →
+// Onboarding → Payments → Tasks → Other ▾).
+// Badge counts mirror the Your-actions card in HomePanel so the
+// sidebar indicators feel load-bearing — the viewer can trace each
+// count from the summary card back to the row it belongs to.
 const NAV = [
   { id: "home", label: "Home", iconSrc: "/Icons/clienthome.svg", iconSize: 13 },
-  { id: "messages", label: "Messages", iconSrc: "/Icons/messages.svg" },
-  { id: "payments", label: "Payments", iconSrc: "/Icons/payments.svg" },
+  { id: "messages", label: "Messages", iconSrc: "/Icons/messages.svg", badge: "4" },
+  { id: "onboarding", label: "Onboarding", iconSrc: "/Icons/on-boarding.svg" },
+  { id: "payments", label: "Payments", iconSrc: "/Icons/payments.svg", badge: "2" },
   // Tasks sits just above the Other folder. It doesn't have a phase
-  // in this tour (no TasksPanel), so the cursor never clicks it — it
-  // just rounds out the sidebar to match the rest of the product.
-  { id: "tasks", label: "Tasks", iconSrc: "/Icons/tasks.svg" },
+  // in this tour, but carries a badge so the Your-actions count on
+  // the Home panel has a matching indicator.
+  { id: "tasks", label: "Tasks", iconSrc: "/Icons/tasks.svg", badge: "7" },
 ];
 
-// Children revealed when the "Other" folder expands. Schedule Call is
-// present for completeness (it mirrors the first-value-prop visual) but
-// never goes active — there's no Schedule Call panel in this tour.
+// Children revealed when the "Other" folder expands. These rows are
+// present for completeness (they mirror the first-value-prop visual)
+// but never go active — there are no Helpdesk/Schedule Call panels in
+// this tour.
 const OTHER_CHILDREN = [
-  { id: "onboarding", label: "Onboarding", iconSrc: "/Icons/on-boarding.svg" },
   { id: "helpdesk", label: "Helpdesk", iconSrc: "/Icons/helpdesk.svg" },
   { id: "schedule", label: "Schedule Call", iconSrc: "/Icons/call.svg", iconSize: 13 },
 ];
@@ -813,10 +958,9 @@ function PortalSurface({ phaseIndex, active, paused }) {
   // "click beats" — move the cursor to a row, hover, press, commit.
   // The commit step is where the consequences of the click happen
   // (folder opens, or main canvas panel swaps), so the content always
-  // lags the cursor by the hover → press beat. Onboarding is a
-  // two-step: first click Other to open the folder, then click
-  // Onboarding inside. Helpdesk reuses the single-step flow (folder
-  // is already open from the previous phase).
+  // lags the cursor by the hover → press beat. Schedule Call is a
+  // two-step: first click "Other" to open the folder, then click
+  // "Schedule Call" inside.
   useEffect(() => {
     if (!active) {
       setCursorVisible(false);
@@ -841,15 +985,15 @@ function PortalSurface({ phaseIndex, active, paused }) {
     const TAIL_MS = 260;
 
     const steps =
-      phaseId === "onboarding"
+      phaseId === "schedule"
         ? [
             {
               target: "other",
               commit: () => setOtherOpen(true),
             },
             {
-              target: "onboarding",
-              commit: () => setDisplayId("onboarding"),
+              target: "schedule",
+              commit: () => setDisplayId("schedule"),
             },
           ]
         : [
@@ -991,6 +1135,7 @@ function PortalSurface({ phaseIndex, active, paused }) {
               iconSize={item.iconSize}
               active={item.id === displayId}
               background={rowBg(item.id)}
+              badge={item.badge}
             />
           ))}
 

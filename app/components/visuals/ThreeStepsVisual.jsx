@@ -364,10 +364,12 @@ function ThinkingPhase({ active, paused }) {
 // ── Phase 2: Result — Client sidebar with new On-Boarding draft ─────
 //
 // Client-side view: lime-branded sidebar with Client Home / Messages /
-// Payments / Other folder. The freshly-generated On-Boarding app lands
-// inside "Other" (highlighted as Draft), alongside Helpdesk and
-// Schedule Call. Main-canvas content is unchanged — the narrative
-// moment is still "your new app just appeared in the sidebar".
+// On-Boarding (freshly-generated, highlighted) / Payments / Tasks /
+// Other folder (Helpdesk and Schedule Call live inside). Onboarding is
+// a top-level row because it's the narrative payoff — burying it under
+// "Other" would hide what just got built. Main-canvas content is
+// unchanged — the moment is still "your new app just appeared in the
+// sidebar".
 
 // Client-side sidebar palette — matches ClientPortalVisual so both
 // animations share the same lime chrome.
@@ -376,36 +378,28 @@ const SIDEBAR_ACTIVE_BG = "#f1f9d8";
 
 // Client nav — Other is a folder; its children render indented.
 // `iconSize` normalises visual weight across SVGs with different
-// viewBoxes: clienthome.svg and call.svg are 16×16 (glyph fills the
-// whole box) while the rest are 20×20 (glyph sits inside ~2px padding).
-// Rendering them all at the same pixel size would make the 16-box ones
-// look ~25% larger, so those get a slightly smaller render size.
+// viewBoxes: clienthome.svg is 16×16 (glyph fills the whole box) while
+// the rest are 20×20 (glyph sits inside ~2px padding). Rendering them
+// all at the same pixel size would make the 16-box one look ~25%
+// larger, so it gets a slightly smaller render size.
+//
+// The "Other" folder stays collapsed here — its children (Helpdesk,
+// Schedule Call) aren't part of the Result-phase narrative, which is
+// just "your freshly-generated Onboarding app appeared in the
+// sidebar". Showing the folder's contents would pull attention away
+// from that highlight.
 const STUDIO_NAV = [
   { id: "home", label: "Home", icon: "/Icons/clienthome.svg", iconSize: 13 },
   { id: "messages", label: "Messages", icon: "/Icons/messages.svg" },
-  { id: "payments", label: "Payments", icon: "/Icons/payments.svg" },
-  { id: "tasks", label: "Tasks", icon: "/Icons/tasks.svg" },
-  { id: "other", label: "Other", icon: "/Icons/other.svg" },
   {
     id: "onboarding",
     label: "Onboarding",
     icon: "/Icons/on-boarding.svg",
     active: true,
-    indented: true,
   },
-  {
-    id: "helpdesk",
-    label: "Helpdesk",
-    icon: "/Icons/helpdesk.svg",
-    indented: true,
-  },
-  {
-    id: "schedule",
-    label: "Schedule Call",
-    icon: "/Icons/call.svg",
-    iconSize: 13,
-    indented: true,
-  },
+  { id: "payments", label: "Payments", icon: "/Icons/payments.svg" },
+  { id: "tasks", label: "Tasks", icon: "/Icons/tasks.svg" },
+  { id: "other", label: "Other", icon: "/Icons/other.svg" },
 ];
 
 const WIZARD_FIELDS = [
