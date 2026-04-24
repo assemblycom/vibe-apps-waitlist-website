@@ -3,9 +3,27 @@
 import { SITE } from "../config/site";
 
 export function Footer() {
+  // Native `behavior: "smooth"` is distance-proportional and caps around
+  // ~500ms, so on a long page it flies to the top in a blink. A fixed
+  // 800ms RAF tween with easeInOutCubic matches the typical marketing-
+  // site cadence — the motion reads as intentional no matter how far
+  // down the user is.
   const scrollToTop = () => {
     if (typeof window === "undefined") return;
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const start = window.scrollY;
+    if (start === 0) return;
+    const duration = 800;
+    const startTime = performance.now();
+    // easeInOutCubic — gentle acceleration, gentle settle.
+    const ease = (t) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    const step = (now) => {
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / duration);
+      window.scrollTo(0, start * (1 - ease(t)));
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   };
 
   return (

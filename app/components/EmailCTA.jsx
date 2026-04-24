@@ -88,7 +88,7 @@ export function EmailCTA() {
             className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#D9ED92] p-2.5 text-[13px] font-medium text-[#101010] transition-colors duration-200 hover:bg-[#C7DA86] sm:whitespace-nowrap sm:px-4 sm:py-2"
           >
             <span className="hidden sm:inline">Request early access</span>
-            <span aria-hidden="true" className="text-[16px] leading-none">→</span>
+            <span aria-hidden="true" className="text-[14px] leading-none">→</span>
           </button>
         </form>
         {error && (

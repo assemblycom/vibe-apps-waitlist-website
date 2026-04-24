@@ -52,7 +52,7 @@ function FaqItem({ q, a }) {
         )}
       >
         <div className="overflow-hidden">
-          <p className="px-6 pb-5 pr-12 text-[14px] leading-[1.6] text-white/55">
+          <p className="px-6 pb-5 pr-12 text-[1rem] leading-[1.6] text-white/55">
             {a}
           </p>
         </div>
