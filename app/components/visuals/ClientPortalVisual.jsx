@@ -1141,7 +1141,7 @@ function PortalSurface({ phaseIndex, active, paused }) {
             Width/gap/padding match ThreeStepsVisual's Studio sidebar so
             both animations share the same chassis. */}
         <div
-          className="relative flex w-[120px] flex-shrink-0 flex-col gap-[6px] px-2 pt-2.5 sm:w-[200px]"
+          className="relative flex w-[160px] flex-shrink-0 flex-col gap-[6px] px-2 pt-2.5 sm:w-[200px]"
           style={{ backgroundColor: SIDEBAR_BG }}
         >
           {/* Click-through cursor — glides between sidebar rows and

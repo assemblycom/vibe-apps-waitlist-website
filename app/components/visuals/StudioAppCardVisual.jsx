@@ -860,7 +860,7 @@ function StudioSurface({ phaseIndex, cursorPhase }) {
       <div className="relative flex h-full">
         {/* Studio sidebar */}
         <div
-          className="flex w-[120px] flex-shrink-0 flex-col gap-[6px] border-r border-[#dfe1e4] px-2 pt-2.5 sm:w-[200px]"
+          className="flex w-[160px] flex-shrink-0 flex-col gap-[6px] border-r border-[#dfe1e4] px-2 pt-2.5 sm:w-[200px]"
           style={{ backgroundColor: SIDEBAR_BG }}
         >
           {/* Brand row */}
