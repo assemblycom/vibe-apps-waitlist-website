@@ -1,4 +1,5 @@
 import { EmailCTA } from "./EmailCTA";
+import { HeroAssembly } from "./HeroAssembly";
 import { LogoStrip } from "./LogoStrip";
 
 export function Hero({
@@ -36,6 +37,13 @@ export function Hero({
         </p>
         <EmailCTA />
       </div>
+
+      {/* Establishing visual — a live "describe → included" composition
+          that performs the product story: the left panel types a short
+          client brief, the right panel's module list checks itself in
+          as the typing progresses. Sits below the CTA and above the
+          bottom-pinned logo strip, filling the hero's mid-band. */}
+      <HeroAssembly />
 
       {/* Alpha-user credential strip — absorbed into the hero from its
           former standalone section so the social proof lands in the
