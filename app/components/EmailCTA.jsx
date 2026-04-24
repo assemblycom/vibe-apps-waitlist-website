@@ -84,23 +84,11 @@ export function EmailCTA() {
           />
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#D9ED92] px-4 py-2 text-[13px] font-medium text-[#101010] transition-colors duration-200 hover:bg-[#C7DA86]"
+            aria-label="Request early access"
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#D9ED92] p-2.5 text-[13px] font-medium text-[#101010] transition-colors duration-200 hover:bg-[#C7DA86] sm:whitespace-nowrap sm:px-4 sm:py-2"
           >
-            Request early access
-            <svg
-              aria-hidden="true"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M5 12h14" />
-              <path d="M13 5l7 7-7 7" />
-            </svg>
+            <span className="hidden sm:inline">Request early access</span>
+            <span aria-hidden="true" className="text-[16px] leading-none">→</span>
           </button>
         </form>
         {error && (

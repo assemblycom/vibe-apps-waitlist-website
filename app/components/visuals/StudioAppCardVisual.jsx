@@ -88,7 +88,7 @@ function SidebarItem({ label, iconSrc, iconNode, iconSize = 16, active, muted })
 
 function PanelHeader({ title, trailing }) {
   return (
-    <div className="flex h-[36px] items-center border-b border-[#eef0f2] px-4">
+    <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-4">
       <span className="truncate text-[11px] font-medium text-[#212b36]">
         {title}
       </span>
@@ -860,7 +860,7 @@ function StudioSurface({ phaseIndex, cursorPhase }) {
       <div className="relative flex h-full">
         {/* Studio sidebar */}
         <div
-          className="flex w-[200px] flex-shrink-0 flex-col gap-[6px] border-r border-[#dfe1e4] px-2 pt-2.5"
+          className="flex w-[120px] flex-shrink-0 flex-col gap-[6px] border-r border-[#dfe1e4] px-2 pt-2.5 sm:w-[200px]"
           style={{ backgroundColor: SIDEBAR_BG }}
         >
           {/* Brand row */}
@@ -977,7 +977,7 @@ export function StudioAppCardVisual() {
   return (
     <div
       ref={ref}
-      className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[28px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)]"
+      className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[16px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:rounded-[28px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <StudioSurface phaseIndex={phase} cursorPhase={cursorPhase} />

@@ -148,7 +148,7 @@ function SidebarItem({
 // already establishes context, so the top bar stays quiet.
 function PanelHeader({ title, trailing }) {
   return (
-    <div className="flex h-[36px] items-center border-b border-[#eef0f2] px-4">
+    <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-4">
       <span className="truncate text-[11px] font-medium text-[#212b36]">
         {title}
       </span>
@@ -400,7 +400,7 @@ function MessagesPanel() {
     <div className="relative flex h-full flex-col">
       <PanelHeader title="Messages" />
 
-      <div className="pt-2">
+      <div className="overflow-hidden pt-2">
         <DateChip label="Today" />
 
         <MessageRow
@@ -1141,7 +1141,7 @@ function PortalSurface({ phaseIndex, active, paused }) {
             Width/gap/padding match ThreeStepsVisual's Studio sidebar so
             both animations share the same chassis. */}
         <div
-          className="relative flex w-[200px] flex-shrink-0 flex-col gap-[6px] px-2 pt-2.5"
+          className="relative flex w-[120px] flex-shrink-0 flex-col gap-[6px] px-2 pt-2.5 sm:w-[200px]"
           style={{ backgroundColor: SIDEBAR_BG }}
         >
           {/* Click-through cursor — glides between sidebar rows and
@@ -1365,7 +1365,7 @@ export function ClientPortalVisual() {
   return (
     <div
       ref={ref}
-      className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[28px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)]"
+      className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[16px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:rounded-[28px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <PortalSurface phaseIndex={phase} active={inView} paused={paused} />

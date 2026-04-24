@@ -497,7 +497,7 @@ function ResultPhase({ active, paused }) {
         </div>
         {/* Main canvas skeleton — one header block + two content blocks. */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex h-[36px] items-center border-b border-[#eef0f2] px-4">
+          <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-4">
             <div className="studio-shimmer h-2.5 w-16 rounded-[4px]" />
           </div>
           <div className="flex-1 space-y-3 px-6 py-6">
@@ -603,7 +603,7 @@ function ResultPhase({ active, paused }) {
         {/* Main canvas — onboarding wizard view. */}
         <div className="flex min-w-0 flex-1 flex-col bg-white">
           {/* Page header strip */}
-          <div className="flex h-[36px] items-center border-b border-[#eef0f2] px-4">
+          <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-4">
             <span
               className="text-[11px] font-medium text-[#212b36] transition-opacity duration-[400ms]"
               style={{ opacity: wizardHeader ? 1 : 0 }}
@@ -708,7 +708,7 @@ export function ThreeStepsVisual() {
   return (
     <div
       ref={ref}
-      className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[28px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)]"
+      className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[16px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:rounded-[28px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       {/* Input + Thinking share a centered slot; the Result phase
