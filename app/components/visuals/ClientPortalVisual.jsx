@@ -194,8 +194,8 @@ function HomePanel() {
   // indicator links back to.
   const actions = [
     { label: "Messages", count: "4", iconSrc: "/Icons/messages.svg" },
-    { label: "Billing", count: "2", iconSrc: "/Icons/payments.svg" },
-    { label: "Tasks", count: "7", iconNode: <TaskIcon /> },
+    { label: "Payments", count: "2", iconSrc: "/Icons/payments.svg" },
+    { label: "Tasks", count: "7", iconSrc: "/Icons/tasks.svg" },
   ];
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -355,6 +355,40 @@ function MessageRow({ initials, avatarBg, avatarFg, name, time, children }) {
   );
 }
 
+// Toolbar glyph helper — uses the uploaded SVG assets so the composer
+// matches the rest of the product's icon library (no inline
+// approximations). Sizes mirror the assets' native geometry scaled
+// into a uniform 11px box so the toolbar row reads tight and even.
+// Note: the shipped asset filenames don't match their visual
+// contents — `UnorderedList.svg` actually draws an Underline (U with
+// a stroke), `Underline.svg` draws a numbered list (1/2 with lines),
+// and the top-level `Icon (approved).svg` is the bullet list. The
+// mapping below is by what each file *renders*, not by filename.
+const COMPOSER_ICONS = {
+  bold: { src: "/Icons/Vector.svg", w: 11, h: 11 },
+  italic: { src: "/Icons/italic.svg", w: 11, h: 11 },
+  underline: { src: "/Icons/Icon (approved)/UnorderedList.svg", w: 11, h: 11 },
+  bullet: { src: "/Icons/Icon (approved).svg", w: 11, h: 11 },
+  number: { src: "/Icons/Icon (approved)/Underline.svg", w: 11, h: 11 },
+  link: { src: "/Icons/Icon (approved)/Link.svg", w: 10, h: 11 },
+  clip: { src: "/Icons/paperclip.svg", w: 12, h: 12 },
+  magic: { src: "/Icons/Primary.svg", w: 11, h: 11 },
+};
+function ComposerIcon({ kind }) {
+  const spec = COMPOSER_ICONS[kind];
+  if (!spec) return null;
+  return (
+    <img
+      src={spec.src}
+      alt=""
+      aria-hidden="true"
+      width={spec.w}
+      height={spec.h}
+      className="flex-shrink-0"
+    />
+  );
+}
+
 function MessagesPanel() {
   // Kickoff thread between the client (Ana — matches the HomePanel
   // "Good morning, Ana" greeting) and her account lead at BrandMages
@@ -362,12 +396,20 @@ function MessagesPanel() {
   // the same person carries across the tour). One welcome note
   // covering the three pending actions the client's portal surfaces
   // (onboarding, first invoice, the task assigned to them), and a
-  // short "sounds good" reply.
+  // short "sounds good" reply. A quiet composer sits below the thread
+  // so the panel fills its height and reads as a real messaging
+  // surface, not a truncated log.
+  // Composer is absolutely positioned near the bottom of the visible
+  // area. The inner portal surface extends ~30% below the outer
+  // card's clip, so a simple flex-bottom composer would fall entirely
+  // into the clipped region. Instead we pin the composer with a
+  // bottom offset that lands it at (or just past) the card's visible
+  // edge — a slight clip is intentional per the reference screenshot.
   return (
-    <div className="flex h-full flex-col">
+    <div className="relative flex h-full flex-col">
       <PanelHeader title="Messages" />
 
-      <div className="flex-1 overflow-hidden pt-2">
+      <div className="pt-2">
         <DateChip label="Today" />
 
         <MessageRow
@@ -395,6 +437,55 @@ function MessagesPanel() {
         >
           <p>Sounds good, thanks!</p>
         </MessageRow>
+      </div>
+
+      {/* Composer — absolutely anchored near the visible bottom. A
+          small amount of bottom clipping is desired so the composer
+          feels like it runs off the screen edge (matches the
+          reference screenshot). */}
+      <div className="absolute inset-x-4 bottom-[33%] overflow-hidden rounded-[6px] border border-[#e5e7eb] bg-white">
+        {/* Toolbar — lists (text formatting) first, then B/I/U styling. */}
+        <div className="flex items-center gap-2 border-b border-[#eef0f2] bg-[#f8f9fb] px-2 py-1.5 text-[#6b6f76]">
+          <ComposerIcon kind="bullet" />
+          <ComposerIcon kind="number" />
+          <span className="mx-0.5 h-3 w-px bg-[#e5e7eb]" />
+          <ComposerIcon kind="bold" />
+          <ComposerIcon kind="italic" />
+          <ComposerIcon kind="underline" />
+          <span className="mx-0.5 h-3 w-px bg-[#e5e7eb]" />
+          <ComposerIcon kind="link" />
+          <span className="mx-0.5 h-3 w-px bg-[#e5e7eb]" />
+          <div className="flex items-center gap-1 text-[#212b36]">
+            <ComposerIcon kind="magic" />
+            <span className="text-[10px]">Suggest reply</span>
+          </div>
+        </div>
+
+        {/* Body — blank space so the composer reads as an empty
+            ready-to-type field. */}
+        <div className="h-[44px]" />
+
+        {/* Footer: attach on the left, send on the right. */}
+        <div className="flex items-center justify-between px-2 py-1.5 text-[#6b6f76]">
+          <span className="opacity-55">
+            <ComposerIcon kind="clip" />
+          </span>
+          <button
+            type="button"
+            aria-label="Send"
+            className="flex h-[20px] w-[20px] items-center justify-center rounded-[4px] bg-[#101010] text-white"
+          >
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="m3 2.5 10 5.5-10 5.5V9l6-1-6-1V2.5Z" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -628,78 +719,66 @@ function ScheduleCallPanel() {
       <PanelHeader title="Schedule a call" />
       <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* Left rail — host, event title, meta rows. */}
-        <div className="flex w-[38%] flex-shrink-0 flex-col gap-2 border-r border-[#eef0f2] px-4 py-3">
-          <div className="text-[9px] font-medium uppercase tracking-[0.04em] text-[#6b6f76]">
+        <div className="flex w-[38%] flex-shrink-0 flex-col gap-2 border-r border-[#eef0f2] px-5 py-4">
+          <div className="text-[10px] font-medium tracking-[0.01em] text-[#6b6f76]">
             BrandMages · Jennifer Rocha
           </div>
-          <div className="text-[13px] font-semibold leading-[1.25] text-[#101010]">
+          <div className="text-[14px] font-semibold leading-[1.25] text-[#101010]">
             Discovery call
           </div>
-          <div className="mt-0.5 flex items-center gap-1.5 text-[10px] text-[#212b36]">
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-[#6b6f76]"
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[#212b36]">
+            <img
+              src="/Icons/clock-three.svg"
+              alt=""
               aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 6v6l4 2" />
-            </svg>
+              width={12}
+              height={12}
+              className="flex-shrink-0"
+            />
             30 min
           </div>
-          <div className="flex items-start gap-1.5 text-[10px] leading-[1.45] text-[#6b6f76]">
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mt-[1px] flex-shrink-0"
+          <div className="flex items-start gap-1.5 text-[11px] leading-[1.45] text-[#6b6f76]">
+            <img
+              src="/Icons/video.svg"
+              alt=""
               aria-hidden="true"
-            >
-              <rect x="2" y="6" width="14" height="12" rx="2" />
-              <path d="m22 8-6 4 6 4V8Z" />
-            </svg>
+              width={13}
+              height={12}
+              className="mt-[2px] flex-shrink-0"
+            />
             <span>Web conferencing details provided upon confirmation.</span>
           </div>
         </div>
 
         {/* Right side — date grid + time slot column. */}
-        <div className="flex min-w-0 flex-1 gap-3 px-4 py-3">
+        <div className="flex min-w-0 flex-1 gap-4 px-5 py-4">
           <div className="flex min-w-0 flex-1 flex-col">
-            <div className="mb-1.5 text-[11px] font-semibold text-[#101010]">
+            <div className="mb-2 text-[12px] font-semibold text-[#101010]">
               Select a Date &amp; Time
             </div>
-            <div className="mb-1 flex items-center justify-between">
-              <span className="text-[10px] font-medium text-[#212b36]">
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="text-[11px] font-medium text-[#212b36]">
                 June 2026
               </span>
-              <div className="flex items-center gap-0.5 text-[#6b6f76]">
-                <span className="rounded-[3px] px-1 text-[10px]">‹</span>
-                <span className="rounded-[3px] bg-[#eef2ff] px-1 text-[10px] text-[#2f6bff]">
+              <div className="flex items-center gap-1 text-[#6b6f76]">
+                <span className="rounded-[3px] px-1 text-[11px]">‹</span>
+                <span className="rounded-[3px] bg-[#eef2ff] px-1 text-[11px] text-[#2f6bff]">
                   ›
                 </span>
               </div>
             </div>
             {/* Day header */}
-            <div className="mb-0.5 grid grid-cols-7 text-center text-[8px] font-medium uppercase tracking-[0.04em] text-[#90959d]">
+            <div className="mb-1 grid grid-cols-7 text-center text-[9px] font-medium uppercase tracking-[0.04em] text-[#90959d]">
               {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
                 <span key={i}>{d}</span>
               ))}
             </div>
-            {/* Calendar grid */}
-            <div className="flex flex-col gap-[2px]">
+            {/* Calendar grid — each cell centers a fixed-size circle so
+                available/selected dates read as circles (not pills)
+                regardless of column width. */}
+            <div className="flex flex-col gap-[4px]">
               {weeks.map((row, rIdx) => (
-                <div key={rIdx} className="grid grid-cols-7 gap-[2px]">
+                <div key={rIdx} className="grid grid-cols-7 gap-[4px]">
                   {row.map((day, cIdx) => {
                     if (day === null) {
                       return <span key={cIdx} />;
@@ -709,57 +788,55 @@ function ScheduleCallPanel() {
                     return (
                       <span
                         key={cIdx}
-                        className={clsx(
-                          "flex h-[18px] items-center justify-center rounded-full text-[9px]",
-                          isSel
-                            ? "bg-[#2f6bff] font-semibold text-white"
-                            : isAvail
-                              ? "bg-[#eef2ff] font-medium text-[#2f6bff]"
-                              : "text-[#c3c7cf]",
-                        )}
+                        className="flex h-[26px] items-center justify-center"
                       >
-                        {day}
+                        <span
+                          className={clsx(
+                            "flex h-[22px] w-[22px] items-center justify-center rounded-full text-[10px]",
+                            isSel
+                              ? "bg-[#2f6bff] font-semibold text-white"
+                              : isAvail
+                                ? "bg-[#eef2ff] font-medium text-[#2f6bff]"
+                                : "text-[#c3c7cf]",
+                          )}
+                        >
+                          {day}
+                        </span>
                       </span>
                     );
                   })}
                 </div>
               ))}
             </div>
-            <div className="mt-2">
-              <div className="text-[9px] font-medium text-[#212b36]">
+            <div className="mt-3">
+              <div className="text-[10px] font-medium text-[#212b36]">
                 Time zone
               </div>
-              <div className="mt-0.5 flex items-center gap-1 text-[9px] text-[#6b6f76]">
-                <svg
-                  width="9"
-                  height="9"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              <div className="mt-1 flex items-center gap-1.5 text-[10px] text-[#6b6f76]">
+                <img
+                  src="/Icons/globe.svg"
+                  alt=""
                   aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" />
-                </svg>
+                  width={11}
+                  height={11}
+                  className="flex-shrink-0"
+                />
                 Eastern Time (3:01pm) ▾
               </div>
             </div>
           </div>
 
           {/* Time slots for the selected date. */}
-          <div className="flex w-[88px] flex-shrink-0 flex-col">
-            <div className="mb-1 text-[10px] font-medium text-[#101010]">
+          <div className="flex w-[96px] flex-shrink-0 flex-col">
+            <div className="mb-1.5 text-[11px] font-medium text-[#101010]">
               Fri, Jun 16
             </div>
-            <div className="flex flex-col gap-[4px]">
+            <div className="flex flex-col gap-[5px]">
               {slots.map((s, i) => (
                 <div
                   key={i}
                   className={clsx(
-                    "flex h-[22px] items-center justify-center rounded-[4px] text-[10px] font-medium",
+                    "flex h-[26px] items-center justify-center rounded-[4px] text-[11px] font-medium",
                     i === 0
                       ? "bg-[#2f6bff] text-white"
                       : "border border-[#d3ddff] text-[#2f6bff]",
