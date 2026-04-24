@@ -21,17 +21,18 @@ const STORAGE_KEY = "assembly-waitlist-progress-v1";
 // survey are local-only state. Nothing persists across closes — `open` toggling
 // resets everything.
 
+// Brand check — inlined from public/Icons/checkmark.svg. Filled path
+// (not a thin stroke), so it reads bold at small sizes and respects
+// the color of its parent via currentColor.
 function CheckIcon({ className }) {
   return (
-    <svg viewBox="0 0 16 16" className={className} aria-hidden="true">
-      <path
-        d="M4 8.5l2.5 2.5L12 5.5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg
+      viewBox="0 0 11 10"
+      className={className}
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M10.2668 0.105509C10.5199 0.285978 10.5762 0.63754 10.3957 0.890666L4.2082 9.51567C4.11211 9.64926 3.96211 9.73598 3.79805 9.7477C3.63398 9.75942 3.46992 9.70317 3.35273 9.58598L0.165234 6.39848C-0.0550781 6.17817 -0.0550781 5.82192 0.165234 5.60395C0.385547 5.38598 0.741797 5.38363 0.959766 5.60395L3.68086 8.32035L9.48164 0.234416C9.66211 -0.0187095 10.0137 -0.0749595 10.2668 0.105509Z" />
     </svg>
   );
 }
@@ -141,10 +142,10 @@ function SurveySelect({ value, placeholder, options, onChange, ariaLabel }) {
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={ariaLabel}
-        className={`flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-2.5 text-left text-[13px] outline-none transition-colors ${
+        className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-[13px] outline-none transition-colors ${
           open
-            ? "border-white/20 bg-white/[0.07]"
-            : "border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.06]"
+            ? "bg-white/[0.08]"
+            : "bg-white/[0.04] hover:bg-white/[0.06]"
         } ${value ? "text-white" : "text-white/40"}`}
       >
         <span className="truncate">{value || placeholder}</span>
@@ -157,7 +158,7 @@ function SurveySelect({ value, placeholder, options, onChange, ariaLabel }) {
         <div
           role="listbox"
           data-lenis-prevent
-          className="absolute left-0 right-0 top-full z-20 mt-1.5 max-h-[240px] overflow-y-auto overscroll-contain rounded-lg border border-white/[0.08] bg-[#1C1C1C] py-1 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.6)] animate-fade-in"
+          className="absolute left-0 right-0 top-full z-20 mt-1.5 max-h-[240px] overflow-y-auto overscroll-contain rounded-lg bg-[#1C1C1C] py-1 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.04)] animate-fade-in"
         >
           {options.map((opt) => {
             const selected = opt === value;
@@ -190,14 +191,25 @@ function SurveySelect({ value, placeholder, options, onChange, ariaLabel }) {
 
 // Clickable step row with expand/collapse header and a content panel.
 // Every row carries a leading status dot so alignment stays consistent:
-// filled + check when done, empty outline while pending. Reward chip
-// (right) previews the perk each step unlocks.
-function StepRow({ title, subtitle, reward, done, open, onToggle, children }) {
+// filled + check when done, empty outline while pending.
+//
+// Layout borrows the "label / value" pattern from the membership-card
+// reference — left column holds the action (title + effort hint), right
+// column holds the reward as brand-lime accent text, mirroring the
+// "Cost: Priceless" treatment. No dot, no pill, no "Unlocks" verb: the
+// color alone signals "this is the prize." On completion the whole row
+// dims and the subtitle flips to the celebratory `completedLabel`
+// ("Earlier access — locked in").
+function StepRow({ id, title, effort, reward, premium, subtitle, done, open, onToggle, children }) {
   const headerClickable = !done && Boolean(onToggle);
+
   return (
     <div
-      className={`rounded-xl px-3 py-3.5 transition-colors ${
-        headerClickable ? "hover:bg-white/[0.03]" : ""
+      data-step-id={id}
+      className={`rounded-xl bg-white/[0.02] px-3.5 pt-3.5 transition-colors ${
+        open && !done ? "pb-5" : "pb-3.5"
+      } ${headerClickable ? "hover:bg-white/[0.05]" : ""} ${
+        done ? "opacity-85" : ""
       }`}
     >
       <button
@@ -205,20 +217,20 @@ function StepRow({ title, subtitle, reward, done, open, onToggle, children }) {
         onClick={() => headerClickable && onToggle()}
         aria-expanded={open}
         disabled={!headerClickable}
-        className="flex w-full items-start justify-between gap-3 text-left transition-opacity disabled:cursor-default disabled:opacity-100"
+        className="flex w-full items-center justify-between gap-3 text-left transition-opacity disabled:cursor-default disabled:opacity-100"
       >
         <div className="flex min-w-0 items-start gap-3">
           {/* Leading status dot — always rendered so every row's title
               aligns to the same column. */}
           <span
             aria-hidden="true"
-            className={`mt-0.5 inline-flex h-5 w-5 flex-none items-center justify-center rounded-full transition-colors ${
+            className={`mt-0.5 inline-flex h-5 w-5 flex-none items-center justify-center rounded-[6px] transition-colors ${
               done
-                ? "bg-white/85 text-[#141414]"
-                : "border border-white/20 bg-transparent text-transparent"
+                ? "bg-white/90 text-[#141414]"
+                : "border-[1.5px] border-white/25 bg-transparent text-transparent"
             }`}
           >
-            <CheckIcon className="h-3 w-3" />
+            <CheckIcon className="h-2.5 w-2.5" />
           </span>
           <div className="min-w-0">
             <div
@@ -228,28 +240,45 @@ function StepRow({ title, subtitle, reward, done, open, onToggle, children }) {
             >
               {title}
             </div>
-            <p className="mt-1 text-[13.5px] leading-[1.5] text-white/50">
-              {subtitle}
-            </p>
+            {done ? (
+              /* Completed: celebratory copy absorbs the full subtitle
+                 line. No right-column reward — the prize is already in
+                 the subtitle text ("Earlier access — locked in"). */
+              <p className="mt-1 text-[13.5px] leading-[1.5] text-white/55">
+                {subtitle}
+              </p>
+            ) : (
+              effort && (
+                <p className="mt-1 text-[13.5px] leading-[1.5] text-white/45">
+                  {effort}
+                </p>
+              )
+            )}
           </div>
         </div>
-        <div className="flex flex-none items-center gap-2">
+        <div className="flex flex-none items-center gap-2.5">
           {reward && !done && (
-            <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[12px] font-medium leading-none tracking-[-0.005em] text-white/70">
-              {reward}
-            </span>
-          )}
-          {!done && (
-            <ChevronIcon
-              className="h-4 w-4 text-white/40"
-              open={open}
-            />
+            premium ? (
+              /* Premium tier — same soft gray base as sibling pills,
+                 but a neutral white highlight sweeps diagonally across
+                 on a slow loop. Distinguished through motion only, so
+                 the row of three stays quiet. */
+              <span className="reward-shimmer inline-flex items-center rounded-full bg-white/[0.08] px-3 py-[5px] text-[12px] font-medium tracking-[-0.005em] text-white/85">
+                <span className="relative z-10">{reward}</span>
+              </span>
+            ) : (
+              /* Standard soft-gray pill — fits within the row's
+                 light-fill language instead of punching out as black. */
+              <span className="inline-flex items-center rounded-full bg-white/[0.08] px-3 py-[5px] text-[12px] font-medium tracking-[-0.005em] text-white/85">
+                {reward}
+              </span>
+            )
           )}
         </div>
       </button>
 
       {open && !done && (
-        <div className="ml-8 mt-4 animate-fade-in">{children}</div>
+        <div className="ml-8 mt-5 animate-fade-in">{children}</div>
       )}
     </div>
   );
@@ -347,6 +376,26 @@ export function WaitlistModal({ open, onClose, content }) {
       window.removeEventListener("keydown", onKey);
     };
   }, [open, onClose]);
+
+  // Close the currently-open step when the user clicks anywhere outside
+  // of it (another row, the progress meter, the footer buttons, etc.).
+  // Escape-to-close is handled by the modal's Escape listener above;
+  // backdrop clicks close the whole modal, so this only needs to care
+  // about clicks landing inside the modal card.
+  useEffect(() => {
+    if (!open || !openStep) return;
+    const handlePointerDown = (e) => {
+      const activeRow = document.querySelector(
+        `[data-step-id="${openStep}"]`,
+      );
+      if (activeRow && !activeRow.contains(e.target)) {
+        setOpenStep(null);
+      }
+    };
+    document.addEventListener("mousedown", handlePointerDown);
+    return () =>
+      document.removeEventListener("mousedown", handlePointerDown);
+  }, [open, openStep]);
 
   // Portal target. Modal must escape hero ancestor transforms/opacity.
   const [portalTarget, setPortalTarget] = useState(null);
@@ -446,11 +495,17 @@ export function WaitlistModal({ open, onClose, content }) {
                 Uses the site's display type scale (smaller than a page H1
                 but the same leading/tracking ratios). */}
             <div className="mb-7 animate-fade-in">
+              {/* Ambient-glow wrapper — soft radial bloom behind the check
+                  gives the icon some dimension so it doesn't read as a flat
+                  button pasted on a flat surface. */}
               <span
                 aria-hidden="true"
-                className="mb-4 inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.1] text-white/80"
+                className="relative mb-4 inline-flex h-7 w-7 items-center justify-center"
               >
-                <CheckIcon className="h-3.5 w-3.5" />
+                <span className="absolute inset-[-8px] rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.18),rgba(255,255,255,0)_75%)]" />
+                <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-white/[0.08] text-white/75">
+                  <CheckIcon className="h-3 w-3" />
+                </span>
               </span>
               <h2
                 id="waitlist-modal-heading"
@@ -463,12 +518,16 @@ export function WaitlistModal({ open, onClose, content }) {
               </p>
             </div>
 
-            {/* Progress meter — single bar spanning all 4 steps. Email is
-                auto-complete, so it starts at 1/4. */}
+            {/* Progress meter — prismatic gradient fill (Dynamic-Island
+                reference). The fill shimmers continuously so the bar feels
+                alive, and brightness-pulses on every new completion via a
+                key= prop that remounts the element. */}
             <div className="mb-5 flex items-center gap-4">
-              <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.08]">
+              <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-white/[0.06]">
                 <div
-                  className="h-full rounded-full bg-white/85 transition-[width] duration-500 ease-out"
+                  key={stepsDone}
+                  data-pulse="true"
+                  className="progress-prism-fill h-full rounded-full transition-[width] duration-500 ease-out"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
@@ -478,8 +537,9 @@ export function WaitlistModal({ open, onClose, content }) {
             </div>
 
             {/* Expandable step rows — email first (pre-complete), then the
-                three follow-ups with reward chips. */}
-            <div className="-mx-3 flex flex-col">
+                three follow-ups with reward chips. Small gap between rows
+                so each reads as its own floating card. */}
+            <div className="-mx-3.5 flex flex-col gap-1.5">
               {/* Email — auto-complete, no expand. */}
               <StepRow
                 title={content.emailStep.title}
@@ -489,12 +549,14 @@ export function WaitlistModal({ open, onClose, content }) {
 
               {/* What would you build? */}
               <StepRow
+                id="build"
                 title={buildItem.title}
                 subtitle={
                   completed.has("build")
                     ? buildItem.completedLabel
                     : buildItem.subtitle
                 }
+                effort={buildItem.effort}
                 reward={buildItem.reward}
                 done={completed.has("build")}
                 open={openStep === "build"}
@@ -526,12 +588,14 @@ export function WaitlistModal({ open, onClose, content }) {
 
               {/* Share */}
               <StepRow
+                id="share"
                 title={shareItem.title}
                 subtitle={
                   completed.has("share")
                     ? shareItem.completedLabel
                     : shareItem.subtitle
                 }
+                effort={shareItem.effort}
                 reward={shareItem.reward}
                 done={completed.has("share")}
                 open={openStep === "share"}
@@ -552,13 +616,16 @@ export function WaitlistModal({ open, onClose, content }) {
 
               {/* Survey */}
               <StepRow
+                id="survey"
                 title={surveyItem.title}
                 subtitle={
                   completed.has("survey")
                     ? surveyItem.completedLabel
                     : surveyItem.subtitle
                 }
+                effort={surveyItem.effort}
                 reward={surveyItem.reward}
+                premium={surveyItem.premium}
                 done={completed.has("survey")}
                 open={openStep === "survey"}
                 onToggle={() => toggleStep("survey")}
@@ -584,10 +651,10 @@ export function WaitlistModal({ open, onClose, content }) {
                                       [q.id]: opt,
                                     }))
                                   }
-                                  className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors ${
+                                  className={`rounded-full px-3.5 py-1.5 text-[13px] transition-colors ${
                                     selected
-                                      ? "border-white/60 bg-white/[0.1] text-white"
-                                      : "border-white/15 text-white/75 hover:border-white/30 hover:text-white"
+                                      ? "bg-white/[0.16] font-medium text-white"
+                                      : "bg-white/[0.05] text-white/75 hover:bg-white/[0.08] hover:text-white"
                                   }`}
                                 >
                                   {opt}
@@ -618,7 +685,7 @@ export function WaitlistModal({ open, onClose, content }) {
                     <button
                       type="submit"
                       disabled={!allAnswered}
-                      className="inline-flex items-center justify-center rounded-full border border-white/20 px-4 py-2 text-[13px] font-medium text-white/80 transition-colors hover:border-white/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex items-center justify-center rounded-lg bg-white/[0.08] px-4 py-2 text-[13px] font-medium text-white/90 transition-colors hover:bg-white/[0.12] hover:text-white disabled:cursor-not-allowed disabled:bg-white/[0.04] disabled:text-white/40"
                     >
                       {surveyItem.submitLabel ?? "Submit"}
                     </button>

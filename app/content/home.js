@@ -238,29 +238,38 @@ export const HOME_CONTENT = {
       {
         id: "build",
         title: "What would you build first?",
-        subtitle: "One sentence is plenty.",
-        reward: "Even earlier access",
+        // Effort is the only subtitle line — reward lives in the right
+        // column as brand-lime accent text (see StepRow). Short-form
+        // reward reads like a price: just the prize, no verb.
+        effort: "1 sentence",
+        reward: "Earlier access",
         placeholder:
           "e.g. a client intake form that routes to the right partner",
         actionLabel: "Save",
-        completedLabel: "Saved",
+        // Completion copy celebrates what they won — absorbs both
+        // columns since the right-side reward is hidden once done.
+        completedLabel: "Earlier access unlocked",
       },
       {
         id: "share",
         title: "Share with your network",
-        subtitle: "Post a quick note on LinkedIn or X.",
-        reward: "Founding member plan",
+        effort: "30s post",
+        reward: "Founding-member plan",
         actionLabel: "Share on LinkedIn",
         actionLabelX: "Share on X",
-        completedLabel: "Shared",
+        completedLabel: "Founding-member plan unlocked",
       },
       {
         id: "survey",
         title: "Quick survey",
-        subtitle: "6 questions · ~2 min",
-        reward: "Onboarding by Assembly founder",
+        effort: "6 questions · ~2 min",
+        reward: "Founder onboarding",
+        // Top-tier reward — opt-in to the shimmer pill treatment so this
+        // prize reads as the most valuable of the three (see reward-
+        // shimmer styling in globals.css and StepRow's `premium` branch).
+        premium: true,
         actionLabel: "Take survey",
-        completedLabel: "Submitted",
+        completedLabel: "Founder onboarding unlocked",
         submitLabel: "Submit",
         questions: [
           {
@@ -327,12 +336,14 @@ export const HOME_CONTENT = {
             label: "What would you expect to pay per month?",
             type: "select",
             placeholder: "Select one…",
+            // Compressed from 6 buckets to 4 — the mid-range splits
+            // (<$100/$100-$300 and $1k-$3k/$3k+) added length without
+            // changing what we learn: low / mid / high / unsure still
+            // answers the founder pricing question.
             options: [
-              "Under $100",
-              "$100 – $300",
+              "Under $300",
               "$300 – $1,000",
-              "$1,000 – $3,000",
-              "$3,000+",
+              "$1,000+",
               "Not sure",
             ],
           },

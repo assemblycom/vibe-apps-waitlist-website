@@ -189,6 +189,84 @@ body::-webkit-scrollbar {
   animation: studio-shimmer 1.4s linear infinite;
 }
 
+/* ── Waitlist progress shimmer ──
+   Brand-gradient fill for the waitlist-modal progress bar. Horizontal wind
+   of the canonical brand vertical gradient (see GradientReveal) — periwinkle
+   #8B99C8 through a soft sage midpoint to the brand lime #D9ED92 and back,
+   so the shimmer reads as an extension of the site's visual identity. Slow
+   always-on animation keeps it feeling interactive/alive. */
+@keyframes progress-brand-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.progress-prism-fill {
+  background-image: linear-gradient(
+    90deg,
+    #8B99C8 0%,
+    #C5D4BA 25%,
+    #D9ED92 50%,
+    #C5D4BA 75%,
+    #8B99C8 100%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: progress-brand-shift 7s ease-in-out infinite;
+}
+
+/* Brief brightness pulse when a step completes — adds a little feedback
+   punch. React triggers this by remounting via key= progress percent. */
+@keyframes progress-brand-pulse {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.35); }
+  100% { filter: brightness(1); }
+}
+.progress-prism-fill[data-pulse="true"] {
+  animation:
+    progress-brand-shift 7s ease-in-out infinite,
+    progress-brand-pulse 700ms ease-out;
+}
+
+/* ── Premium reward shimmer ──
+   Subtle neutral sheen on the shared gray reward pill. Same base fill
+   as sibling pills (white/[0.08]) — the premium tier is distinguished
+   only by a slow white highlight that sweeps diagonally across. No
+   color, no gradient hues; reads as "alive" through motion alone, so
+   three pills side-by-side stay quiet. */
+@keyframes reward-shimmer-sweep {
+  0% { background-position: -60% 0; }
+  100% { background-position: 160% 0; }
+}
+.reward-shimmer {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.reward-shimmer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Wide, feathered highlight — the peak is soft and gradual so the
+     sweep reads as a breathing sheen rather than a hard bar of light.
+     Off-screen start/end (−60% / 160%) means the loop wraps without a
+     visible snap. */
+  background-image: linear-gradient(
+    110deg,
+    transparent 0%,
+    transparent 25%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 60%,
+    transparent 75%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  animation: reward-shimmer-sweep 7s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* ── Studio "ship" arrow nudge ── */
 @keyframes studio-ship-arrow {
   0%,
