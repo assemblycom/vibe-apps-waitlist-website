@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 // EDITORIAL HOVER PREVIEW
@@ -380,36 +380,32 @@ export function ContactsPreview() {
   );
 }
 
-// Permissions: a framed 2×2 matrix with role headers.
+// Permissions: two role rows, each with a trailing access-level chip.
+// A matrix reads like a spreadsheet — slow to parse in a tooltip. A
+// role → chip list lets the reader skim both rows in one glance:
+// "Team can edit, Client can view."
 export function PermissionsPreview() {
-  const roles = ["Team", "Client"];
-  const cells = [
-    [true, false],
-    [true, true],
+  const rows = [
+    { role: "Team", level: "Can edit" },
+    { role: "Client", level: "View only" },
   ];
   return (
     <CardShell>
-      <CardHeader label="Access" />
-      <span className="grid grid-cols-[auto_1fr_1fr] items-center gap-x-2 gap-y-0.5 px-2 py-1.5 text-[9px] text-[#1A1A1A]/70">
-        <span />
-        {roles.map((r) => (
-          <span key={r} className="text-center">
-            {r}
+      <CardHeader label="Roles" />
+      <span className="flex flex-col">
+        {rows.map((row, i) => (
+          <span
+            key={row.role}
+            className={[
+              "flex items-center gap-1.5 px-2 py-1",
+              i < rows.length - 1 ? "border-b border-[#1A1A1A]/8" : "",
+            ].join(" ")}
+          >
+            <span className="flex-1 text-[9px] text-[#1A1A1A]">{row.role}</span>
+            <span className="rounded-[2px] bg-[#1A1A1A]/10 px-[4px] py-[0.5px] text-[7px] uppercase tracking-[0.06em] text-[#1A1A1A]/60">
+              {row.level}
+            </span>
           </span>
-        ))}
-        {["Edit", "Invite"].map((label, i) => (
-          <Fragment key={label}>
-            <span>{label}</span>
-            {cells[i].map((on, j) => (
-              <span
-                key={j}
-                className={[
-                  "mx-auto h-[9px] w-[9px] rounded-[2px]",
-                  on ? "bg-[#1A1A1A]/70" : "bg-[#1A1A1A]/10",
-                ].join(" ")}
-              />
-            ))}
-          </Fragment>
         ))}
       </span>
     </CardShell>
