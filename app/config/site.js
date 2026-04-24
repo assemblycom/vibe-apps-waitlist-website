@@ -6,6 +6,6 @@ export const TYPEFORM_URL = "https://PLACEHOLDER_TYPEFORM_URL";
 export const SITE = {
   brand: "Assembly Studio",
   domain: "studio.assembly.com",
-  cta: "Request early access",
+  cta: "Get early access",
   alphaSignal: "Already used by early teams in alpha.",
 };

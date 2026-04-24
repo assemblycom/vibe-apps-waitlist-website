@@ -11,8 +11,8 @@ function Chevron({ open }) {
       viewBox="0 0 14 14"
       fill="none"
       className={clsx(
-        "flex-shrink-0 text-white/40 transition-transform duration-300",
-        open && "rotate-180 text-white/80",
+        "flex-shrink-0 transition-[transform,color] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+        open ? "rotate-180 text-white/55" : "text-white/40",
       )}
       aria-hidden="true"
     >
@@ -47,12 +47,19 @@ function FaqItem({ q, a }) {
       </button>
       <div
         className={clsx(
-          "grid transition-[grid-template-rows] duration-300 ease-out",
+          "grid transition-[grid-template-rows] duration-[520ms] ease-[cubic-bezier(0.22,1.2,0.36,1)]",
           open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
         )}
       >
         <div className="overflow-hidden">
-          <p className="px-6 pb-5 pr-12 text-[1rem] leading-[1.6] text-white/55">
+          <p
+            className={clsx(
+              "px-6 pb-5 pr-12 text-[1rem] leading-[1.6] text-white/55 transition-all duration-[520ms]",
+              open
+                ? "translate-y-0 opacity-100 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                : "-translate-y-1 opacity-0 ease-[cubic-bezier(0.4,0,0.2,1)]",
+            )}
+          >
             {a}
           </p>
         </div>
