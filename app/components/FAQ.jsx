@@ -27,17 +27,24 @@ function Chevron({ open }) {
   );
 }
 
-function FaqItem({ q, a }) {
-  const [open, setOpen] = useState(false);
+// Hover-to-open with click-to-toggle, mirroring the Testimonials card
+// pattern (onMouseEnter/onFocus activate, click acts as a toggle so
+// keyboard + touch users can still close items). State is lifted to the
+// parent so only one item is open at a time — preserves the editorial
+// "one detail at a time" feel.
+function FaqItem({ q, a, open, onActivate, onToggle }) {
   return (
     <div
+      onMouseEnter={onActivate}
       className={clsx(
         "group overflow-hidden rounded-2xl border bg-white/[0.02] transition-colors duration-300",
         open ? "border-white/25" : "border-white/10 hover:border-white/20",
       )}
     >
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={onToggle}
+        onFocus={onActivate}
+        aria-expanded={open}
         className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left"
       >
         <span className="text-[1rem] leading-snug text-white">
@@ -69,6 +76,12 @@ function FaqItem({ q, a }) {
 }
 
 export function FAQ({ eyebrow, heading, items = [] }) {
+  // Single source of truth for which item is open. Hovering a row sets
+  // it; clicking the active row closes it. Mouse leaving the whole list
+  // keeps the last hovered item open — feels less twitchy than auto-
+  // collapsing on every move.
+  const [activeIndex, setActiveIndex] = useState(null);
+
   return (
     <section className="gradient-divider py-20 md:py-28">
       <div className="mx-auto max-w-3xl px-6">
@@ -86,7 +99,16 @@ export function FAQ({ eyebrow, heading, items = [] }) {
         </div>
         <div className="flex flex-col gap-3">
           {items.map((item, i) => (
-            <FaqItem key={i} index={i} q={item.q} a={item.a} />
+            <FaqItem
+              key={i}
+              q={item.q}
+              a={item.a}
+              open={activeIndex === i}
+              onActivate={() => setActiveIndex(i)}
+              onToggle={() =>
+                setActiveIndex((cur) => (cur === i ? null : i))
+              }
+            />
           ))}
         </div>
       </div>

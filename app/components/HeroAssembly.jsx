@@ -288,14 +288,14 @@ function YourAppBody() {
           borderColor: "rgba(255,255,255,0.08)",
         }}
       >
-        <div className="mono mb-1.5 text-[9px] uppercase tracking-[0.1em] text-white/40">
+        <div className="mb-1.5 text-[10px] tracking-[-0.005em] text-white/40 md:text-[11px]">
           Prompt
         </div>
         <div className="min-h-[40px] text-[12px] leading-[1.55] text-white/90 md:text-[13px]">
           {shown}
           <span
             aria-hidden="true"
-            className="ml-[1px] inline-block h-[13px] w-[1px] translate-y-[2px] align-middle"
+            className="ml-[1px] inline-block h-[1em] w-[1px] -translate-y-[1px] align-middle"
             style={{
               background: "rgba(255,255,255,0.85)",
               opacity: isTyping ? 1 : 0.5,
@@ -306,7 +306,7 @@ function YourAppBody() {
 
       {/* Foundation modules */}
       <div className="px-1">
-        <div className="mono mb-2 flex items-center gap-2 text-[9px] uppercase tracking-[0.09em] text-white/40">
+        <div className="mb-2 flex items-center gap-2 text-[10px] tracking-[-0.005em] text-white/40 md:text-[11px]">
           <span>Assembling on foundation</span>
           <span className="flex items-center gap-[2px]">
             <span
@@ -338,14 +338,14 @@ function YourAppBody() {
                 className="rounded-[4px] border px-2.5 py-[4px] text-[10px] md:text-[11px]"
                 style={{
                   borderColor: done
-                    ? "rgba(255,255,255,0.18)"
-                    : "rgba(255,255,255,0.08)",
+                    ? "rgba(255,255,255,0.1)"
+                    : "rgba(255,255,255,0.05)",
                   background: done
-                    ? "rgba(255,255,255,0.05)"
-                    : "rgba(255,255,255,0.015)",
+                    ? "rgba(255,255,255,0.03)"
+                    : "rgba(255,255,255,0.01)",
                   color: done
-                    ? "rgba(255,255,255,0.9)"
-                    : "rgba(255,255,255,0.45)",
+                    ? "rgba(255,255,255,0.6)"
+                    : "rgba(255,255,255,0.3)",
                   transition:
                     "border-color 320ms ease, background 320ms ease, color 320ms ease",
                 }}
