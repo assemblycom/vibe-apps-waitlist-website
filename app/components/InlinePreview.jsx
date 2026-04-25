@@ -104,33 +104,29 @@ export function DetailPanel({ preview, eyebrow = "What we mean", side = "right" 
 
   return (
     <div className="text-left">
-      <div
-        className="mb-4 flex items-center gap-2 text-[10px] uppercase tracking-[0.14em] text-[#1A1A1A]/45"
-        style={{ fontFamily: '"ABC Diatype Mono", ui-monospace, monospace' }}
-      >
-        {isLeft ? (
-          <>
-            <span>{eyebrow}</span>
-            <span className="h-px w-4 bg-[#1A1A1A]/30" />
-          </>
-        ) : (
-          <>
-            <span className="h-px w-4 bg-[#1A1A1A]/30" />
-            <span>{eyebrow}</span>
-          </>
-        )}
+      {/* Full-width rule + eyebrow stacked underneath. Reads like a
+          magazine side-note: the rule is the panel's top edge, the
+          eyebrow is its caption. Side prop is kept for API parity but
+          no longer flips a tick — the rule always spans the panel. */}
+      <div className="mb-3 border-t border-[#1A1A1A]/15 pt-3">
+        <div
+          className="text-[10px] uppercase tracking-[0.14em] text-[#1A1A1A]/45"
+          style={{ fontFamily: '"ABC Diatype Mono", ui-monospace, monospace' }}
+        >
+          {eyebrow}
+        </div>
       </div>
 
       <div key={key} className="narrative-detail-in block">
         {preview ? (
           <>
             {preview.title && (
-              <h3 className="mb-2 text-[0.9375rem] font-medium leading-[1.3] tracking-[-0.005em] text-[#1A1A1A]">
+              <h3 className="mb-1.5 text-[1rem] font-medium leading-[1.25] tracking-[-0.01em] text-[#1A1A1A] [text-wrap:balance]">
                 {preview.title}
               </h3>
             )}
             {preview.body && (
-              <p className="text-[0.8125rem] leading-[1.55] text-[#1A1A1A]/60">
+              <p className="text-[0.8125rem] leading-[1.5] text-[#1A1A1A]/65 [text-wrap:pretty]">
                 {preview.body}
               </p>
             )}
