@@ -206,8 +206,8 @@ function StepRow({ id, title, effort, reward, premium, subtitle, done, open, onT
   return (
     <div
       data-step-id={id}
-      className={`rounded-xl bg-white/[0.02] px-3.5 pt-3.5 transition-colors ${
-        open && !done ? "pb-5" : "pb-3.5"
+      className={`rounded-xl bg-white/[0.02] px-3.5 pt-3.5 pb-3.5 transition-[background-color,padding-bottom] duration-[260ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] ${
+        open && !done ? "!pb-5" : ""
       } ${headerClickable ? "hover:bg-white/[0.05]" : ""} ${
         done ? "opacity-85" : ""
       }`}
@@ -277,8 +277,22 @@ function StepRow({ id, title, effort, reward, premium, subtitle, done, open, onT
         </div>
       </button>
 
-      {open && !done && (
-        <div className="ml-8 mt-5 animate-fade-in">{children}</div>
+      {/* Always-mounted collapsible body. We animate grid-template-rows
+          between 0fr ↔ 1fr (so height transitions naturally) plus opacity
+          and margin in lockstep. Closing now eases out instead of cutting
+          to nothing. The inner element is `min-h-0 overflow-hidden` so
+          the row clamp during the transition. */}
+      {!done && (
+        <div
+          className={`grid transition-[grid-template-rows,opacity,margin-top] duration-[260ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] ${
+            open
+              ? "mt-5 grid-rows-[1fr] opacity-100"
+              : "mt-0 grid-rows-[0fr] opacity-0"
+          }`}
+          aria-hidden={!open}
+        >
+          <div className="ml-8 min-h-0 overflow-hidden">{children}</div>
+        </div>
       )}
     </div>
   );
