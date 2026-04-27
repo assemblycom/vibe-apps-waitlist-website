@@ -288,66 +288,6 @@ body::-webkit-scrollbar {
   animation: spec-row-enter 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* ── Spec-card pill indicator ──
-   Segmented-pill meters inside ComparisonSpec. Two keyframes: the
-   Assembly side lights up in brand lime with a soft glow; the
-   competitor side lights up in a quiet off-white with no glow, and
-   only on its leading pills — so a short muted bar sits next to a
-   full lime bar, reinforcing the "partial vs complete" story
-   visually. Both fire row-by-row once data-spec-animate="true" is
-   set on the enclosing scope, with a stagger driven by inline
-   animationDelay. */
-@keyframes spec-pill-fill-assembly {
-  0% {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  100% {
-    background-color: rgba(255, 255, 255, 0.6);
-  }
-}
-@keyframes spec-pill-fill-competitor {
-  0% {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  100% {
-    background-color: rgba(255, 255, 255, 0.35);
-  }
-}
-[data-spec-animate="true"][data-spec-theme="dark"] .spec-pill--assembly-lit,
-[data-spec-animate="true"]:not([data-spec-theme]) .spec-pill--assembly-lit {
-  animation: spec-pill-fill-assembly 360ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-}
-[data-spec-animate="true"][data-spec-theme="dark"] .spec-pill--competitor-lit,
-[data-spec-animate="true"]:not([data-spec-theme]) .spec-pill--competitor-lit {
-  animation: spec-pill-fill-competitor 360ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-}
-
-/* Light-chapter variants — the lit pills animate from translucent
-   #1A1A1A toward a stronger #1A1A1A tone instead of white. The
-   competitor side stays a step quieter than the Assembly side so the
-   "partial vs. full" reading still works on the cream surface. */
-@keyframes spec-pill-fill-assembly-light {
-  0% {
-    background-color: rgba(26, 26, 26, 0.1);
-  }
-  100% {
-    background-color: rgba(26, 26, 26, 0.7);
-  }
-}
-@keyframes spec-pill-fill-competitor-light {
-  0% {
-    background-color: rgba(26, 26, 26, 0.1);
-  }
-  100% {
-    background-color: rgba(26, 26, 26, 0.4);
-  }
-}
-[data-spec-animate="true"][data-spec-theme="light"] .spec-pill--assembly-lit {
-  animation: spec-pill-fill-assembly-light 360ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-}
-[data-spec-animate="true"][data-spec-theme="light"] .spec-pill--competitor-lit {
-  animation: spec-pill-fill-competitor-light 360ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-}
 
 /* ── Studio "ship" arrow nudge ── */
 @keyframes studio-ship-arrow {

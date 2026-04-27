@@ -121,7 +121,7 @@ export function Header() {
     // mode for the entire time cream content is visibly below it,
     // instead of flipping back to dark while the cream section is still
     // on screen below the fold.
-    const FADE_PX = 140;
+    const FADE_PX = 60;
     const NAV_BOTTOM_PX = 56;
     const computeChapterTint = () => {
       if (lightSections.length === 0) return 0;

@@ -2,16 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// V7-inspired spec-sheet comparison, Assembly-styled.
-// A single rounded card with a header strip (brand logo + label per
-// column) and rows beneath where each axis maps to a short
-// description. The "— — —" ticks from V7 are replaced with a
-// segmented-pill indicator: the competitor column keeps its pills
-// flat/muted (static "unpowered" state) while the Assembly column
-// lights the pills up in lime brand-green, staggered per pill and
-// per row, so the indicator reads row-by-row as the section scrolls
-// into view. Animation keyframes live in globals.css under the
-// `spec-pill-fill` rule.
+// Spec-sheet comparison. A bordered, rounded card consistent with
+// the rest of the page's card pattern (FAQ, Testimonials,
+// ArchitectureDiagram all use the same rounded-2xl + subtle border +
+// faint surface tint). Inside, two products read as parallel
+// stances on the same questions — no scoring, no ranking. Hierarchy
+// is carried entirely by typography and a thin column rule between
+// the two answer columns; the last row gets quiet emphasis via a
+// slightly stronger rule above and one type step up.
 export function ComparisonSpec({
   heading,
   headingCallout,
@@ -24,22 +22,27 @@ export function ComparisonSpec({
   const [animate, setAnimate] = useState(false);
   const isLight = theme === "light";
 
-  // Token map — keeps the JSX readable while letting the section
-  // flip cleanly between dark and light surfaces. White-on-translucent
-  // becomes #1A1A1A-on-translucent; the cards lean slightly heavier on
-  // contrast than their dark counterparts so they don't disappear into
-  // the cream background.
+  // Token map. Card chrome matches the rest of the page; rule
+  // weights are tuned to read as "drawn lines" without pulling
+  // toward a spreadsheet feel. The summary rule lifts to ~25-30%
+  // so the last row's break is visible but not loud.
   const t = isLight
     ? {
         heading: "text-[#1A1A1A]",
         headingMuted: "text-[#1A1A1A]/55",
         cardBorder: "border-[#1A1A1A]/10",
         cardBg: "bg-[#1A1A1A]/[0.03]",
-        rowDivide: "divide-[#1A1A1A]/8",
+        rule: "bg-[#1A1A1A]/10",
+        ruleBorder: "border-[#1A1A1A]/10",
         rowHover: "hover:bg-[#1A1A1A]/[0.04]",
         rowLabel: "text-[#1A1A1A]/55",
-        bodyMuted: "text-[#1A1A1A]/55",
-        bodyMore: "text-[#1A1A1A]/45",
+        rowLabelStrong: "text-[#1A1A1A]/75",
+        bodyText: "text-[#1A1A1A]",
+        bodyMuted: "text-[#1A1A1A]/70",
+        brandLabel: "text-[#1A1A1A]/90",
+        brandMuted: "text-[#1A1A1A]/55",
+        brandRing: "ring-[#1A1A1A]/10",
+        brandSurface: "bg-[#1A1A1A]/[0.04]",
         mobileBorder: "border-[#1A1A1A]/10",
         mobileBg: "bg-[#1A1A1A]/[0.03]",
         mobileCheckBg: "bg-[#1A1A1A]/10 text-[#1A1A1A]",
@@ -50,20 +53,23 @@ export function ComparisonSpec({
         headingMuted: "text-white/50",
         cardBorder: "border-white/10",
         cardBg: "bg-white/[0.02]",
-        rowDivide: "divide-white/5",
+        rule: "bg-white/10",
+        ruleBorder: "border-white/8",
         rowHover: "hover:bg-white/[0.03]",
-        rowLabel: "text-white/45",
-        bodyMuted: "text-white/50",
-        bodyMore: "text-white/40",
+        rowLabel: "text-white/50",
+        rowLabelStrong: "text-white/75",
+        bodyText: "text-white",
+        bodyMuted: "text-white/65",
+        brandLabel: "text-white/85",
+        brandMuted: "text-white/55",
+        brandRing: "ring-white/10",
+        brandSurface: "bg-white/[0.04]",
         mobileBorder: "border-white/10",
         mobileBg: "bg-white/[0.02]",
         mobileCheckBg: "bg-white/10 text-white",
         mobileCheckText: "text-white",
       };
 
-  // Section-local intersection observer so pill animations start only
-  // when the spec card is actually in view. Reduced-motion users skip
-  // the stagger and see the final lit state immediately.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -92,27 +98,24 @@ export function ComparisonSpec({
     return () => observer.disconnect();
   }, []);
 
-  // Stagger tuning — row-level delay dominates so each row reads as
-  // its own reveal beat; the per-pill delay inside a row is just
-  // enough to read as "filling up" rather than flashing on.
-  const PILL_COUNT = 9;
-  // Competitor side fills only the leading pills — visual cue that
-  // they solve a small slice of what Assembly does. Keeps the meter
-  // idea without using brand colour on "them".
-  const COMPETITOR_LIT_COUNT = 2;
-  const ROW_STAGGER_MS = 140;
-  const PILL_STAGGER_MS = 55;
-  const HEADER_DELAY_MS = 0;
+  // Last row reads as the takeaway: stronger rule above, slightly
+  // emphasised label, larger answer type. Everything before it is a
+  // standard body row.
+  const bodyRows = rows.length > 1 ? rows.slice(0, -1) : rows;
+  const summaryRow = rows.length > 1 ? rows[rows.length - 1] : null;
 
-  const rowDelay = (rowIndex) =>
-    HEADER_DELAY_MS + 180 + rowIndex * ROW_STAGGER_MS;
+  // Shared 5-column grid: row label | rule | competitor | rule |
+  // assembly. The two 1px rule tracks split the table into three
+  // visually distinct columns. Padding lives inside each cell (not
+  // on the row) so the rule tracks stretch to the full row height
+  // via self-stretch.
+  const gridCols =
+    "grid-cols-[minmax(180px,220px)_1px_1fr_1px_1fr]";
 
   return (
-    <section className="gradient-divider py-12 md:py-16">
+    <section className="gradient-divider py-20 md:py-28">
       <div className="mx-auto max-w-5xl px-6">
-        {/* Heading — primary claim on top, dimmed callout below.
-            Mirrors the NarrativeBlock pattern from earlier in the page
-            ("bold statement → quiet restatement"). */}
+        {/* Heading — primary claim on top, dimmed callout below. */}
         <div className="mb-7 text-center">
           {heading && (
             <h3 className={`text-[1.75rem] font-normal leading-[1.1] tracking-[-0.025em] [text-wrap:balance] md:text-[2.375rem] md:tracking-[-0.03em] ${t.heading}`}>
@@ -127,87 +130,107 @@ export function ComparisonSpec({
           )}
         </div>
 
-        {/* Desktop — spec card with per-row pill indicators. */}
+        {/* Desktop card — same chrome pattern as FAQ / Testimonials /
+            ArchitectureDiagram so the section reads as part of the
+            family. overflow-hidden gives the internal hairlines a
+            clean clip against the rounded corners. */}
         <div
           ref={ref}
           data-spec-animate={animate ? "true" : "false"}
           data-spec-theme={theme}
-          className={`hidden rounded-2xl border ${t.cardBorder} ${t.cardBg} pt-4 md:block md:pt-6`}
+          className={`hidden overflow-hidden rounded-2xl border ${t.cardBorder} ${t.cardBg} md:block`}
         >
-          {/* Header strip — logo + brand label per column. The logo
-              slot is a fixed 32px square so the column headers line
-              up even if the competitor logo is a neutral placeholder
-              (we don't display third-party brand marks). */}
-          <div className={`grid grid-cols-[minmax(180px,220px)_1fr_1fr] gap-x-6 border-b ${t.cardBorder} pb-3 px-6 md:px-8`}>
-            <div />
-            <BrandSlot variant="competitor" label={leftLabel} isLight={isLight} />
-            <BrandSlot variant="assembly" label={rightLabel} isLight={isLight} />
+          {/* Header strip — brand slots in their respective columns,
+              separated by the same vertical 1px rule that runs
+              through the body. Padding is inside cells so the rule
+              fills the full strip height. */}
+          <div className={`grid ${gridCols} gap-x-6 px-6 md:px-8`}>
+            <div className={`py-5 text-[14px] leading-[1.5] ${t.brandMuted}`}>
+              Comparison
+            </div>
+            <span aria-hidden="true" className={`block self-stretch ${t.rule}`} />
+            <div className="py-5">
+              <BrandSlot variant="competitor" label={leftLabel} t={t} />
+            </div>
+            <span aria-hidden="true" className={`block self-stretch ${t.rule}`} />
+            <div className="py-5">
+              <BrandSlot variant="assembly" label={rightLabel} t={t} />
+            </div>
           </div>
 
-          {/* Body rows. divide-y gives just-enough separation without
-              the cell-border look of a spreadsheet. Lines bleed full-
-              width; px is re-applied per row so content stays inset. */}
-          <div className={`divide-y ${t.rowDivide}`}>
-            {rows.map(([label, left, right], i) => {
-              // Each row cascades left→right: axis label + competitor appear
-              // together, then Assembly follows 60ms later. Rows are
-              // staggered 80ms apart — tight enough to feel fluid, clear
-              // enough to read as sequential.
+          {/* Top edge of the body. */}
+          <div className={`h-px w-full ${t.rule}`} />
+
+          {/* Body rows. Per-row vertical rule lives in column 3;
+              between-row hairlines come from divide-y on the wrapper. */}
+          <div className={`divide-y ${t.ruleBorder}`}>
+            {bodyRows.map(([label, left, right], i) => {
               const base = i * 80;
               return (
                 <div
                   key={i}
-                  className={`grid grid-cols-[minmax(180px,220px)_1fr_1fr] gap-x-6 py-4 px-6 md:px-8 transition-colors duration-150 ${t.rowHover}`}
-                  style={{
-                    paddingTop: i === 0 ? 12 : undefined,
-                    paddingBottom: undefined,
-                  }}
+                  className={`grid ${gridCols} gap-x-6 px-6 md:px-8 items-start transition-colors duration-150 ${t.rowHover}`}
                 >
                   <div
-                    className={`spec-row text-[14px] leading-[1.5] ${t.rowLabel}`}
+                    className={`spec-row py-5 text-[14px] leading-[1.5] ${t.rowLabel}`}
                     style={{ animationDelay: `${base}ms` }}
                   >
                     {label}
                   </div>
+                  <span aria-hidden="true" className={`block self-stretch ${t.rule}`} />
                   <div
-                    className="spec-row flex flex-col gap-3"
+                    className={`spec-row py-5 text-[14px] leading-[1.5] ${t.bodyText}`}
                     style={{ animationDelay: `${base}ms` }}
                   >
-                    <PillStrip
-                      variant="competitor"
-                      count={PILL_COUNT}
-                      litCount={COMPETITOR_LIT_COUNT}
-                      baseDelayMs={base}
-                      pillStepMs={PILL_STAGGER_MS}
-                      isLight={isLight}
-                    />
-                    <p className={`text-[14px] leading-[1.5] ${t.bodyMore}`}>
-                      {left}
-                    </p>
+                    {left}
                   </div>
+                  <span aria-hidden="true" className={`block self-stretch ${t.rule}`} />
                   <div
-                    className="spec-row flex flex-col gap-3"
+                    className={`spec-row py-5 text-[14px] leading-[1.5] ${t.bodyText}`}
                     style={{ animationDelay: `${base + 60}ms` }}
                   >
-                    <PillStrip
-                      variant="assembly"
-                      count={PILL_COUNT}
-                      litCount={PILL_COUNT}
-                      baseDelayMs={base + 60}
-                      pillStepMs={PILL_STAGGER_MS}
-                      isLight={isLight}
-                    />
-                    <p className={`text-[14px] leading-[1.5] ${t.bodyMuted}`}>
-                      {right}
-                    </p>
+                    {right}
                   </div>
                 </div>
               );
             })}
           </div>
+
+          {/* Summary row — same hairline weight as the body rules so
+              nothing reads as a "bright line." Emphasis comes only
+              from a one-step type bump and a slightly darker label. */}
+          {summaryRow && (
+            <>
+              <div className={`h-px w-full ${t.rule}`} />
+              <div className={`grid ${gridCols} gap-x-6 px-6 md:px-8 items-start transition-colors duration-150 ${t.rowHover}`}>
+                <div
+                  className={`spec-row py-6 text-[14px] leading-[1.5] font-medium ${t.rowLabelStrong}`}
+                  style={{ animationDelay: `${bodyRows.length * 80}ms` }}
+                >
+                  {summaryRow[0]}
+                </div>
+                <span aria-hidden="true" className={`block self-stretch ${t.rule}`} />
+                <div
+                  className={`spec-row py-6 text-[15px] leading-[1.45] ${t.bodyText}`}
+                  style={{ animationDelay: `${bodyRows.length * 80}ms` }}
+                >
+                  {summaryRow[1]}
+                </div>
+                <span aria-hidden="true" className={`block self-stretch ${t.rule}`} />
+                <div
+                  className={`spec-row py-6 text-[15px] leading-[1.45] ${t.bodyText}`}
+                  style={{ animationDelay: `${bodyRows.length * 80 + 60}ms` }}
+                >
+                  {summaryRow[2]}
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
-        {/* Mobile — same stacked-card checklist as the original table. */}
+        {/* Mobile — Studio-only checklist, same card chrome as the
+            rest of the page so it sits naturally in the cream
+            chapter. */}
         <div className="flex flex-col gap-2 md:hidden">
           {rows.map(([, , right, mobileFeature], i) => (
             <div
@@ -242,37 +265,29 @@ export function ComparisonSpec({
   );
 }
 
-// Brand slot — a 32px logo square next to the brand label. For the
-// Assembly side we render the actual app mark (the same mark as the
-// favicon). For the competitor we render a neutral, unbranded
-// placeholder — we deliberately don't display third-party logos in a
-// comparative context.
-function BrandSlot({ variant, label, isLight }) {
+// Brand slot — 32px logo square + label. Matches the chip pattern
+// used elsewhere on the page (Testimonials avatars, InlinePreview
+// chips). The Assembly side renders the actual app mark on its dark
+// brand surface; the competitor renders a neutral, unbranded
+// placeholder — we deliberately don't display third-party logos in
+// a comparative context.
+function BrandSlot({ variant, label, t }) {
   const isAssembly = variant === "assembly";
-  // The Assembly mark is always its dark brand surface (#101010 with
-  // white logo) — that mark IS the brand and reads great on both
-  // backgrounds. Only the competitor placeholder + label color flip.
-  const competitorBg = isLight
-    ? "bg-[#1A1A1A]/[0.04] ring-[#1A1A1A]/10"
-    : "bg-white/[0.04] ring-white/10";
-  const assemblyRing = isLight ? "ring-[#1A1A1A]/10" : "ring-white/10";
-  const assemblyLabel = isLight ? "text-[#1A1A1A]/90" : "text-white/85";
-  const competitorLabel = isLight ? "text-[#1A1A1A]/55" : "text-white/55";
   return (
     <div className="flex items-center gap-3">
       <span
         aria-hidden="true"
         className={
           isAssembly
-            ? `flex h-8 w-8 flex-none items-center justify-center rounded-md bg-[#101010] ring-1 ${assemblyRing}`
-            : `flex h-8 w-8 flex-none rounded-md ring-1 ${competitorBg}`
+            ? `flex h-8 w-8 flex-none items-center justify-center rounded-md bg-[#101010] ring-1 ${t.brandRing}`
+            : `flex h-8 w-8 flex-none rounded-md ring-1 ${t.brandSurface} ${t.brandRing}`
         }
       >
         {isAssembly && <AssemblyMark />}
       </span>
       <span
         className={`text-[14px] leading-[1.5] ${
-          isAssembly ? assemblyLabel : competitorLabel
+          isAssembly ? t.brandLabel : t.brandMuted
         }`}
       >
         {label}
@@ -281,10 +296,10 @@ function BrandSlot({ variant, label, isLight }) {
   );
 }
 
-// Inline four-dot Assembly mark. Recreated inline (vs. <img
-// src="/logos/favicon.svg">) so it inherits currentColor and stays
-// visually in sync with any future colour changes to the brand-slot
-// background.
+// Inline four-dot Assembly mark used in the brand chip. Recreated
+// inline (vs. <img src="/logos/favicon.svg">) so it inherits
+// currentColor and stays visually in sync with future colour
+// changes.
 function AssemblyMark() {
   return (
     <svg
@@ -300,48 +315,5 @@ function AssemblyMark() {
       <path d="M15.7146 0L15.7086 0C7.03296 0 0 7.03297 0 15.7086L0 15.7146C0 24.3902 7.03296 31.4231 15.7086 31.4231H15.7146C24.3902 31.4231 31.4231 24.3902 31.4231 15.7146V15.7086C31.4231 7.03297 24.3902 0 15.7146 0Z" />
       <path d="M15.7146 40.7666H15.7086C7.03297 40.7666 0 47.7996 0 56.4752L0 56.4812C0 65.1568 7.03297 72.1897 15.7086 72.1897H15.7146C24.3902 72.1897 31.4231 65.1568 31.4231 56.4812V56.4752C31.4231 47.7996 24.3902 40.7666 15.7146 40.7666Z" />
     </svg>
-  );
-}
-
-// Segmented-pill indicator. Renders `count` tall stadium pills. Both
-// variants animate on reveal, but the competitor side only lights
-// the first `litCount` pills — and lights them in a quiet off-white
-// rather than the brand lime — so it reads as a partial/incomplete
-// meter next to Assembly's full lime bar. Pills beyond `litCount`
-// stay in their dim resting state.
-function PillStrip({
-  variant,
-  count,
-  litCount,
-  baseDelayMs = 0,
-  pillStepMs = 0,
-  isLight = false,
-}) {
-  const isAssembly = variant === "assembly";
-  const litClass = isAssembly
-    ? "spec-pill--assembly-lit"
-    : "spec-pill--competitor-lit";
-  // Resting (unlit) base — translucent dark on the cream chapter,
-  // translucent white on the dark sections.
-  const restingBg = isLight ? "bg-[#1A1A1A]/10" : "bg-white/10";
-  return (
-    <div aria-hidden="true" className="flex items-center gap-[4px]">
-      {Array.from({ length: count }).map((_, i) => {
-        const isLit = i < litCount;
-        return (
-          <span
-            key={i}
-            className={`block h-4 w-[6px] ${restingBg} ${
-              isLit ? litClass : ""
-            }`}
-            style={
-              isLit
-                ? { animationDelay: `${baseDelayMs + i * pillStepMs}ms` }
-                : undefined
-            }
-          />
-        );
-      })}
-    </div>
   );
 }
