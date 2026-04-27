@@ -116,15 +116,20 @@ export function Header() {
     // Same chapter-tint formula as ScrollTintedChapter (kept in sync
     // intentionally — both compute t from the same sentinel rects so
     // the bg fade and the nav fade move together perfectly).
-    const LOCK_PX = 80;
+    // Fade-out completes when the wrapper's bottom edge reaches the
+    // viewport bottom — that way the nav (and the page bg) are fully
+    // back in dark mode before any pixel of the following section
+    // enters view, eliminating both white-on-cream readability bugs
+    // and hard cream/dark seams at section boundaries.
+    const FADE_PX = 140;
     const computeChapterTint = () => {
       if (lightSections.length === 0) return 0;
       let max = 0;
       for (const s of lightSections) {
         const r = s.getBoundingClientRect();
         const vh = window.innerHeight;
-        const fadeIn = clamp01((vh - r.top) / (vh - LOCK_PX));
-        const fadeOut = clamp01(r.bottom / (vh - LOCK_PX));
+        const fadeIn = clamp01((vh - r.top) / FADE_PX);
+        const fadeOut = clamp01((r.bottom - vh) / FADE_PX);
         const t = Math.min(fadeIn, fadeOut);
         if (t > max) max = t;
       }

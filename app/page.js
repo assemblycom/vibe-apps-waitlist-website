@@ -11,17 +11,12 @@ import { Footer } from "./components/Footer";
 import { GradientReveal } from "./components/GradientReveal";
 import { ZoomHero } from "./components/ZoomHero";
 import { Reveal } from "./components/Reveal";
-import { ScrollTintedChapter } from "./components/ScrollTintedChapter";
 import { HOME_CONTENT } from "./content/home";
 
 export default function Home() {
   const c = HOME_CONTENT;
   return (
     <div className="min-h-screen">
-      {/* Tints the page background between dark and cream as the
-          light chapter (ComparisonSpec + Testimonials) enters and
-          exits the viewport. Pure side-effect — renders nothing. */}
-      <ScrollTintedChapter />
       {/* Header is rendered OUTSIDE GradientReveal so its `position:
           fixed` actually anchors to the viewport. GradientReveal
           applies a `translate3d` to its content frame for the bottom-
@@ -80,18 +75,17 @@ export default function Home() {
         <ValueProps items={c.valueProps} />
       </Reveal>
 
-      {/* Off-white chapter — ComparisonSpec + Testimonials read as a
-          single light-mode interlude between the dark ValueProps and
-          dark FAQ. The page background interpolates smoothly from
-          dark to cream and back as the chapter enters/exits the
-          viewport — driven by ScrollTintedChapter (mounted at the
-          top of the page tree). The wrapper itself has no static bg;
-          only the tag attributes are needed:
-          - data-tinted-section="light" is the position sentinel
-            that ScrollTintedChapter watches.
-          - data-nav-theme="light" still triggers the nav's own
-            300ms light-mode flip for the pill, border, and logo. */}
-      <div data-nav-theme="light" data-tinted-section="light">
+      {/* Cream chapter — ComparisonSpec + Testimonials read as a single
+          light-mode interlude between dark ValueProps and dark FAQ.
+          Same pattern as NarrativeBlock: explicit cream bg with generous
+          bottom padding so its content ends well above the seam, then a
+          short dark spacer gives the eye a beat before FAQ's white text.
+          data-nav-theme="light" drives the nav pill's continuous tint. */}
+      <div
+        data-nav-theme="light"
+        data-tinted-section="light"
+        className="bg-[#F5F5F0] pb-32 md:pb-40"
+      >
         <Reveal>
           <ComparisonSpec
             theme="light"
@@ -114,6 +108,12 @@ export default function Home() {
           />
         </Reveal>
       </div>
+
+      {/* Dark spacer — same pattern as the NarrativeBlock → ValueProps
+          seam. Hard color flip at the wrapper edge with this strip of
+          empty dark giving the eye a beat to register the change before
+          FAQ content arrives. */}
+      <div aria-hidden="true" className="h-12 bg-[#101010] md:h-16" />
 
       <Reveal>
         <FAQ

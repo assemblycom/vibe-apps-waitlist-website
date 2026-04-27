@@ -24,9 +24,10 @@ export function ScrollTintedChapter({
   selector = '[data-tinted-section="light"]',
   dark = [16, 16, 16],
   light = [245, 245, 240],
-  // Once the chapter has docked to within `lockPx` of the viewport top
-  // (or bottom), the tint is fully on. Smaller = a quicker fade.
-  lockPx = 80,
+  // Width of the fade-in/fade-out band, in pixels. Page is fully
+  // tinted while the chapter is in view and only interpolates inside
+  // this short band at each edge — long lerps read as muddy.
+  fadePx = 140,
 }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -59,15 +60,25 @@ export function ScrollTintedChapter({
       const r = el.getBoundingClientRect();
       const vh = window.innerHeight;
 
-      // Fade-in: section approaching from below.
-      //   top = vh   → 0 (no tint, section just entering viewport)
-      //   top = lockPx → 1 (section fully docked under the nav)
-      const fadeIn = clamp01((vh - r.top) / (vh - lockPx));
+      // Fade-in: short band as the chapter crosses into the viewport.
+      //   top = vh         → 0 (just touching bottom edge)
+      //   top = vh - fadePx → 1 (band fully crossed)
+      const fadeIn = clamp01((vh - r.top) / fadePx);
 
-      // Fade-out: section leaving past the top.
-      //   bottom = vh - lockPx → 1 (still mostly in view)
-      //   bottom = 0          → 0 (section gone)
-      const fadeOut = clamp01(r.bottom / (vh - lockPx));
+      // Fade-out: finishes the moment the wrapper's bottom edge
+      // reaches the BOTTOM of the viewport — i.e. before any pixel
+      // of the next section enters view. The next section sits on
+      // a dark page bg (white text on dark, fully readable) from
+      // the moment it appears, with no cream-coloured frame around
+      // it and no hard cream/dark seam at the boundary.
+      //   bottom = vh + fadePx → 1 (wrapper extends well below the
+      //                             viewport, only chapter content
+      //                             is on screen, bg fully cream)
+      //   bottom = vh          → 0 (wrapper bottom touches viewport
+      //                             bottom, page bg now dark — any
+      //                             further scroll reveals next
+      //                             section on dark bg)
+      const fadeOut = clamp01((r.bottom - vh) / fadePx);
 
       const t = ease(Math.min(fadeIn, fadeOut));
       setBg(lerpColor(dark, light, t));
@@ -89,7 +100,7 @@ export function ScrollTintedChapter({
       // stuck on the last interpolated frame.
       root.style.removeProperty("--color-bg");
     };
-  }, [selector, dark, light, lockPx]);
+  }, [selector, dark, light, fadePx]);
 
   return null;
 }
