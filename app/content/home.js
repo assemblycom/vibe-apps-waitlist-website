@@ -23,7 +23,7 @@ export const HOME_CONTENT = {
         {
           u: "unified",
           preview: {
-            side: "right",
+            side: "left",
             visual: "qualityBadge",
             visualProps: { label: "One workspace" },
             body: "Every app you build shows up as part of an integrated experience in your client-facing portal. Apps can be grouped into folders, surface notifications the same way, and combine into a cohesive experience.",
