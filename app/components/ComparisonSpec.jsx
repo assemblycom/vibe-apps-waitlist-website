@@ -197,8 +197,9 @@ export function ComparisonSpec({
           </div>
 
           {/* Summary row — same hairline weight as the body rules so
-              nothing reads as a "bright line." Emphasis comes only
-              from a one-step type bump and a slightly darker label. */}
+              nothing reads as a "bright line." Emphasis comes from a
+              slightly darker label and a typewriter reveal on the
+              Assembly cell once the card has finished entering. */}
           {summaryRow && (
             <>
               <div className={`h-px w-full ${t.rule}`} />
@@ -211,17 +212,21 @@ export function ComparisonSpec({
                 </div>
                 <span aria-hidden="true" className={`block self-stretch ${t.rule}`} />
                 <div
-                  className={`spec-row py-6 text-[15px] leading-[1.45] ${t.bodyText}`}
+                  className={`spec-row py-6 text-[14px] leading-[1.5] ${t.bodyText}`}
                   style={{ animationDelay: `${bodyRows.length * 80}ms` }}
                 >
                   {summaryRow[1]}
                 </div>
                 <span aria-hidden="true" className={`block self-stretch ${t.rule}`} />
                 <div
-                  className={`spec-row py-6 text-[15px] leading-[1.45] ${t.bodyText}`}
+                  className={`spec-row py-6 text-[14px] leading-[1.5] ${t.bodyText}`}
                   style={{ animationDelay: `${bodyRows.length * 80 + 60}ms` }}
                 >
-                  {summaryRow[2]}
+                  <Typewriter
+                    text={summaryRow[2]}
+                    start={animate}
+                    delay={bodyRows.length * 80 + 60 + 480}
+                  />
                 </div>
               </div>
             </>
@@ -262,6 +267,63 @@ export function ComparisonSpec({
         </div>
       </div>
     </section>
+  );
+}
+
+// Typewriter reveal. Renders the full string for screen readers
+// (sr-only) and a visually-typed copy for sighted users. A blinking
+// caret follows the cursor while typing and lingers briefly after
+// the last character, so the row reads unambiguously as "being
+// typed" rather than as a generic fade. Reduced-motion users get
+// the full string with no caret.
+function Typewriter({ text, start, delay = 0, speed = 22 }) {
+  const [count, setCount] = useState(0);
+  const [showCaret, setShowCaret] = useState(false);
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  useEffect(() => {
+    if (!start) return;
+    if (reduced) {
+      setCount(text.length);
+      setShowCaret(false);
+      return;
+    }
+    let tickId;
+    let endId;
+    const startId = setTimeout(() => {
+      setShowCaret(true);
+      let i = 0;
+      const tick = () => {
+        i += 1;
+        setCount(i);
+        if (i < text.length) {
+          tickId = setTimeout(tick, speed);
+        } else {
+          endId = setTimeout(() => setShowCaret(false), 1100);
+        }
+      };
+      tick();
+    }, delay);
+    return () => {
+      clearTimeout(startId);
+      clearTimeout(tickId);
+      clearTimeout(endId);
+    };
+  }, [start, text, delay, speed, reduced]);
+
+  return (
+    <>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
+        {text.slice(0, count)}
+        {showCaret && <span className="typewriter-caret" />}
+      </span>
+    </>
   );
 }
 
