@@ -3,9 +3,9 @@
 
 export const HOME_CONTENT = {
   hero: {
-    heading: "Create tailored client experiences without starting over",
+    heading: "Build client-facing apps on a foundation built for client work",
     subheading:
-      "Assembly Studio lets you deliver tailor-made client experiences on top of a built-in CRM, portal, payments, and messaging.",
+      "Build apps in minutes, or pick from a growing library of pre-built ones. Each one deploys to your client portal and inherits your contacts, team, permissions, and preferences.",
   },
 
   whyAssemblyStudio: {
@@ -19,24 +19,24 @@ export const HOME_CONTENT = {
     // through as-is. NarrativeBlock flattens arrays paragraph-by-paragraph.
     body: [
       [
-        "Today's app builders are great for internal tools, prototypes, and websites. But if you're serving real paying clients, you don't want a single isolated app. You want a ",
+        "Today's app builders are great for internal tools, websites, and one-off apps. But if you're serving real paying clients, you don't want a single isolated app. You want a ",
         {
-          u: "reliable",
+          u: "unified",
           preview: {
             side: "right",
             visual: "qualityBadge",
-            visualProps: { label: "99.9% uptime" },
-            body: "Runs on Assembly's platform — monitored, backed up, SOC 2 in progress.",
+            visualProps: { label: "One workspace" },
+            body: "Every app you build shows up as part of an integrated experience in your client-facing portal. Apps can be grouped into folders, surface notifications the same way, and combine into a cohesive experience.",
           },
         },
         ", ",
         {
-          u: "unified",
+          u: "reliable",
           preview: {
             side: "left",
             visual: "qualityBadge",
-            visualProps: { label: "One workspace" },
-            body: "One CRM, one portal, one permissions model across every app.",
+            visualProps: { label: "99.9% uptime" },
+            body: "Apps deploy into a secure, production-grade client experience. So when one app misbehaves, clients can still authenticate and use built-in features like messaging and payments.",
           },
         },
         ", and ",
@@ -46,7 +46,7 @@ export const HOME_CONTENT = {
             side: "right",
             visual: "qualityBadge",
             visualProps: { label: "Production-ready" },
-            body: "Branded, typography and spacing dialed in, empty states handled.",
+            body: "Your client experience is fully brandable, and the apps you generate automatically combine your brand language with our app design system.",
           },
         },
         " client experience.",
@@ -67,7 +67,7 @@ export const HOME_CONTENT = {
         },
         ", a ",
         {
-          u: "deliverable approval flow",
+          u: "approvals workflow",
           preview: {
             side: "right",
             visual: "appMock",
@@ -98,37 +98,28 @@ export const HOME_CONTENT = {
           preview: {
             side: "left",
             visual: "contacts",
-            body: "Shares your CRM — update a contact once, every app follows.",
+            body: "When you build a new app it automatically works with the contacts and companies in your CRM and the internal users on your team. You don't have to rebuild these primitives for each new app.",
           },
         },
-        ", respects your ",
+        ", ",
         {
-          u: "permissions",
+          u: "respects your permissions",
           preview: {
             side: "right",
             visual: "permissions",
-            body: "Row-level access, enforced at the data layer.",
+            body: "For each app, control which clients can access it. This lets you create tiered client experiences — for trial vs. paying clients, clients in different industries, clients on different subscription plans, and more.",
           },
         },
-        ", and seamlessly ",
+        ", and ",
         {
-          u: "integrates notifications",
+          u: "seamlessly integrates notifications",
           preview: {
             side: "left",
             visual: "notifications",
-            body: "One unified feed — email, in-product, and mobile.",
+            body: "Every app surfaces notifications the same way. In your portal, a counter appears next to the app name in the sidebar. Over email, clients get white-labeled notifications with magic-link actions for seamless login.",
           },
         },
-        ". Every app deploys straight into your portal, not as a standalone tool on a separate URL, but as a ",
-        {
-          u: "native part of your client experience",
-          preview: {
-            side: "right",
-            visual: "portalMini",
-            body: "Ships into your branded portal — no separate URL or login.",
-          },
-        },
-        ". Authentication, permissions, client identity, branding — all handled automatically.",
+        ". Every app deploys straight into your portal, not as a standalone tool on a separate URL, but as a native part of your client experience. Authentication, permissions, client identity, branding — all handled automatically.",
       ],
       [
         "And you don't have to build everything yourself. Assembly ships with a ",
@@ -137,7 +128,7 @@ export const HOME_CONTENT = {
           preview: {
             side: "right",
             visual: "library",
-            body: "21 production-ready apps — messaging, payments, intake, proposals, and more.",
+            body: "You don't have to build everything from scratch. For example, you can enable our Messages App in one click to let clients seamlessly communicate with you and reply directly via email. Our app library now has 20 apps and counting.",
           },
         },
         " that you can enable in one click — for client messaging, payments, proposals, project management, and more. Don't rebuild the 80% that's been perfected over years of iteration. Focus on the 20% that makes you different.",
@@ -164,23 +155,23 @@ export const HOME_CONTENT = {
       layout: "split",
       orientation: "text-left",
       menuLabel: "AI builder",
-      heading: "Describe an idea, watch it come alive",
-      body: "Start from a template or describe your own app in plain English. Assembly generates a secure app and publishes it to your client portal. No code, no deploy step, no infrastructure to wire up.",
+      heading: "Describe an app, ship it in minutes",
+      body: "Start from a template or describe your own app in plain English. Assembly generates a secure app you can publish to your client portal in one click. No code, no infrastructure, no developer required.",
       visualKey: "threeSteps",
     },
     {
       layout: "split",
       orientation: "text-right",
       menuLabel: "Client experience",
-      heading: "Where your apps meet your clients",
-      body: "Every client sees a portal built from native Assembly apps and the ones you built yourself, organized into folders, scoped per client, branded as yours.",
+      heading: "A branded portal your clients actually want to use",
+      body: "Native Assembly apps and the ones you build live side by side in a portal that's branded as your firm. Organize apps into folders on the sidebar and set permissions so every client sees only what's meant for them.",
       visualKey: "clientPortal",
     },
     {
       layout: "stacked",
       menuLabel: "Internal dashboard",
       heading: "Your team's command center",
-      body: "Behind the portal, your team's command center. A CRM with contacts and companies, custom fields, internal notes, a unified notification center, automations, and every custom app you built ships with an internal view for your team, too.",
+      body: "Manage contacts and companies in a built-in CRM. Stay on top of activity with a unified notification center. And every app you build ships with an internal view for your team — automatically.",
       visualKey: "studioApp",
     },
   ],
@@ -191,10 +182,10 @@ export const HOME_CONTENT = {
     // The heading splits onto two lines: primary claim on top, a
     // dimmed "coda" below — mirrors the NarrativeBlock headline
     // pattern used earlier in the page.
-    heading: "Built for clients",
-    headingCallout: "not prototypes",
+    heading: "Built for",
+    headingCallout: "client experiences",
     firstColumnLabel: "Where we differ",
-    leftLabel: "Lovable / Replit",
+    leftLabel: "Lovable / Base44",
     rightLabel: "Assembly Studio",
     // Rows are [rowLabel, competitor, assembly, mobileFeature?]. The
     // first three drive the desktop 3-col grid where the axis label
@@ -204,16 +195,10 @@ export const HOME_CONTENT = {
     // axis as scaffolding.
     rows: [
       [
-        "Who it's for",
-        "Anyone building software",
-        "AI-native service firms",
-        "Built for AI-native service firms",
-      ],
-      [
         "What it's for",
-        "Prototypes & internal tools",
-        "Client-facing experiences",
-        "Built for client-facing experiences",
+        "Internal tools, websites, one-off apps",
+        "Authenticated client-facing experiences",
+        "Built for authenticated client-facing experiences",
       ],
       [
         "Where it lives",
@@ -224,19 +209,19 @@ export const HOME_CONTENT = {
       [
         "What's included",
         "You build the stack",
-        "CRM, portal, auth, billing, notifications",
-        "CRM, portal, auth, billing, and notifications included",
+        "CRM, portal, 30+ primitives, 20+ apps",
+        "CRM, portal, 30+ primitives, and 20+ apps included",
       ],
       [
-        "How apps connect",
-        "Siloed, one-off apps",
-        "Organized in folders, trigger each other",
-        "Apps organized in folders, triggering each other",
+        "What if one app fails?",
+        "The core client experience goes down",
+        "The core client experience remains active",
+        "Core client experience stays up if one app fails",
       ],
       [
-        "Best fit for",
-        "A one-off tool",
-        "A consolidated client experience",
+        "Best fit when",
+        "Building a one-off app",
+        "Deliver a consolidated client experience",
         "Built for a consolidated client experience",
       ],
     ],
@@ -321,23 +306,34 @@ export const HOME_CONTENT = {
     items: [
       {
         q: "How do I get access to Assembly Studio?",
-        a: "Assembly Studio is in pre-launch. Join the waitlist above with your work email and we'll open seats in waves, earliest firms first. Signing up before launch locks in $100 of build credits.",
+        a: "We're rolling out access in waves. Waitlist members get first access, and founding members get extra perks like a founding member plan and personalized onboarding.",
       },
       {
-        q: "What does it cost?",
-        a: "Assembly Studio includes the full foundation (CRM, portal, auth, permissions, messaging, payments) on a flat per-workspace plan. Custom apps run on metered build credits; waitlist members get $100 to start. Full pricing will be published at launch.",
+        q: "What can I actually build?",
+        a: "Assembly Studio is a particularly good fit for anything you'd want your clients to interact with. The specifics vary by firm — accounting firms might build year-end checklist apps, consulting firms build deliverable review flows, law firms build case status trackers, marketing agencies build campaign approval flows, interior design firms build mood board approvals. If you can describe a workflow you run with clients, you can probably build it as an app.",
       },
       {
-        q: "How secure is it?",
-        a: "Every workspace runs on one permissions layer with row-level client scoping on by default, magic-link and SSO auth, encrypted data at rest and in transit, and audit logs. SOC 2 Type II is in progress; region-pinned data is available on Enterprise.",
+        q: "Do I need to know how to code?",
+        a: "No. Describe the app you want in plain English and Assembly Studio generates it. Iterate by chatting — no code required.",
       },
       {
-        q: "Can I get help building features?",
-        a: "Yes. Assembly Studio ships with a library of 21 reviewed apps you can enable with one click. For bespoke work, our solutions team and partner network can build alongside you, and everything they build lives on the same platform as the rest of your workspace.",
+        q: "What if I already have an Assembly.com workspace?",
+        a: [
+          "For now, Assembly Studio is a standalone product. If you're invited to create an Assembly Studio workspace, it'll be separate from your existing ",
+          { link: "Assembly.com", href: "http://assembly.com" },
+          " workspace, and the two can't be combined. Longer term, Assembly Studio features will roll out to everyone.",
+        ],
       },
       {
-        q: "What if I already have an Assembly workspace?",
-        a: "Assembly Studio slots directly into your existing workspace: same CRM, same portal, same clients. When you get access, you'll see it appear in your sidebar. No migration needed.",
+        q: "How do I get in touch with the team?",
+        a: [
+          "For questions about Assembly Studio, email us at ",
+          {
+            link: "assemblystudio@assembly.com",
+            href: "mailto:assemblystudio@assembly.com",
+          },
+          ".",
+        ],
       },
     ],
   },
@@ -345,7 +341,7 @@ export const HOME_CONTENT = {
   finalCta: {
     heading: "Reserve your seat",
     subheading:
-      "The first signups get a personalized onboarding session. We'll sit with you, understand your firm, and help you craft the client experience your firm deserves.",
+      "Reserve your seat to become a founding member — with an exclusive plan, personalized onboarding, and direct access to our team as we build.",
   },
 
   // Post-submit modal that appears after the user enters an email in

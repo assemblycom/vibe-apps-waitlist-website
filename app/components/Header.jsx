@@ -113,23 +113,23 @@ export function Header() {
     const ease = (t) =>
       t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 
-    // Same chapter-tint formula as ScrollTintedChapter (kept in sync
-    // intentionally — both compute t from the same sentinel rects so
-    // the bg fade and the nav fade move together perfectly).
-    // Fade-out completes when the wrapper's bottom edge reaches the
-    // viewport bottom — that way the nav (and the page bg) are fully
-    // back in dark mode before any pixel of the following section
-    // enters view, eliminating both white-on-cream readability bugs
-    // and hard cream/dark seams at section boundaries.
+    // Tint formula tied to the NAV's own y-position, not the viewport
+    // bottom. The nav should read whatever section sits directly behind
+    // the pill — so we measure each light section's edges relative to
+    // the pill's bottom (NAV_BOTTOM_PX). Fades complete just as the
+    // section enters/exits the nav strip, which keeps the pill in light
+    // mode for the entire time cream content is visibly below it,
+    // instead of flipping back to dark while the cream section is still
+    // on screen below the fold.
     const FADE_PX = 140;
+    const NAV_BOTTOM_PX = 56;
     const computeChapterTint = () => {
       if (lightSections.length === 0) return 0;
       let max = 0;
       for (const s of lightSections) {
         const r = s.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const fadeIn = clamp01((vh - r.top) / FADE_PX);
-        const fadeOut = clamp01((r.bottom - vh) / FADE_PX);
+        const fadeIn = clamp01((NAV_BOTTOM_PX - r.top) / FADE_PX);
+        const fadeOut = clamp01((r.bottom - NAV_BOTTOM_PX) / FADE_PX);
         const t = Math.min(fadeIn, fadeOut);
         if (t > max) max = t;
       }

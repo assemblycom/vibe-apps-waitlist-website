@@ -32,6 +32,28 @@ function Chevron({ open }) {
 // keyboard + touch users can still close items). State is lifted to the
 // parent so only one item is open at a time — preserves the editorial
 // "one detail at a time" feel.
+function renderAnswer(a) {
+  if (typeof a === "string") return a;
+  if (!Array.isArray(a)) return a;
+  return a.map((seg, i) => {
+    if (typeof seg === "string") return seg;
+    if (seg && seg.link) {
+      return (
+        <a
+          key={i}
+          href={seg.href}
+          className="text-white/80 underline decoration-white/30 underline-offset-[3px] transition-colors hover:text-white hover:decoration-white/60"
+          target={seg.href?.startsWith("http") ? "_blank" : undefined}
+          rel={seg.href?.startsWith("http") ? "noreferrer" : undefined}
+        >
+          {seg.link}
+        </a>
+      );
+    }
+    return null;
+  });
+}
+
 function FaqItem({ q, a, open, onActivate, onToggle }) {
   return (
     <div
@@ -67,7 +89,7 @@ function FaqItem({ q, a, open, onActivate, onToggle }) {
                 : "-translate-y-1 opacity-0 ease-[cubic-bezier(0.4,0,0.2,1)]",
             )}
           >
-            {a}
+            {renderAnswer(a)}
           </p>
         </div>
       </div>
