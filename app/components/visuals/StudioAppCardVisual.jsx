@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { PlayPauseToggle } from "./PlayPauseToggle";
 
@@ -241,26 +241,6 @@ function DashboardPanel() {
 
           {/* Trend chart */}
           <TrendChart />
-        </div>
-
-        {/* Latest release */}
-        <div className="mt-5">
-          <div className="mb-1 text-[10px] font-medium text-[#212b36]">
-            Latest release
-          </div>
-          <div className="rounded-[5px] border border-[#eef0f2] bg-white px-2.5 py-2">
-            <div className="text-[10px] font-semibold text-[#101010]">
-              Assembly MCP for Claude &amp; ChatGPT
-            </div>
-            <p className="mt-0.5 text-[9px] leading-[1.45] text-[#6b6f76]">
-              Connect Assembly to Claude and ChatGPT through the Assembly MCP
-              server. Your apps, CRM, and client data become tools your team can
-              query from either assistant.
-            </p>
-            <div className="mt-1.5 inline-flex rounded-[4px] border border-[#dfe1e4] bg-white px-1.5 py-[2px] text-[9px] text-[#212b36]">
-              See all releases
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -542,7 +522,13 @@ function ChevronRight() {
   );
 }
 
-function CompanyHeader({ activeTab }) {
+function CompanyHeader({ activeTab, pressingTab, textActiveTab }) {
+  // `textActiveTab` controls only which tab gets the dark text colour;
+  // `activeTab` drives the sliding underline. Splitting them lets the
+  // underline begin its slide on the click while the type colour holds
+  // until the body actually swaps — avoids a heavy "everything bolds at
+  // once" flash at the moment of press.
+  const colorActive = textActiveTab ?? activeTab;
   const tabs = [
     { id: "messages", label: "Messages" },
     { id: "onboarding", label: "Onboarding" },
@@ -551,6 +537,16 @@ function CompanyHeader({ activeTab }) {
     { id: "forms", label: "Forms" },
     { id: "billing", label: "Billing" },
   ];
+  // Single underline element that translates between tab targets so the
+  // active line slides on tab change instead of jump-cutting. Position
+  // is measured from each tab's actual rendered width so it matches
+  // even as the type scale or copy changes.
+  const tabRefs = useRef({});
+  const [underline, setUnderline] = useState({ left: 0, width: 0 });
+  useLayoutEffect(() => {
+    const el = tabRefs.current[activeTab];
+    if (el) setUnderline({ left: el.offsetLeft, width: el.offsetWidth });
+  }, [activeTab]);
   return (
     <>
       {/* Crumb / title row */}
@@ -564,25 +560,45 @@ function CompanyHeader({ activeTab }) {
           of floating above it at fractional mobile render scales. */}
       <div className="relative flex items-center gap-4 border-b border-[#eef0f2] px-4">
         {tabs.map((t) => {
-          const isActive = t.id === activeTab;
+          const isColorActive = t.id === colorActive;
+          const isPressing = t.id === pressingTab;
           return (
             <span
               key={t.id}
+              ref={(el) => {
+                tabRefs.current[t.id] = el;
+              }}
               className={clsx(
-                "relative flex-shrink-0 whitespace-nowrap py-2 text-[11px] transition-colors duration-[250ms]",
-                isActive ? "text-[#101010]" : "text-[#6b6f76]",
+                "relative flex-shrink-0 whitespace-nowrap py-2 text-[11px] transition-[color,background-color] duration-[200ms]",
+                isColorActive ? "text-[#101010]" : "text-[#6b6f76]",
               )}
+              style={{
+                // Press feedback — kept very light: a faint warm tint
+                // under the tab during the cursor's pressed state, no
+                // scale/padding shifts, no early colour bump. The
+                // sliding underline carries most of the click signal.
+                backgroundColor: isPressing
+                  ? "rgba(16,16,16,0.035)"
+                  : "transparent",
+              }}
             >
               {t.label}
-              {isActive && (
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-[#101010]"
-                />
-              )}
             </span>
           );
         })}
+        {/* Sliding underline — sits on the bottom border, tracks the
+            active tab's geometry. Hidden until the first measurement
+            so it doesn't flash at width 0. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-px h-px bg-[#101010] transition-[transform,width,opacity] duration-[420ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]"
+          style={{
+            left: 0,
+            width: `${underline.width}px`,
+            transform: `translateX(${underline.left}px)`,
+            opacity: underline.width > 0 ? 1 : 0,
+          }}
+        />
         <span className="flex flex-shrink-0 items-center gap-0.5 whitespace-nowrap py-2 text-[11px] text-[#6b6f76]">
           9 more
           <svg
@@ -807,12 +823,22 @@ function MainCanvas({ phaseId, cursorPhase }) {
   if (phaseId === "dashboard") return <DashboardPanel />;
   if (phaseId === "crm") return <CompaniesPanel cursorPhase={cursorPhase} />;
 
-  // Company detail — Messages tab by default, Onboarding once clicked.
-  const activeTab = phaseId === "onboarding" ? "onboarding" : "messages";
+  // Company detail — Messages tab by default, Onboarding once the
+  // cursor commits its click. The underline slides as soon as the
+  // press fires (well before the phase transition lands ~600ms later),
+  // so the click reads as a real interaction instead of a jump cut.
+  const clickCommit = phaseId === "messages" && cursorPhase === "clicking";
+  const bodyTab = phaseId === "onboarding" ? "onboarding" : "messages";
+  const activeTab = clickCommit ? "onboarding" : bodyTab;
+  const pressingTab = clickCommit ? "onboarding" : null;
   return (
     <div className="relative flex h-full flex-col">
-      <CompanyHeader activeTab={activeTab} />
-      {activeTab === "messages" ? (
+      <CompanyHeader
+        activeTab={activeTab}
+        textActiveTab={bodyTab}
+        pressingTab={pressingTab}
+      />
+      {bodyTab === "messages" ? (
         <CompanyMessagesBody />
       ) : (
         <CompanyOnboardingBody />

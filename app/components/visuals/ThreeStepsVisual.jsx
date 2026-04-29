@@ -107,17 +107,19 @@ function InputPhase({ active, paused }) {
       }, 420),
     );
 
-    // Attach the PDF chip after typing finishes, then arm the button.
-    timers.push(setTimeout(() => !cancelled && setAttached(true), 3700));
-    timers.push(setTimeout(() => !cancelled && setArmed(true), 4500));
+    // Attach the PDF chip shortly after typing finishes, then arm the
+    // button. Pulled forward by ~1s so the chip doesn't sit waiting in
+    // the wings after the prompt completes.
+    timers.push(setTimeout(() => !cancelled && setAttached(true), 2700));
+    timers.push(setTimeout(() => !cancelled && setArmed(true), 3500));
 
     // Cursor appears after the button arms, glides into the button,
     // presses, releases — then the phase advances on its own clock.
-    timers.push(setTimeout(() => !cancelled && setCursorPhase("moving"), 4750));
+    timers.push(setTimeout(() => !cancelled && setCursorPhase("moving"), 3750));
     timers.push(
-      setTimeout(() => !cancelled && setCursorPhase("clicking"), 5650),
+      setTimeout(() => !cancelled && setCursorPhase("clicking"), 4650),
     );
-    timers.push(setTimeout(() => !cancelled && setCursorPhase("done"), 5900));
+    timers.push(setTimeout(() => !cancelled && setCursorPhase("done"), 4900));
 
     return () => {
       cancelled = true;
@@ -388,6 +390,10 @@ const SIDEBAR_ACTIVE_BG = "#f1f9d8";
 // just "your freshly-generated Onboarding app appeared in the
 // sidebar". Showing the folder's contents would pull attention away
 // from that highlight.
+// Badges mirror ClientPortalVisual's sidebar so the freshly-generated
+// app reads as already wired into the client's notifications: 1
+// onboarding step pending, 1 invoice open, 2 tasks to do. Messages has
+// no badge — the welcome thread has been replied to.
 const STUDIO_NAV = [
   { id: "home", label: "Home", icon: "/Icons/clienthome.svg", iconSize: 13 },
   { id: "messages", label: "Messages", icon: "/Icons/messages.svg" },
@@ -396,9 +402,10 @@ const STUDIO_NAV = [
     label: "Onboarding",
     icon: "/Icons/on-boarding.svg",
     active: true,
+    badge: "1",
   },
-  { id: "payments", label: "Payments", icon: "/Icons/payments.svg" },
-  { id: "tasks", label: "Tasks", icon: "/Icons/tasks.svg" },
+  { id: "payments", label: "Payments", icon: "/Icons/payments.svg", badge: "1" },
+  { id: "tasks", label: "Tasks", icon: "/Icons/tasks.svg", badge: "2" },
   { id: "other", label: "Other", icon: "/Icons/other.svg" },
 ];
 
@@ -585,7 +592,7 @@ function ResultPhase({ active, paused }) {
                   </span>
                   {item.badge && (
                     <span
-                      className="rounded-full bg-[#dfe1e4] px-1.5 py-[1px] text-[10px] font-medium leading-[14px] text-[#212b36] transition-all duration-[350ms] ease-out"
+                      className="flex h-[14px] min-w-[16px] flex-shrink-0 items-center justify-center rounded-[3px] bg-[#bdd180] px-1 text-[10px] font-medium leading-none text-[#2a3d0a] transition-all duration-[350ms] ease-out"
                       style={{
                         opacity: showBadge ? 1 : 0,
                         transform: `scale(${showBadge ? 1 : 0.85})`,

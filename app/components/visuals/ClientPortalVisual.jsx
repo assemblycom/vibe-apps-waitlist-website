@@ -183,18 +183,14 @@ function TaskIcon() {
 // across the tour), then personalised greeting → hero banner →
 // Your-actions counters → About-us copy → Working-hours table.
 function HomePanel() {
-  // Invoices uses the Payments icon (closest semantic match from the
-  // supplied asset pack); Tasks falls back to an inline tick-in-square.
-  // Neutral action-card styling — the sidebar is the client's lime brand,
-  // but the action cards are app surface, so they read in greys. Counts
-  // carry the "what needs attention" signal (100 invoices vs 5 contracts).
   // Counts here must match the sidebar row badges below — the
   // Your-actions card is the "what's pending" summary that each nav
-  // indicator links back to.
+  // indicator links back to. Messages isn't surfaced as an action
+  // because the welcome thread has already been replied to.
   const actions = [
-    { label: "Messages", count: "4", iconSrc: "/Icons/messages.svg" },
-    { label: "Payments", count: "2", iconSrc: "/Icons/payments.svg" },
-    { label: "Tasks", count: "7", iconSrc: "/Icons/tasks.svg" },
+    { label: "Onboarding", count: "1", iconSrc: "/Icons/on-boarding.svg" },
+    { label: "Payments", count: "1", iconSrc: "/Icons/payments.svg" },
+    { label: "Tasks", count: "2", iconSrc: "/Icons/tasks.svg" },
   ];
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -562,49 +558,33 @@ function VisaMark() {
   );
 }
 
-function BankIcon() {
-  return (
-    <img
-      src="/Icons/chasebank.svg"
-      alt=""
-      aria-hidden="true"
-      width={20}
-      height={20}
-      className="flex-shrink-0"
-    />
-  );
-}
-
 function PaymentsPanel() {
-  // Matches the client-onboarding story: Ana just joined, hasn't added
-  // a payment method or subscribed to ongoing services yet, and has a
-  // single first invoice waiting to be paid (the one Jennifer calls
-  // out in her welcome message).
+  // Matches the client-onboarding story: Ana has added a card on file
+  // but hasn't paid the first invoice yet (the one Jennifer calls out
+  // in her welcome message). Subscriptions section is intentionally
+  // omitted — the brand sprint is a one-time engagement, so the page
+  // reads cleaner with just Payment Methods + Invoices.
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <PanelHeader title="Billing" />
       <div className="flex-1 overflow-hidden px-5 py-3 space-y-4">
-        {/* Payment Methods — empty state. The client hasn't added a
-            card or bank account yet; this is the first thing the
-            "pay your first invoice" flow will prompt. */}
         <section>
           <div className="mb-2 text-[11px] font-medium text-[#212b36]">
             Payment Methods
           </div>
-          <div className="flex items-center justify-center rounded-[5px] border border-dashed border-[#dfe1e4] bg-white px-3 py-4 text-[10px] text-[#6b6f76]">
-            No payment method on file yet.
-          </div>
-        </section>
-
-        {/* Subscriptions — empty state. Brand sprint is a one-time
-            engagement so far; ongoing retainers would appear here
-            once the client signs up for them. */}
-        <section>
-          <div className="mb-2 text-[11px] font-medium text-[#212b36]">
-            Subscriptions
-          </div>
-          <div className="flex items-center justify-center rounded-[5px] border border-dashed border-[#dfe1e4] bg-white px-3 py-4 text-[10px] text-[#6b6f76]">
-            No active subscriptions.
+          <div className="flex items-center justify-between rounded-[5px] border border-[#dfe1e4] bg-white px-3 py-2.5">
+            <div className="flex items-center gap-2.5">
+              <VisaMark />
+              <div>
+                <div className="text-[11px] font-medium text-[#212b36]">
+                  Visa ending in 4242
+                </div>
+                <div className="text-[10px] text-[#6b6f76]">Expires 09/28</div>
+              </div>
+            </div>
+            <span className="rounded-full bg-[#eef0f2] px-2 py-[2px] text-[10px] font-medium text-[#2b2f36]">
+              Default
+            </span>
           </div>
         </section>
 
@@ -987,16 +967,15 @@ function MainPanel({ visible, phaseId }) {
 // Onboarding → Payments → Tasks → Other ▾).
 // Badge counts mirror the Your-actions card in HomePanel so the
 // sidebar indicators feel load-bearing — the viewer can trace each
-// count from the summary card back to the row it belongs to.
+// count from the summary card back to the row it belongs to. Messages
+// has no badge: the welcome thread has already been replied to, so
+// nothing is unread.
 const NAV = [
   { id: "home", label: "Home", iconSrc: "/Icons/clienthome.svg", iconSize: 13 },
-  { id: "messages", label: "Messages", iconSrc: "/Icons/messages.svg", badge: "4" },
-  { id: "onboarding", label: "Onboarding", iconSrc: "/Icons/on-boarding.svg" },
-  { id: "payments", label: "Payments", iconSrc: "/Icons/payments.svg", badge: "2" },
-  // Tasks sits just above the Other folder. It doesn't have a phase
-  // in this tour, but carries a badge so the Your-actions count on
-  // the Home panel has a matching indicator.
-  { id: "tasks", label: "Tasks", iconSrc: "/Icons/tasks.svg", badge: "7" },
+  { id: "messages", label: "Messages", iconSrc: "/Icons/messages.svg" },
+  { id: "onboarding", label: "Onboarding", iconSrc: "/Icons/on-boarding.svg", badge: "1" },
+  { id: "payments", label: "Payments", iconSrc: "/Icons/payments.svg", badge: "1" },
+  { id: "tasks", label: "Tasks", iconSrc: "/Icons/tasks.svg", badge: "2" },
 ];
 
 // Children revealed when the "Other" folder expands. These rows are

@@ -5,7 +5,7 @@ export const HOME_CONTENT = {
   hero: {
     heading: "Build client-facing apps on a foundation built for client work",
     subheading:
-      "Build apps in minutes, or pick from a growing library of pre-built ones. Each one deploys to your client portal and inherits your contacts, team, permissions, and preferences.",
+      "Build apps in minutes, or pick from a library of pre-built ones. Each one deploys to your client portal and inherits your contacts, permissions, and preferences.",
   },
 
   whyAssemblyStudio: {
@@ -341,7 +341,7 @@ export const HOME_CONTENT = {
   finalCta: {
     heading: "Reserve your seat",
     subheading:
-      "Reserve your seat to become a founding member — with an exclusive plan, personalized onboarding, and direct access to our team as we build.",
+      "Reserve your seat to become a founding member — with an exclusive plan, personalized onboarding, and direct access to our team.",
   },
 
   // Post-submit modal that appears after the user enters an email in
