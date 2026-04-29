@@ -20,6 +20,10 @@ const MAX_RADIUS_PX = 28; // corner radius at full progress
 // Scroll distance over which the animation plays, as a fraction of the
 // viewport height. 1 = one full screen of scroll to reach MIN_SCALE.
 const ACTIVE_VH_FRAC = 1;
+// Initial scroll budget the hero hands off before the zoom kicks in.
+// The hero visual no longer animates on scroll, so this is 0 — the
+// hero starts scaling the moment the user begins scrolling.
+const SCROLL_OFFSET_PX = 0;
 // Off-white backdrop — showing through around the scaled hero and
 // carrying into the section below for a continuous color band.
 const BACKDROP = "#F5F5F0";
@@ -37,9 +41,12 @@ export function ZoomHero({ children }) {
       raf = null;
       const vh = window.innerHeight || 1;
       const scrollY = window.scrollY;
+      // Subtract the runway HeroLayeredStack uses for its fan-out so
+      // the hero only starts scaling once that animation has played.
+      const adjusted = Math.max(0, scrollY - SCROLL_OFFSET_PX);
       const progress = Math.max(
         0,
-        Math.min(1, scrollY / (vh * ACTIVE_VH_FRAC)),
+        Math.min(1, adjusted / (vh * ACTIVE_VH_FRAC)),
       );
       const scale = 1 - progress * (1 - MIN_SCALE);
       const radius = progress * MAX_RADIUS_PX;

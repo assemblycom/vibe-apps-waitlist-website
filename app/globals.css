@@ -443,3 +443,61 @@ html.lenis body {
     animation-delay: 0ms !important;
   }
 }
+
+/* HeroLayeredStack — pill cycler.
+   Each pill follows the same 6s loop, with N pills offset by 6/N
+   seconds via animation-delay so at any frame one is at the front
+   slot, two more peek out as faded depth slots, and the fourth is
+   off-stage either entering from below or wrapping back from the top.
+   Translate values are larger than they look "needed" because the
+   pills overlap heavily — back slots have to peek a clear sliver
+   below the front pill or the stack reads as one fat row. */
+@keyframes hls-pill-cycle {
+  0% {
+    transform: translate(-50%, -50%) translateY(56px) scale(0.88);
+    opacity: 0;
+    z-index: 0;
+  }
+  12% {
+    transform: translate(-50%, -50%) translateY(36px) scale(0.91);
+    opacity: 0.18;
+    z-index: 1;
+  }
+  25% {
+    transform: translate(-50%, -50%) translateY(28px) scale(0.93);
+    opacity: 0.32;
+    z-index: 2;
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(14px) scale(0.97);
+    opacity: 0.6;
+    z-index: 3;
+  }
+  75% {
+    transform: translate(-50%, -50%) translateY(0px) scale(1);
+    opacity: 1;
+    z-index: 5;
+  }
+  88% {
+    transform: translate(-50%, -50%) translateY(-18px) scale(1);
+    opacity: 0.4;
+    z-index: 4;
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(-40px) scale(0.95);
+    opacity: 0;
+    z-index: 0;
+  }
+}
+
+.hls-pill {
+  animation: hls-pill-cycle 6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hls-pill {
+    animation: none;
+  }
+}
+
