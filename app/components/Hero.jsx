@@ -1,12 +1,5 @@
 import { EmailCTA } from "./EmailCTA";
-import { HeroLayeredStack, FoundationIcon } from "./HeroLayeredStack";
 import { LogoStrip } from "./LogoStrip";
-
-const FOUNDATION_TAGS = [
-  { iconKey: "lock", label: "Authentication" },
-  { iconKey: "shield", label: "Permissions" },
-  { iconKey: "bell", label: "Notifications" },
-];
 
 export function Hero({
   eyebrow,
@@ -55,48 +48,14 @@ export function Hero({
         }}
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-12 pt-32 md:pt-36 lg:pt-40">
-        {/* Two-column grid for md+. On mobile, text stacks above the
-            (hidden) visual and stays left-aligned. */}
-        <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-[1.05fr_1fr] md:gap-10 lg:gap-16">
-          {/* Left column — heading, subheading, CTA, foundation tags. */}
-          <div className="flex flex-col items-start text-left">
-            <h1 className="mb-6 max-w-[560px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
-              {heading}
-            </h1>
-            <p className="mb-8 max-w-[520px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
-              {subheading}
-            </p>
-            <EmailCTA />
-
-            {/* Foundation tag row — names the primitives every app on
-                Assembly Studio inherits. Lives directly under the CTA
-                so the promise ("auth/perms/notifs come for free") sits
-                next to the moment the user is asked to commit. */}
-            <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] text-white/45">
-              <span className="tracking-[-0.005em]">
-                Every app inherits your
-              </span>
-              <div className="flex flex-wrap items-center gap-1.5">
-                {FOUNDATION_TAGS.map((f) => (
-                  <span
-                    key={f.label}
-                    className="flex items-center gap-1.5 rounded-full border border-white/[0.07] bg-white/[0.02] px-2.5 py-1 text-white/65"
-                  >
-                    <FoundationIcon kind={f.iconKey} className="h-3 w-3" />
-                    {f.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right column — layered square-card visual. Hidden on
-              mobile (the component handles its own md:block). */}
-          <div className="flex justify-center md:justify-end">
-            <HeroLayeredStack />
-          </div>
-        </div>
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center px-6 pb-12 pt-32 text-center md:pt-36 lg:pt-40">
+        <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
+          {heading}
+        </h1>
+        <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
+          {subheading}
+        </p>
+        <EmailCTA />
 
         {/* Alpha-user credential strip — pinned to the bottom of the
             section, full-width centered. */}
