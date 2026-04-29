@@ -5,50 +5,68 @@ export function Hero({
   eyebrow,
   heading,
   subheading,
+  alphaLabel,
   alphaLogos,
 }) {
   return (
-    // min-height clamped so very tall viewports (1080p+, ultrawides) don't
-    // stretch the hero and dump all their slack into one big gap between the
-    // CTA and the bottom-anchored logo strip. Extra top padding at xl/2xl
-    // keeps the stack visually centered on large monitors without needing to
-    // restructure the flex layout.
+    // Centered text/CTA stack at the top, polished product surface
+    // below as the hero's product feature, logo strip pinned to the
+    // bottom. min-height clamped so very tall viewports don't dump
+    // slack into one big gap between the CTA and the bottom-anchored
+    // logo strip.
     <section
-      className="mx-auto flex max-w-6xl flex-col px-6 pb-8 pt-32 md:pb-12 md:pt-40 xl:pt-52 2xl:pt-60"
-      style={{ minHeight: "min(100vh, 920px)" }}
+      className="relative overflow-hidden flex flex-col"
+      style={{ minHeight: "min(100vh, 1080px)" }}
     >
-      {/* Centered column — heading + subhead + CTA all align on the
-          vertical axis so the hero reads as a single focused stack. Each
-          child keeps its own max-width constraint; items-center lays them
-          out center-anchored, text-center carries through to multi-line
-          copy. */}
-      <div className="flex flex-col items-center text-center">
-        {eyebrow && (
-          <span className="mono mb-5 block text-xs uppercase tracking-[0.08em] text-white/40">
-            {eyebrow}
-          </span>
-        )}
-        <h1 className="mb-6 max-w-[900px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
-          {heading}
-        </h1>
-        <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
-          {subheading}
-        </p>
-        <EmailCTA />
-      </div>
+      {/* Dotted background — subtle, low-contrast, masked at the edges
+          so the grid fades out instead of cutting hard at the section
+          bounds. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.055) 1px, transparent 0)",
+          backgroundSize: "26px 26px",
+          maskImage:
+            "radial-gradient(ellipse 75% 65% at 50% 45%, black 35%, transparent 95%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 75% 65% at 50% 45%, black 35%, transparent 95%)",
+        }}
+      />
 
-      {/* Alpha-user credential strip — absorbed into the hero from its
-          former standalone section so the social proof lands in the
-          first view. Uses the dark variant of LogoStrip so markup is
-          shared but text colors flip for the dark hero surface. */}
-      {alphaLogos && alphaLogos.length > 0 && (
-        // Pinned to the bottom of the flex-column hero (`mt-auto`),
-        // centered, and kept narrow so the marquee reads as a grace
-        // note of social proof rather than a full-width chrome bar.
-        <div className="mx-auto mt-auto w-full max-w-[620px] pt-16 md:pt-20">
-          <LogoStrip logos={alphaLogos} variant="dark" />
+      {/* Soft halo behind the headline area so the text has somewhere
+          to sit visually against the dotted field. A second mint orb
+          echoes the CTA accent. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background:
+            "radial-gradient(45% 35% at 50% 30%, rgba(255,255,255,0.04) 0%, transparent 70%), radial-gradient(35% 25% at 50% 60%, rgba(217,237,146,0.04) 0%, transparent 75%)",
+        }}
+      />
+
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-12 pt-32 md:pt-36 lg:pt-40">
+        {/* Centered headline stack. */}
+        <div className="flex flex-col items-center text-center">
+          <h1 className="mb-6 max-w-[900px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
+            {heading}
+          </h1>
+          <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
+            {subheading}
+          </p>
+          <EmailCTA />
         </div>
-      )}
+
+        {/* Alpha-user credential strip — pinned to the bottom of the
+            section. */}
+        {alphaLogos && alphaLogos.length > 0 && (
+          <div className="mx-auto mt-auto w-full max-w-[620px] pt-16 md:pt-20">
+            <LogoStrip label={alphaLabel} logos={alphaLogos} variant="dark" />
+          </div>
+        )}
+      </div>
     </section>
   );
 }

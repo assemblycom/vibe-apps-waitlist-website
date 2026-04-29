@@ -88,7 +88,6 @@ export default function Home() {
       >
         <Reveal>
           <ComparisonSpec
-            theme="light"
             heading={c.comparison.heading}
             headingCallout={c.comparison.headingCallout}
             leftLabel={c.comparison.leftLabel}

@@ -397,3 +397,49 @@ html.lenis body {
 .narrative-detail-in {
   animation: narrativeDetailIn 360ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
+
+/* ── Hero perimeter network ──
+   Dark "vibe app" silhouettes positioned around the centered hero
+   text, connected by thin curving lines that route around the
+   text. On mount, lines draw themselves in sequence (stroke-dashoffset
+   animation) and cards fade in on cue, so the network reads as a
+   system being assembled. After the reveal, everything is static —
+   the original busy multi-pulse loop felt cluttered, so this version
+   says its piece once and then sits quietly behind the headline. */
+
+@keyframes hero-line-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.hero-flow-line {
+  opacity: 0;
+  animation: hero-line-fade 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: var(--line-delay, 0ms);
+}
+
+@keyframes hero-card-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.hero-flow-card {
+  animation: hero-card-fade-in 720ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: var(--card-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-flow-line,
+  .hero-flow-card {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}

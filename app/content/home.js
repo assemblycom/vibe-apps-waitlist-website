@@ -137,7 +137,7 @@ export const HOME_CONTENT = {
   },
 
   logoStrip: {
-    label: "Trusted by teams at",
+    label: "Already used by early teams in alpha",
     logos: [
       { name: "Capital One" },
       { name: "Collective" },
@@ -177,14 +177,10 @@ export const HOME_CONTENT = {
   ],
 
   comparison: {
-    // Heading intentionally differs from the whyAssemblyStudio heading
-    // ("Not another app builder") so the page doesn't repeat itself.
-    // The heading splits onto two lines: primary claim on top, a
-    // dimmed "coda" below — mirrors the NarrativeBlock headline
-    // pattern used earlier in the page.
+    // Heading splits onto two lines: primary claim on top, a dimmed
+    // "coda" below — mirrors the NarrativeBlock headline pattern.
     heading: "Built for",
     headingCallout: "client experiences",
-    firstColumnLabel: "Where we differ",
     leftLabel: "Lovable / Base44",
     rightLabel: "Assembly Studio",
     // Rows are [rowLabel, competitor, assembly, mobileFeature?]. The
