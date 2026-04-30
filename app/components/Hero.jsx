@@ -1,4 +1,5 @@
 import { EmailCTA } from "./EmailCTA";
+import { HeroPromptToApp } from "./HeroPromptToApp";
 import { LogoStrip } from "./LogoStrip";
 
 export function Hero({
@@ -16,29 +17,11 @@ export function Hero({
     <section
       className="relative overflow-hidden flex flex-col"
       style={{
-        minHeight: "min(100vh, 1080px)",
+        height: "min(100vh, 1080px)",
       }}
     >
-      {/* Dotted background — subtle, low-contrast, masked at the edges
-          so the grid fades out instead of cutting hard at the section
-          bounds. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.055) 1px, transparent 0)",
-          backgroundSize: "26px 26px",
-          maskImage:
-            "radial-gradient(ellipse 75% 65% at 50% 45%, black 35%, transparent 95%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 75% 65% at 50% 45%, black 35%, transparent 95%)",
-        }}
-      />
-
       {/* Soft halo behind the headline area so the text has somewhere
-          to sit visually against the dotted field. A second mint orb
-          echoes the CTA accent. */}
+          to sit visually against the dark field. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0"
@@ -48,7 +31,11 @@ export function Hero({
         }}
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center px-6 pb-12 pt-32 text-center md:pt-36 lg:pt-40">
+      {/* Centered text + CTA — the readable column. Logos no longer
+          live here; they're pinned to the bottom of the section over
+          the portal so they read as a credibility strip on the
+          showcase rather than a stack right under the CTA. */}
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 text-center md:pt-36 lg:pt-40">
         <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
           {heading}
         </h1>
@@ -56,15 +43,42 @@ export function Hero({
           {subheading}
         </p>
         <EmailCTA />
-
-        {/* Alpha-user credential strip — pinned to the bottom of the
-            section, full-width centered. */}
-        {alphaLogos && alphaLogos.length > 0 && (
-          <div className="mx-auto mt-auto w-full max-w-[620px] pt-16 md:pt-20">
-            <LogoStrip label={alphaLabel} logos={alphaLogos} variant="dark" />
-          </div>
-        )}
       </div>
+
+      {/* Full-bleed portal showcase — pushed to the bottom of the
+          section via mt-auto so the readable column above stays
+          anchored to the top. The portal frame's height intentionally
+          exceeds the remaining space so it bleeds past the section's
+          bottom edge (clipped by overflow-hidden). */}
+      <div className="relative z-10 mt-auto w-full px-4 pt-12 md:px-6 md:pt-16 lg:px-10">
+        <HeroPromptToApp />
+      </div>
+
+      {/* Alpha-user credential strip — pinned to the bottom of the
+          section, layered above the portal. A short gradient mask
+          behind it fades the portal under the strip so the logos
+          stay readable without obscuring the visual. */}
+      {alphaLogos && alphaLogos.length > 0 && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
+          <div
+            aria-hidden="true"
+            className="h-20"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 60%, rgba(10,10,10,0) 100%)",
+            }}
+          />
+          <div className="bg-[#0a0a0a]/95 pb-2 pt-4 md:pb-3">
+            <div className="mx-auto w-full max-w-[620px] px-6">
+              {/* Eyebrow ("Already used by early teams in alpha") is
+                  intentionally omitted for now — just the marquee.
+                  Tight bottom padding so the strip hugs the very
+                  bottom edge of the hero viewport. */}
+              <LogoStrip logos={alphaLogos} variant="dark" />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
