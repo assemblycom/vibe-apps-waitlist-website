@@ -453,7 +453,7 @@ export function HeroPromptToApp() {
 
                 <div className="flex h-[calc(100%-28px)]">
                   {/* Client's sidebar */}
-                  <aside className="w-[100px] shrink-0 border-r border-white/[0.06] bg-[#0a0a0a] p-2.5 lg:w-[110px]">
+                  <aside className="w-[140px] shrink-0 border-r border-white/[0.06] bg-[#0a0a0a] p-2.5">
                     <div className="mb-3 flex items-center gap-1.5 px-1">
                       <img
                         src="/logos/brandmages.svg"
