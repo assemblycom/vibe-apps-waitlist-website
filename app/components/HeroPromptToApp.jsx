@@ -355,7 +355,7 @@ export function HeroPromptToApp() {
                 className="hsv-fade-in mt-3 text-[11px] leading-[1.55] text-white/65"
                 style={{ animationDelay: `${T.planTitle}s` }}
               >
-                Here's a structured plan for your Time Tracker:
+                Here&apos;s a structured plan for your Time Tracker:
               </div>
               <div
                 className="hsv-fade-in mt-2 text-[11.5px] font-medium text-white/95"
