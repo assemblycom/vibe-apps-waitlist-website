@@ -351,27 +351,30 @@ export function HeroPromptToAppV3() {
             </div>
 
             <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-10">
-              <div className="text-[10.5px] uppercase tracking-[0.18em] text-white/40">
+              <div className="text-[12px] font-medium text-white/55">
                 Describe your app
               </div>
-              <div className="mt-8 w-full max-w-[340px]">
+              <div className="mt-6 w-full max-w-[360px]">
                 <div
                   className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-all duration-500"
                   style={promptFly}
                 >
-                  <div className="min-h-[64px] text-[12.5px] leading-[1.45] text-white/85">
-                    {promptText}
+                  <div className="min-h-[68px] text-[13px] leading-[1.5] text-white/85">
+                    {promptText || (
+                      <span className="text-white/30">
+                        e.g. Build a time tracker for my team
+                      </span>
+                    )}
                     {showCursor && (
-                      <span className="ml-[1px] inline-block h-[12px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
+                      <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
                     )}
                   </div>
-                  <div className="mt-3 flex items-center justify-between border-t border-white/[0.06] pt-2">
-                    <span className="text-[10px] text-white/35">Prompt</span>
+                  <div className="mt-3 flex items-center justify-end">
                     <span
                       className={[
-                        "flex h-6 w-6 items-center justify-center rounded-full transition-colors",
+                        "flex h-7 w-7 items-center justify-center rounded-full transition-colors",
                         cycleT >= TYPE_END
-                          ? "bg-[#d9ed92] text-black"
+                          ? "bg-white text-black"
                           : "bg-white/10 text-white/55",
                       ].join(" ")}
                     >
