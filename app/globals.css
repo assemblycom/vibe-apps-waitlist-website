@@ -267,6 +267,29 @@ body::-webkit-scrollbar {
   z-index: 0;
 }
 
+/* ── HeroPromptToAppV5 Build-app row shimmer ──
+   Continuous, hover-free sheen across the dashed "Build an app" sidebar
+   row. The row sits in v5's settled final state, so its job is to draw
+   the eye to the next action without any other motion in the panel. A
+   slow, low-amplitude diagonal sweep — reads as alive but quiet. */
+@keyframes v5-build-shimmer {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+.v5-build-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 65%
+  );
+  animation: v5-build-shimmer 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
 /* ── Spec-card row entrance ──
    Each row fades up into view, staggered by index via inline
    animationDelay. Rows start hidden (opacity:0) and animate in once

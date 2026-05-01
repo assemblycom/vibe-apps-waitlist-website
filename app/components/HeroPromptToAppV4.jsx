@@ -473,29 +473,34 @@ export function HeroPromptToAppV4() {
 
           {/* In-screen status notification — quiet dark pill in the
               top-right of the portal showing "Building <app>" with a
-              spinner, then "<app> added to your portal" with a check. */}
-          <div
-            className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-2 rounded-full border border-white/10 bg-black/55 px-2.5 py-1 text-[11px] leading-none text-white/70 backdrop-blur-md transition-opacity duration-300"
-            style={{ opacity: statusOpacity }}
-          >
-            <span className="flex h-3 w-3 shrink-0 items-center justify-center text-white/70">
-              {statusBuilt ? (
-                <svg
-                  viewBox="0 0 16 16"
-                  className="h-3 w-3"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M3.5 8.5l3 3 6-6" />
-                </svg>
-              ) : (
-                <span className="h-2 w-2 animate-spin rounded-full border border-white/30 border-t-white/85" />
-              )}
-            </span>
-            <span>{statusLabel}</span>
+              spinner, then "<app> added to your portal" with a check.
+              Wrapper aligns to the panel header strip (h-9) and centers
+              the pill vertically inside it so the divider never cuts
+              through the pill. */}
+          <div className="pointer-events-none absolute right-3 top-0 z-20 flex h-9 items-center">
+            <div
+              className="flex items-center gap-2 rounded-full border border-white/10 bg-black/55 px-2.5 py-1 text-[11px] leading-none text-white/70 backdrop-blur-md transition-opacity duration-300"
+              style={{ opacity: statusOpacity }}
+            >
+              <span className="flex h-3 w-3 shrink-0 items-center justify-center text-white/70">
+                {statusBuilt ? (
+                  <svg
+                    viewBox="0 0 16 16"
+                    className="h-3 w-3"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3.5 8.5l3 3 6-6" />
+                  </svg>
+                ) : (
+                  <span className="h-2 w-2 animate-spin rounded-full border border-white/30 border-t-white/85" />
+                )}
+              </span>
+              <span>{statusLabel}</span>
+            </div>
           </div>
 
           <div className="grid h-full min-w-0 grid-cols-[180px_1fr] gap-0">
