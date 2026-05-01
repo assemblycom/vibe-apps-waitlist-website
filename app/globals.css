@@ -271,22 +271,25 @@ body::-webkit-scrollbar {
    Continuous, hover-free sheen across the dashed "Build an app" sidebar
    row. The row sits in v5's settled final state, so its job is to draw
    the eye to the next action without any other motion in the panel. A
-   slow, low-amplitude diagonal sweep — reads as alive but quiet. */
+   slow diagonal sweep with a brief offscreen pause between sweeps so it
+   reads as alive but quiet. The element is absolutely positioned over
+   the whole row; the row's own children (icon + label) sit on a higher
+   z-index so the highlight passes behind them. */
 @keyframes v5-build-shimmer {
-  0% { transform: translateX(-120%); }
-  100% { transform: translateX(120%); }
+  0%   { transform: translateX(-110%); }
+  55%  { transform: translateX(110%); }
+  100% { transform: translateX(110%); }
 }
-.v5-build-shimmer::after {
-  content: "";
+.v5-build-shimmer {
   position: absolute;
   inset: 0;
   background-image: linear-gradient(
     105deg,
     transparent 35%,
-    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.22) 50%,
     transparent 65%
   );
-  animation: v5-build-shimmer 2.6s ease-in-out infinite;
+  animation: v5-build-shimmer 2.8s ease-in-out infinite;
   pointer-events: none;
 }
 

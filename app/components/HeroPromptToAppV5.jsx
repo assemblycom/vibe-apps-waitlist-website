@@ -86,14 +86,12 @@ function SidebarRow({ iconSrc, label }) {
 // (.v5-build-shimmer) so it loops forever without needing a hover.
 function BuildAppRow() {
   return (
-    <div className="pointer-events-none mt-3 flex items-center gap-2 rounded-md border border-dashed border-white/35 bg-white/[0.05] px-2 py-1 text-[11px] leading-none text-white/95">
-      <span className="flex h-3 w-3 shrink-0 items-center justify-center text-current">
+    <div className="pointer-events-none relative mt-3 flex items-center gap-2 overflow-hidden rounded-md border border-dashed border-white/35 bg-white/[0.05] px-2 py-1 text-[11px] leading-none text-white/95">
+      <span className="relative z-[1] flex h-3 w-3 shrink-0 items-center justify-center text-current">
         <PlusIcon className="h-3 w-3" />
       </span>
-      <span className="relative flex-1 overflow-hidden">
-        <span className="block truncate">Build an app</span>
-        <span aria-hidden="true" className="v5-build-shimmer" />
-      </span>
+      <span className="relative z-[1] truncate">Build an app</span>
+      <span aria-hidden="true" className="v5-build-shimmer" />
     </div>
   );
 }
