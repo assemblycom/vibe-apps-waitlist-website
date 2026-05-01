@@ -67,7 +67,7 @@ function BuildAppView() {
   return (
     <div className="flex h-full min-w-0 flex-col">
       <PanelHeader title="Build an app" />
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center">
+      <div className="flex flex-1 flex-col items-center gap-4 px-8 pt-12 text-center">
         <span
           aria-hidden="true"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.05] text-white/70"
