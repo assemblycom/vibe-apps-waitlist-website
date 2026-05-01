@@ -374,12 +374,10 @@ export function HeroPromptToAppV4() {
   const cycleT = inResetPause ? CYCLE_MS : elapsed % CYCLE_MS;
   const app = APPS[cycleIndex];
 
-  const promptText = typed(app.prompt, cycleT);
-  const showCursor = cycleT >= TYPE_START && cycleT < SEND;
-  const showDots = cycleT >= SEND && cycleT < LOADING_END;
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
-  // Sidebar updates at LOADING_END, in sync with the start of the
-  // shimmer. Main panel cross-fades during the same window.
+  // Sidebar updates at UPDATE_END (= start of shimmer). Main panel
+  // cross-fades during the same window.
   const updated = cycleT >= UPDATE_END;
   let installed = cycleIndex;
   if (updated) installed = cycleIndex + 1;
@@ -397,19 +395,15 @@ export function HeroPromptToAppV4() {
       ? (cycleT - LOADING_END) / (SHIMMER_END + 800 - LOADING_END)
       : null;
 
-  const clamp01 = (v) => Math.max(0, Math.min(1, v));
-
-  // Shimmer sweep across the portal: 0 → 1 over the shimmer window,
-  // converted to a diagonal background-position offset.
+  // Shimmer sweep across the portal.
   const shimmerActive = cycleT >= LOADING_END && cycleT < SHIMMER_END;
   const shimmerP = shimmerActive
     ? (cycleT - LOADING_END) / (SHIMMER_END - LOADING_END)
     : 0;
-  // Sweep moves left → right; a soft white band reveals through.
-  const shimmerCenter = -30 + shimmerP * 160; // % across
+  const shimmerCenter = -30 + shimmerP * 160;
   const shimmerStyle = shimmerActive
     ? {
-        opacity: Math.sin(shimmerP * Math.PI), // peak in middle
+        opacity: Math.sin(shimmerP * Math.PI),
         background: `linear-gradient(105deg, transparent ${
           shimmerCenter - 20
         }%, rgba(255,255,255,0.10) ${shimmerCenter}%, transparent ${
@@ -418,68 +412,68 @@ export function HeroPromptToAppV4() {
       }
     : { opacity: 0 };
 
-  // Bubble intro and cross-cycle fade.
-  const introP = clamp01((cycleT - TYPE_START) / 240);
-  const fadeOutP = clamp01(
-    (cycleT - TEXT_FADE_START) / (CYCLE_MS - TEXT_FADE_START)
-  );
-
-  const bubbleVisible = cycleT >= TYPE_START;
-  const bubbleStyle = {
-    opacity: bubbleVisible ? introP * (1 - fadeOutP) : 0,
-    transform: `translateY(${(1 - introP) * -8}px)`,
-  };
-  const bubbleContentOpacity = bubbleVisible
-    ? introP * (1 - fadeOutP)
+  // Loop fade: in the last 600ms before the totalMs wrap, fade the
+  // entire bubble stack out so the next loop starts from a clean slate.
+  const loopFadeStart = totalMs - 600;
+  const loopFadeP = elapsed > loopFadeStart
+    ? clamp01((elapsed - loopFadeStart) / 600)
     : 0;
+  const stackOpacity = 1 - loopFadeP;
+
+  // Build the stacked-bubble list. For every cycle index that's been
+  // reached, render a bubble. Earlier cycles render as 'settled'
+  // (full text, no cursor, no dots). The current cycle's bubble is
+  // 'typing', 'loading', or 'settled' depending on cycleT.
+  const introP = clamp01((cycleT - TYPE_START) / 240);
+  const bubbles = [];
+  for (let i = 0; i <= cycleIndex; i++) {
+    const a = APPS[i];
+    if (i < cycleIndex) {
+      bubbles.push({
+        key: a.id,
+        text: a.prompt,
+        cursor: false,
+        dots: false,
+        opacity: 1,
+      });
+    } else {
+      // Current cycle. Mode is derived from cycleT.
+      const text = typed(a.prompt, cycleT);
+      const isTyping = cycleT >= TYPE_START && cycleT < SEND;
+      const isLoading = cycleT >= SEND && cycleT < LOADING_END;
+      const isSettled = cycleT >= LOADING_END;
+      bubbles.push({
+        key: a.id,
+        text: isSettled ? a.prompt : text,
+        cursor: isTyping,
+        dots: isLoading,
+        opacity: isSettled ? 1 : introP,
+      });
+    }
+  }
 
   return (
     <div
       aria-hidden="true"
       className="pointer-events-none relative w-full"
     >
-      <div className="relative mx-auto w-full max-w-[1080px] pt-28 md:pt-32">
-        {/* Prompt bubble — lives entirely above the portal. After SEND,
-            three pulsing dots appear under the prompt for a beat (the
-            "AI is generating" moment), then the portal shimmers and
-            updates with the new app. The bubble itself doesn't move —
-            the change happens inside the portal screen below. */}
+      <div className="relative mx-auto w-full max-w-[1080px]">
+        {/* Stacked prompt thread — each sent prompt remains as a settled
+            message, new prompts type in below. Current bubble shows
+            cursor while typing and dots during the AI-generating beat. */}
         <div
-          className="absolute left-0 top-0 z-20 w-full max-w-[420px]"
-          style={{
-            ...bubbleStyle,
-            transformOrigin: "left top",
-          }}
+          className="mb-5 flex w-full max-w-[420px] flex-col gap-2"
+          style={{ opacity: stackOpacity }}
         >
-          <div className="flex items-start gap-3 rounded-2xl border border-white/[0.08] bg-[#141416] px-4 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.45)]">
-            <span className="mt-[1px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/85">
-              <SparkleIcon className="h-3.5 w-3.5" />
-            </span>
-            <div
-              className="min-w-0 flex-1"
-              style={{ opacity: bubbleContentOpacity }}
-            >
-              <div className="text-[13px] leading-[1.45] text-white/85">
-                {promptText || (
-                  <span className="text-white/35">
-                    e.g. Build a time tracker for my team
-                  </span>
-                )}
-                {showCursor && (
-                  <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
-                )}
-              </div>
-              <div
-                className="mt-2 flex items-center gap-1 transition-opacity duration-200"
-                style={{ opacity: showDots ? 1 : 0 }}
-                aria-hidden="true"
-              >
-                <LoadingDot delay={0} />
-                <LoadingDot delay={160} />
-                <LoadingDot delay={320} />
-              </div>
-            </div>
-          </div>
+          {bubbles.map((b) => (
+            <PromptBubble
+              key={b.key}
+              text={b.text}
+              cursor={b.cursor}
+              dots={b.dots}
+              opacity={b.opacity}
+            />
+          ))}
         </div>
 
         {/* Single dominant Client Portal panel ─────────────────── */}
@@ -550,6 +544,38 @@ export function HeroPromptToAppV4() {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PromptBubble({ text, cursor, dots, opacity }) {
+  return (
+    <div
+      className="flex items-start gap-3 rounded-2xl border border-white/[0.08] bg-[#141416] px-4 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.45)] transition-opacity duration-300"
+      style={{ opacity }}
+    >
+      <span className="mt-[1px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/85">
+        <SparkleIcon className="h-3.5 w-3.5" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="text-[13px] leading-[1.45] text-white/85">
+          {text || (
+            <span className="text-white/35">
+              e.g. Build a time tracker for my team
+            </span>
+          )}
+          {cursor && (
+            <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
+          )}
+        </div>
+        {dots && (
+          <div className="mt-2 flex items-center gap-1" aria-hidden="true">
+            <LoadingDot delay={0} />
+            <LoadingDot delay={160} />
+            <LoadingDot delay={320} />
+          </div>
+        )}
       </div>
     </div>
   );
