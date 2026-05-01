@@ -84,7 +84,7 @@ export function Hero({
       </section>
 
       {alphaLogos && alphaLogos.length > 0 && (
-        <div className="bg-[#0a0a0a] pb-10 pt-12 md:pb-12 md:pt-14">
+        <div className="bg-[var(--color-bg)] pb-10 pt-12 md:pb-12 md:pt-14">
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
               <p
