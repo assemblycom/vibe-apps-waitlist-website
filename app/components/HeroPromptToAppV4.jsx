@@ -360,83 +360,67 @@ export function HeroPromptToAppV4() {
       ? (cycleT - SEND) / (HIGHLIGHT_END - SEND)
       : null;
 
-  // Card fly: prompt panel travels further + scales smaller for a more
-  // visible "throw" across the gap.
+  // Bubble fly: types in place at the top, then translates down + left
+  // toward the sidebar, scaling and fading as it lands as a new entry.
   const flyP = sending ? (cycleT - SEND) / (FLY_END - SEND) : sent ? 1 : 0;
-  const flyEase = flyP === 0 ? 0 : flyP === 1 ? 1 : 1 - Math.pow(1 - flyP, 2);
-  const promptFly =
-    sending || sent
-      ? {
-          opacity: 1 - flyEase,
-          transform: `translateX(${flyEase * 220}px) scale(${1 - flyEase * 0.25})`,
-        }
-      : { opacity: 1, transform: "translateX(0) scale(1)" };
+  const flyEase = flyP === 0 ? 0 : flyP === 1 ? 1 : 1 - Math.pow(1 - flyP, 2.2);
+  const bubbleVisible = cycleT >= TYPE_START && !sent;
+  const bubbleStyle = sending
+    ? {
+        opacity: 1 - flyEase * 0.95,
+        transform: `translate(calc(-50% + ${flyEase * -340}px), ${flyEase * 200}px) scale(${
+          1 - flyEase * 0.55
+        })`,
+      }
+    : sent
+    ? {
+        opacity: 0,
+        transform: "translate(calc(-50% - 340px), 200px) scale(0.45)",
+      }
+    : {
+        opacity: bubbleVisible ? 1 : 0,
+        transform: "translate(-50%, 0) scale(1)",
+      };
 
   return (
     <div
       aria-hidden="true"
       className="pointer-events-none relative w-full"
     >
-      <div className="mx-auto grid w-full max-w-[1180px] grid-cols-[0.7fr_1.3fr] items-stretch gap-x-4">
-        {/* Left card: App Builder ─────────────────────────────────── */}
-        <div className="flex min-w-0 flex-col">
-          <span className="mb-2 pl-1 text-[10px] uppercase tracking-[0.16em] text-white/30">
-            App Builder
-          </span>
-          <div
-            className="relative flex-1 overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0a0a0a]"
-            style={{ height: "min(56vh, 540px)" }}
-          >
-            <div className="flex h-full min-w-0 flex-col items-center px-6 pt-12">
-              <div className="text-[12px] font-medium text-white/55">
-                Describe your app
-              </div>
-              <div className="mt-6 w-full max-w-[340px]">
-                <div
-                  className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-all duration-700 ease-out"
-                  style={promptFly}
-                >
-                  <div className="min-h-[68px] text-[13px] leading-[1.5] text-white/85">
-                    {promptText || (
-                      <span className="text-white/30">
-                        e.g. Build a time tracker for my team
-                      </span>
-                    )}
-                    {showCursor && (
-                      <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
-                    )}
-                  </div>
-                  <div className="mt-3 flex items-center justify-end">
-                    <span
-                      className={[
-                        "flex h-7 w-7 items-center justify-center rounded-full transition-colors",
-                        cycleT >= TYPE_END
-                          ? "bg-white text-black"
-                          : "bg-white/10 text-white/55",
-                      ].join(" ")}
-                    >
-                      <ArrowIcon className="h-3 w-3" />
-                    </span>
-                  </div>
-                </div>
-              </div>
+      <div className="relative mx-auto w-full max-w-[1080px] pt-10">
+        {/* Floating prompt bubble — lives above the portal, types out,
+            then translates down + left into the sidebar position as the
+            new app entry. */}
+        <div
+          className="absolute left-1/2 top-0 z-20 w-full max-w-[520px] transition-all duration-700 ease-out"
+          style={bubbleStyle}
+        >
+          <div className="flex items-start gap-3 rounded-2xl border border-white/[0.08] bg-[#141416] px-4 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.45)]">
+            <span className="mt-[1px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/85">
+              <SparkleIcon className="h-3.5 w-3.5" />
+            </span>
+            <div className="min-w-0 flex-1 text-[13px] leading-[1.45] text-white/85">
+              {promptText || (
+                <span className="text-white/35">
+                  e.g. Build a time tracker for my team
+                </span>
+              )}
+              {showCursor && (
+                <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
+              )}
             </div>
           </div>
         </div>
 
-        {/* Right card: Client Portal ──────────────────────────────── */}
-        <div className="flex min-w-0 flex-col">
-          <span className="mb-2 pl-1 text-[10px] uppercase tracking-[0.16em] text-white/30">
-            Client Portal
-          </span>
-          <div
-            className="relative flex-1 overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0c0c0d]"
-            style={{ height: "min(56vh, 540px)" }}
-          >
-            <div className="grid h-full min-w-0 grid-cols-[170px_1fr] gap-0">
+        {/* Single dominant Client Portal panel ─────────────────── */}
+        <div
+          className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0c0c0d]"
+          style={{ height: "min(58vh, 560px)" }}
+        >
+          <div className="grid h-full min-w-0 grid-cols-[180px_1fr] gap-0">
             {/* Sidebar */}
             <div className="flex h-full min-w-0 flex-col border-r border-white/[0.05] p-3">
-              <div className="mb-3 flex items-center gap-2 px-2">
+              <div className="mb-4 flex items-center gap-2 px-2 pt-1">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-white/10 text-[10px] font-semibold text-white/85">
                   B
                 </span>
@@ -482,8 +466,21 @@ export function HeroPromptToAppV4() {
             </div>
           </div>
         </div>
-        </div>
       </div>
     </div>
   );
 }
+
+const SparkleIcon = ({ className = "h-3.5 w-3.5" }) => (
+  <svg
+    viewBox="0 0 16 16"
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M8 2v3M8 11v3M2 8h3M11 8h3M4 4l2 2M10 10l2 2M4 12l2-2M10 6l2-2" />
+  </svg>
+);
