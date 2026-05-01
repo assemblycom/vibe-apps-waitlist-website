@@ -63,6 +63,28 @@ function PanelHeader({ title, trailing }) {
   );
 }
 
+function BuildAppView() {
+  return (
+    <div className="flex h-full min-w-0 flex-col">
+      <PanelHeader title="Build an app" />
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center">
+        <span
+          aria-hidden="true"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.05] text-white/70"
+        >
+          <SparkleIcon className="h-4 w-4" />
+        </span>
+        <div className="text-[14px] font-medium text-white/90">
+          Ready for your next app?
+        </div>
+        <div className="max-w-[260px] text-[11.5px] leading-[1.5] text-white/45">
+          Describe what you need and Assembly builds it into your client portal.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function HomeEmpty() {
   return (
     <div className="flex h-full min-w-0 flex-col">
@@ -353,7 +375,16 @@ export function HeroPromptToAppV4() {
   if (isFinal) installed = APPS.length;
 
   const showHome = cycleIndex === 0 && !arrived;
-  const activeApp = arrived ? app : cycleIndex > 0 ? APPS[cycleIndex - 1] : null;
+  // In the final settled state, focus shifts to the "Build an app" row.
+  // No app stays highlighted in the sidebar and the main panel swaps
+  // to a build CTA so the visual nudges users toward the next action.
+  const activeApp = isFinal
+    ? null
+    : arrived
+    ? app
+    : cycleIndex > 0
+    ? APPS[cycleIndex - 1]
+    : null;
 
   // Entry progress for the just-installed row, normalized 0→1 across
   // the arrive window so the row pops in dramatically.
@@ -504,7 +535,7 @@ export function HeroPromptToAppV4() {
                     entryT={i === cycleIndex ? entryT : null}
                   />
                 ))}
-                {isFinal && <BuildAppRow />}
+                {isFinal && <BuildAppRow active />}
               </div>
             </div>
 
@@ -516,8 +547,15 @@ export function HeroPromptToAppV4() {
               >
                 <HomeEmpty />
               </div>
+              <div
+                className="absolute inset-0 transition-opacity duration-500"
+                style={{ opacity: isFinal ? 1 : 0 }}
+              >
+                <BuildAppView />
+              </div>
               {APPS.map((a) => {
-                const isActive = !showHome && activeApp && a.id === activeApp.id;
+                const isActive =
+                  !showHome && !isFinal && activeApp && a.id === activeApp.id;
                 return (
                   <div
                     key={a.id}
@@ -536,10 +574,15 @@ export function HeroPromptToAppV4() {
   );
 }
 
-function BuildAppRow() {
+function BuildAppRow({ active = false }) {
   return (
     <div
-      className="group pointer-events-auto relative mt-3 flex cursor-pointer items-center gap-2 overflow-hidden rounded-md border border-dashed border-white/15 px-2 py-1 text-[11px] leading-none text-white/55 transition-colors duration-200 hover:border-white/35 hover:text-white"
+      className={[
+        "group pointer-events-auto relative mt-3 flex cursor-pointer items-center gap-2 overflow-hidden rounded-md border border-dashed px-2 py-1 text-[11px] leading-none transition-colors duration-200",
+        active
+          ? "border-white/35 bg-white/[0.05] text-white/95"
+          : "border-white/15 text-white/55 hover:border-white/35 hover:text-white",
+      ].join(" ")}
     >
       <span className="flex h-3 w-3 shrink-0 items-center justify-center text-current">
         <PlusIcon className="h-3 w-3" />

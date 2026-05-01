@@ -71,7 +71,7 @@ export function Hero({
         </div>
 
         <div
-          className="relative z-10 mt-auto w-full px-4 pt-12 md:px-6 md:pt-16 lg:px-10"
+          className="relative z-10 mt-auto w-full overflow-hidden px-4 pt-12 md:px-6 md:pt-16 lg:px-10"
           style={{
             WebkitMaskImage:
               "linear-gradient(to bottom, black 0%, black 45%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0.25) 88%, transparent 100%)",
