@@ -346,10 +346,7 @@ export function HeroPromptToAppV3() {
           <div className="relative flex h-full min-w-0 flex-col border-r border-white/[0.06] bg-[#0a0a0a]">
             <div className="flex h-9 shrink-0 items-center gap-2 border-b border-white/[0.06] px-4">
               <span className="text-[11px] font-medium text-white/55">
-                Untitled
-              </span>
-              <span className="ml-auto rounded-full bg-white/85 px-2 py-[2px] text-[10px] font-medium text-black">
-                Publish app
+                App Builder
               </span>
             </div>
 
