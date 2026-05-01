@@ -192,8 +192,8 @@ function HelpdeskView() {
             <span
               className={
                 row.tone === "open"
-                  ? "shrink-0 whitespace-nowrap rounded-full border border-[#d9ed92]/40 bg-[#d9ed92]/10 px-2 py-[1px] text-[9.5px] text-[#d9ed92]"
-                  : "shrink-0 whitespace-nowrap rounded-full border border-white/15 px-2 py-[1px] text-[9.5px] text-white/55"
+                  ? "shrink-0 whitespace-nowrap rounded-full border border-white/25 bg-white/[0.06] px-2 py-[1px] text-[9.5px] text-white/80"
+                  : "shrink-0 whitespace-nowrap rounded-full border border-white/10 px-2 py-[1px] text-[9.5px] text-white/45"
               }
             >
               {row.state}
@@ -247,10 +247,10 @@ function PaymentsView() {
               <span
                 className={
                   row.tone === "paid"
-                    ? "shrink-0 whitespace-nowrap rounded-full border border-[#d9ed92]/40 bg-[#d9ed92]/10 px-2 py-[1px] text-[9.5px] text-[#d9ed92]"
+                    ? "shrink-0 whitespace-nowrap rounded-full border border-white/25 bg-white/[0.06] px-2 py-[1px] text-[9.5px] text-white/80"
                     : row.tone === "pending"
-                    ? "shrink-0 whitespace-nowrap rounded-full border border-amber-300/30 bg-amber-300/10 px-2 py-[1px] text-[9.5px] text-amber-200"
-                    : "shrink-0 whitespace-nowrap rounded-full border border-white/15 px-2 py-[1px] text-[9.5px] text-white/55"
+                    ? "shrink-0 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.03] px-2 py-[1px] text-[9.5px] text-white/65"
+                    : "shrink-0 whitespace-nowrap rounded-full border border-white/10 px-2 py-[1px] text-[9.5px] text-white/45"
                 }
               >
                 {row.state}
@@ -386,7 +386,7 @@ export function HeroPromptToAppV3() {
           {/* Right: client portal preview */}
           <div className="relative flex h-full min-w-0 flex-col bg-[#0c0c0d]">
             <div className="flex h-9 shrink-0 items-center gap-2 border-b border-white/[0.06] px-4">
-              <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">
+              <span className="text-[11px] text-white/45">
                 Client portal preview
               </span>
               <span className="ml-auto text-[10px] text-white/35">
