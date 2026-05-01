@@ -353,11 +353,11 @@ export function HeroPromptToAppV3() {
               </span>
             </div>
 
-            <div className="flex min-w-0 flex-1 flex-col items-center justify-center px-6">
+            <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-10">
               <div className="text-[10.5px] uppercase tracking-[0.18em] text-white/40">
                 Describe your app
               </div>
-              <div className="mt-3 w-full max-w-[340px]">
+              <div className="mt-8 w-full max-w-[340px]">
                 <div
                   className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-all duration-500"
                   style={promptFly}
