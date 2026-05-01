@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { EmailCTA } from "./EmailCTA";
 import { HeroPromptToApp } from "./HeroPromptToApp";
 import { HeroPromptToAppV1 } from "./HeroPromptToAppV1";
@@ -89,8 +90,15 @@ export function Hero({
 }
 
 function HeroVersionToggle({ version, onChange }) {
-  return (
-    <div className="fixed right-4 top-4 z-50 flex items-center gap-1 rounded-full border border-white/15 bg-black/60 p-1 text-xs font-medium text-white/70 backdrop-blur-md">
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  const ui = (
+    <div
+      className="flex items-center gap-1 rounded-full border border-white/15 bg-black/60 p-1 text-xs font-medium text-white/70 backdrop-blur-md"
+      style={{ position: "fixed", top: 16, right: 16, zIndex: 2147483647 }}
+    >
       {["v1", "v2"].map((v) => {
         const active = version === v;
         return (
@@ -110,4 +118,6 @@ function HeroVersionToggle({ version, onChange }) {
       })}
     </div>
   );
+
+  return createPortal(ui, document.body);
 }
