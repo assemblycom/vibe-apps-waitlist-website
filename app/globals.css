@@ -1,0 +1,963 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Inter is loaded for the product-UI animation visuals so they read as
+   real SaaS interfaces, not marketing copy. Marketing surfaces keep the
+   brand font (PP Mori) via body defaults. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* ── Font faces ── */
+@font-face {
+  font-family: "PP Mori";
+  src: url("/fonts/PPMori-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PP Mori";
+  src: url("/fonts/PPMori-SemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ABC Diatype Mono";
+  src: url("/fonts/ABCDiatypeMono-Regular-Trial.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── CSS Variables ── */
+:root {
+  --font-sans: "PP Mori", system-ui, -apple-system, sans-serif;
+  --font-mono: "ABC Diatype Mono", ui-monospace, monospace;
+  --color-bg: #101010;
+  --color-text-primary: rgb(255, 255, 255);
+  --color-text-secondary: rgba(255, 255, 255, 0.55);
+  --color-text-muted: rgba(255, 255, 255, 0.4);
+  --color-text-faint: rgba(255, 255, 255, 0.25);
+  --color-gray: #6F6F6F;
+}
+
+/* ── Base ── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Hide the native scrollbar. Lenis handles smooth scrolling; the visible
+   track on the right edge clashes with the cinematic section rhythm, so
+   we remove it. The page still scrolls normally. */
+html {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+body {
+  scrollbar-width: none;
+}
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Use the browser's default text selection — no custom color. The
+   page has both dark and light sections, and forcing a single
+   selection color for both was making text unreadable on one of
+   them. Browser defaults (typically a neutral blue) work for all
+   backgrounds. */
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Opt-in font switch for the UI animation visuals. Apply on the root of
+   any mock-product surface so every child inherits Inter. */
+.font-inter,
+.font-inter * {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* ── Reveal-on-scroll ── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 600ms ease, transform 600ms ease;
+  will-change: opacity, transform;
+}
+[data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Gradient divider utility (disabled — dividers removed site-wide) ── */
+.gradient-divider {
+  position: relative;
+}
+
+/* ── Studio "thinking" dots ── */
+@keyframes studio-thinking {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+.studio-thinking-dot {
+  animation: studio-thinking 1.2s ease-in-out infinite;
+}
+
+/* ── Logo marquee (mobile) ──
+   Inner track contains the logo list rendered twice. Translating the
+   track by -50% lands the second copy exactly where the first started,
+   so the loop is seamless. The track must be as wide as the two copies
+   combined; flexbox + `flex-none` on each item keeps widths stable. */
+@keyframes logo-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.logo-marquee-track {
+  animation: logo-marquee 28s linear infinite;
+}
+
+/* ── Steps progress fill ── */
+/* Each segment in the segmented progress bar fades from dim to bright
+   with a subtle glow. animation-delay staggers the segments so the bar
+   fills left-to-right across the active step's dwell. */
+@keyframes steps-segment {
+  from {
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* ── Skeleton shimmer ──
+   Gradient sweeps left-to-right across a base block to signal loading.
+   Used in the Result phase of ThreeStepsVisual for the brief "app is
+   opening" beat before real content populates. */
+@keyframes studio-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.studio-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    rgba(16, 16, 16, 0.06) 0%,
+    rgba(16, 16, 16, 0.11) 50%,
+    rgba(16, 16, 16, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-color: rgba(16, 16, 16, 0.06);
+  animation: studio-shimmer 1.4s linear infinite;
+}
+
+/* ── Waitlist progress shimmer ──
+   Brand-gradient fill for the waitlist-modal progress bar. Horizontal wind
+   of the canonical brand vertical gradient (see GradientReveal) — periwinkle
+   #8B99C8 through a soft sage midpoint to the brand lime #D9ED92 and back,
+   so the shimmer reads as an extension of the site's visual identity. Slow
+   always-on animation keeps it feeling interactive/alive. */
+@keyframes progress-brand-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.progress-prism-fill {
+  background-image: linear-gradient(
+    90deg,
+    #8B99C8 0%,
+    #C5D4BA 25%,
+    #D9ED92 50%,
+    #C5D4BA 75%,
+    #8B99C8 100%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: progress-brand-shift 7s ease-in-out infinite;
+}
+
+/* Brief brightness pulse when a step completes — adds a little feedback
+   punch. React triggers this by remounting via key= progress percent. */
+@keyframes progress-brand-pulse {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.35); }
+  100% { filter: brightness(1); }
+}
+.progress-prism-fill[data-pulse="true"] {
+  animation:
+    progress-brand-shift 7s ease-in-out infinite,
+    progress-brand-pulse 700ms ease-out;
+}
+
+/* ── Premium reward shimmer ──
+   Subtle neutral sheen on the shared gray reward pill. Same base fill
+   as sibling pills (white/[0.08]) — the premium tier is distinguished
+   only by a slow white highlight that sweeps diagonally across. No
+   color, no gradient hues; reads as "alive" through motion alone, so
+   three pills side-by-side stay quiet. */
+@keyframes reward-shimmer-sweep {
+  0% { background-position: -60% 0; }
+  100% { background-position: 160% 0; }
+}
+.reward-shimmer {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.reward-shimmer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Wide, feathered highlight — the peak is soft and gradual so the
+     sweep reads as a breathing sheen rather than a hard bar of light.
+     Off-screen start/end (−60% / 160%) means the loop wraps without a
+     visible snap. */
+  background-image: linear-gradient(
+    110deg,
+    transparent 0%,
+    transparent 25%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 60%,
+    transparent 75%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  animation: reward-shimmer-sweep 7s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Spec-card row entrance ──
+   Each row fades up into view, staggered by index via inline
+   animationDelay. Rows start hidden (opacity:0) and animate in once
+   data-spec-animate="true" is set on the enclosing card. */
+@keyframes spec-row-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.spec-row {
+  opacity: 0;
+}
+[data-spec-animate="true"] .spec-row {
+  animation: spec-row-enter 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Typewriter caret ──
+   Thin block that follows the typed text. Blinks in two-step
+   cadence so it reads as a real cursor, not a fade. The element
+   itself is mounted/unmounted by JS — no separate fade-out. */
+.typewriter-caret {
+  display: inline-block;
+  width: 0.5ch;
+  margin-left: 1px;
+  vertical-align: -1px;
+  background: currentColor;
+  height: 1em;
+  animation: typewriter-caret-blink 900ms steps(2) infinite;
+}
+@keyframes typewriter-caret-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+
+/* ── Studio "ship" arrow nudge ── */
+@keyframes studio-ship-arrow {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+.studio-ship-arrow {
+  animation: studio-ship-arrow 1.6s ease-in-out infinite;
+}
+
+/* ── Autofill override ──
+   Chrome paints a light blue background on inputs it recognizes
+   (autofill / paste). On our dark pill form that reads as a jarring
+   blue slab. The inset-shadow trick is unreliable across Chrome
+   versions; clipping the background to text removes the blue slab
+   entirely while still letting the text render. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff;
+  -webkit-background-clip: text;
+  background-clip: text;
+  caret-color: #ffffff;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  [data-reveal],
+  [data-reveal][data-revealed="true"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Lenis prep ── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* NarrativeBlock detail-panel content swap. Re-keying the inner block
+   in DetailPanel mounts a fresh node, which triggers this fade+rise
+   animation. Kept here (rather than via styled-jsx) so it's part of
+   the global stylesheet pipeline and doesn't require client-only
+   tooling to evaluate. */
+@keyframes narrativeDetailIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.narrative-detail-in {
+  animation: narrativeDetailIn 360ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* ── Hero perimeter network ──
+   Dark "vibe app" silhouettes positioned around the centered hero
+   text, connected by thin curving lines that route around the
+   text. On mount, lines draw themselves in sequence (stroke-dashoffset
+   animation) and cards fade in on cue, so the network reads as a
+   system being assembled. After the reveal, everything is static —
+   the original busy multi-pulse loop felt cluttered, so this version
+   says its piece once and then sits quietly behind the headline. */
+
+@keyframes hero-line-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.hero-flow-line {
+  opacity: 0;
+  animation: hero-line-fade 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: var(--line-delay, 0ms);
+}
+
+@keyframes hero-card-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.hero-flow-card {
+  animation: hero-card-fade-in 720ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: var(--card-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-flow-line,
+  .hero-flow-card {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+/* HeroLayeredStack — pill cycler.
+   Each pill follows the same 6s loop, with N pills offset by 6/N
+   seconds via animation-delay so at any frame one is at the front
+   slot, two more peek out as faded depth slots, and the fourth is
+   off-stage either entering from below or wrapping back from the top.
+   Translate values are larger than they look "needed" because the
+   pills overlap heavily — back slots have to peek a clear sliver
+   below the front pill or the stack reads as one fat row. */
+@keyframes hls-pill-cycle {
+  0% {
+    transform: translate(-50%, -50%) translateY(56px) scale(0.88);
+    opacity: 0;
+    z-index: 0;
+  }
+  12% {
+    transform: translate(-50%, -50%) translateY(36px) scale(0.91);
+    opacity: 0.18;
+    z-index: 1;
+  }
+  25% {
+    transform: translate(-50%, -50%) translateY(28px) scale(0.93);
+    opacity: 0.32;
+    z-index: 2;
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(14px) scale(0.97);
+    opacity: 0.6;
+    z-index: 3;
+  }
+  75% {
+    transform: translate(-50%, -50%) translateY(0px) scale(1);
+    opacity: 1;
+    z-index: 5;
+  }
+  88% {
+    transform: translate(-50%, -50%) translateY(-18px) scale(1);
+    opacity: 0.4;
+    z-index: 4;
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(-40px) scale(0.95);
+    opacity: 0;
+    z-index: 0;
+  }
+}
+
+.hls-pill {
+  animation: hls-pill-cycle 6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hls-pill {
+    animation: none;
+  }
+}
+
+/* ── HeroPromptToApp portal showcase ──
+   Single-pass timeline anchoring the bottom of the hero. Sidebar
+   entries slide in from the left as each app is "added". The main
+   view crossfades to the matching preview, and a floating card on
+   the bottom-right confirms the addition. All animations use
+   animation-fill-mode: both so the final state persists. */
+
+@keyframes hpd-prompt-line {
+  /* Opacity envelope for one prompt: typing happens at the start,
+     a shimmer "generating" phase holds the row visible in the
+     middle, then the line fades before the next prompt arrives. */
+  0% {
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes hpd-prompt-text {
+  0% {
+    width: 0;
+  }
+  100% {
+    /* Each prompt sets --type-w to its character count in `ch`.
+       This keeps the text span sized to its content so the caret
+       lands right after the last character instead of being pushed
+       to the right edge of the input (the bug when width hit 100%
+       of the flex container). */
+    width: var(--type-w, 30ch);
+  }
+}
+@keyframes hpd-prompt-shimmer {
+  /* Shimmer overlay that pulses left-to-right over the prompt input
+     after typing finishes, signalling that the AI is generating.
+     Stays hidden during the typing phase (0–40% of the 3s slot)
+     so it doesn't fight the type-in motion. */
+  0%,
+  40% {
+    opacity: 0;
+    background-position: -150% 0;
+  }
+  48% {
+    opacity: 1;
+    background-position: -150% 0;
+  }
+  88% {
+    opacity: 1;
+    background-position: 250% 0;
+  }
+  100% {
+    opacity: 0;
+    background-position: 250% 0;
+  }
+}
+@keyframes hpd-placeholder-out {
+  /* Placeholder fades out at the very start so the typing reveal
+     doesn't draw on top of it. */
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.hpd-prompt-line {
+  /* 3s slot per prompt, three slots = 9s total animation. */
+  animation: hpd-prompt-line 3s linear both;
+}
+@keyframes hpd-prompt-line-stay {
+  /* Used for the last prompt: fades in like the others but holds
+     visible permanently so the composer doesn't read as empty
+     once the final app is in place. */
+  0% {
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hpd-prompt-line-stay {
+  animation: hpd-prompt-line-stay 3s linear both;
+}
+.hpd-prompt-text {
+  /* Typing finishes within the first ~40% of the 3s slot (~1.2s).
+     Slower step pacing reads as actual typing rather than a swipe. */
+  animation: hpd-prompt-text 1.2s steps(30, end) both;
+  animation-delay: inherit;
+}
+@keyframes hpd-prompt-caret {
+  /* Caret is visible while the prompt is typing, then disappears
+     once the text is fully typed — matching how a real input cursor
+     behaves on submit. */
+  0% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  44% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.hpd-prompt-caret {
+  animation: hpd-prompt-caret 3s linear both;
+  animation-delay: inherit;
+}
+.hpd-prompt-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 45%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.08) 55%,
+    transparent 100%
+  );
+  background-size: 60% 100%;
+  background-repeat: no-repeat;
+  animation: hpd-prompt-shimmer 3s linear both;
+  animation-delay: inherit;
+  pointer-events: none;
+}
+.hpd-placeholder {
+  /* 200ms fade-out at the start so the placeholder is gone before
+     the first prompt has typed more than a few characters. */
+  animation: hpd-placeholder-out 200ms ease-out both;
+}
+
+@keyframes hpd-caret-blink {
+  /* Hard on/off blink — for the trailing cursor on the teaser
+     prompt, where the input idles before the next idea types in. */
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+.hpd-caret-blink {
+  animation: hpd-caret-blink 1s steps(1, end) infinite;
+}
+
+@keyframes hpd-entry-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.hpd-entry {
+  animation: hpd-entry-in 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes hpd-welcome-out {
+  0% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.hpd-welcome {
+  /* duration set so the welcome fades just before the first preview
+     starts to fade in — animation-delay is 0, so the timeline runs
+     from mount. */
+  animation: hpd-welcome-out 2.7s ease-out both;
+}
+
+@keyframes hpd-main-fade {
+  /* fade in, hold, fade out — used for the first two main previews */
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes hpd-main-stay {
+  /* fade in and stay — used for the final main preview */
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hpd-main-fade {
+  animation: hpd-main-fade 3s ease-in-out both;
+}
+.hpd-main-stay {
+  animation: hpd-main-stay 900ms ease-out both;
+}
+
+@keyframes hpd-floater-fade {
+  /* slide up + fade in, hold, then fade out — for non-final cards */
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  82% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes hpd-floater-stay {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hpd-floater-fade {
+  animation: hpd-floater-fade 1.6s ease-in-out both;
+}
+.hpd-floater-stay {
+  animation: hpd-floater-stay 500ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hpd-prompt-line,
+  .hpd-prompt-line-stay,
+  .hpd-prompt-text,
+  .hpd-prompt-shimmer,
+  .hpd-prompt-caret,
+  .hpd-placeholder,
+  .hpd-caret-blink,
+  .hpd-entry,
+  .hpd-welcome,
+  .hpd-main-fade,
+  .hpd-main-stay,
+  .hpd-floater-fade,
+  .hpd-floater-stay {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+/* ── HeroPromptToApp v2 — studio + client portal split ──
+   Single-pass timeline: the user prompt types into the builder
+   column, the AI response and plan fade in, then the right-side
+   client portal populates with the Time Tracker app. */
+
+@keyframes hsv-prompt {
+  /* Opacity envelope for the prompt block — fades in immediately
+     and stays visible. */
+  0% {
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes hsv-prompt-text {
+  /* Width-based typewriter reveal — the prompt span is content-
+     sized so the caret lands right after the last character. */
+  0% {
+    max-width: 0;
+  }
+  100% {
+    max-width: 100%;
+  }
+}
+@keyframes hsv-prompt-caret {
+  /* Caret visible while typing (first ~80% of slot), then fades. */
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.hsv-prompt {
+  animation: hsv-prompt 2.4s linear both;
+}
+.hsv-prompt-text {
+  display: inline-block;
+  white-space: pre-wrap;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: hsv-prompt-text 2s steps(60, end) both;
+}
+.hsv-prompt-caret {
+  animation: hsv-prompt-caret 2.4s linear both;
+}
+
+@keyframes hsv-fade-in {
+  /* Soft slide-up + fade for AI response, plan title, bullets, and
+     references. */
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hsv-fade-in {
+  animation: hsv-fade-in 500ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes hsv-dots-envelope {
+  /* Container envelope: dots fade in once the prompt is settled,
+     pulse for ~1.5s, then fade out before the AI response slides
+     in. animation-delay positions this in the timeline. */
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes hsv-dot-pulse {
+  /* Individual dot pulse — three siblings stagger this via their
+     own animation-delay so the dots wave like a typing indicator. */
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}
+.hsv-dots {
+  animation: hsv-dots-envelope 2s ease-in-out both;
+}
+.hsv-dot {
+  animation: hsv-dot-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes hsv-studio-entry {
+  /* Time Tracker drops into the studio's Apps list. */
+  0% {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.hsv-studio-entry {
+  animation: hsv-studio-entry 600ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes hsv-portal-entry {
+  /* Time Tracker entry appears in the client's sidebar (right). */
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hsv-portal-entry {
+  animation: hsv-portal-entry 500ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes hsv-portal-empty-out {
+  /* Welcome state in the client's main view fades out before the
+     Time Tracker UI fades in. */
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.hsv-portal-empty {
+  animation: hsv-portal-empty-out 5.4s ease-out both;
+}
+
+@keyframes hsv-portal-main-in {
+  /* Time Tracker preview fades into the client's main view. */
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hsv-portal-main {
+  animation: hsv-portal-main-in 700ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hsv-prompt,
+  .hsv-prompt-text,
+  .hsv-prompt-caret,
+  .hsv-fade-in,
+  .hsv-dots,
+  .hsv-dot,
+  .hsv-studio-entry,
+  .hsv-portal-entry,
+  .hsv-portal-empty,
+  .hsv-portal-main {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+

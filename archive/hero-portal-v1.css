@@ -1,0 +1,269 @@
+/* ── HeroPromptToApp portal showcase ──
+   Single-pass timeline anchoring the bottom of the hero. Sidebar
+   entries slide in from the left as each app is "added". The main
+   view crossfades to the matching preview, and a floating card on
+   the bottom-right confirms the addition. All animations use
+   animation-fill-mode: both so the final state persists. */
+
+@keyframes hpd-prompt-line {
+  /* Opacity envelope for one prompt: typing happens at the start,
+     a shimmer "generating" phase holds the row visible in the
+     middle, then the line fades before the next prompt arrives. */
+  0% {
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes hpd-prompt-text {
+  0% {
+    width: 0;
+  }
+  100% {
+    /* Each prompt sets --type-w to its character count in `ch`.
+       This keeps the text span sized to its content so the caret
+       lands right after the last character instead of being pushed
+       to the right edge of the input (the bug when width hit 100%
+       of the flex container). */
+    width: var(--type-w, 30ch);
+  }
+}
+@keyframes hpd-prompt-shimmer {
+  /* Shimmer overlay that pulses left-to-right over the prompt input
+     after typing finishes, signalling that the AI is generating.
+     Stays hidden during the typing phase (0–40% of the 3s slot)
+     so it doesn't fight the type-in motion. */
+  0%,
+  40% {
+    opacity: 0;
+    background-position: -150% 0;
+  }
+  48% {
+    opacity: 1;
+    background-position: -150% 0;
+  }
+  88% {
+    opacity: 1;
+    background-position: 250% 0;
+  }
+  100% {
+    opacity: 0;
+    background-position: 250% 0;
+  }
+}
+@keyframes hpd-placeholder-out {
+  /* Placeholder fades out at the very start so the typing reveal
+     doesn't draw on top of it. */
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.hpd-prompt-line {
+  /* 3s slot per prompt, three slots = 9s total animation. */
+  animation: hpd-prompt-line 3s linear both;
+}
+@keyframes hpd-prompt-line-stay {
+  /* Used for the last prompt: fades in like the others but holds
+     visible permanently so the composer doesn't read as empty
+     once the final app is in place. */
+  0% {
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hpd-prompt-line-stay {
+  animation: hpd-prompt-line-stay 3s linear both;
+}
+.hpd-prompt-text {
+  /* Typing finishes within the first ~40% of the 3s slot (~1.2s).
+     Slower step pacing reads as actual typing rather than a swipe. */
+  animation: hpd-prompt-text 1.2s steps(30, end) both;
+  animation-delay: inherit;
+}
+@keyframes hpd-prompt-caret {
+  /* Caret is visible while the prompt is typing, then disappears
+     once the text is fully typed — matching how a real input cursor
+     behaves on submit. */
+  0% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  44% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.hpd-prompt-caret {
+  animation: hpd-prompt-caret 3s linear both;
+  animation-delay: inherit;
+}
+.hpd-prompt-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 45%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.08) 55%,
+    transparent 100%
+  );
+  background-size: 60% 100%;
+  background-repeat: no-repeat;
+  animation: hpd-prompt-shimmer 3s linear both;
+  animation-delay: inherit;
+  pointer-events: none;
+}
+.hpd-placeholder {
+  /* 200ms fade-out at the start so the placeholder is gone before
+     the first prompt has typed more than a few characters. */
+  animation: hpd-placeholder-out 200ms ease-out both;
+}
+
+@keyframes hpd-caret-blink {
+  /* Hard on/off blink — for the trailing cursor on the teaser
+     prompt, where the input idles before the next idea types in. */
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+.hpd-caret-blink {
+  animation: hpd-caret-blink 1s steps(1, end) infinite;
+}
+
+@keyframes hpd-entry-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.hpd-entry {
+  animation: hpd-entry-in 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes hpd-welcome-out {
+  0% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.hpd-welcome {
+  /* duration set so the welcome fades just before the first preview
+     starts to fade in — animation-delay is 0, so the timeline runs
+     from mount. */
+  animation: hpd-welcome-out 2.7s ease-out both;
+}
+
+@keyframes hpd-main-fade {
+  /* fade in, hold, fade out — used for the first two main previews */
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes hpd-main-stay {
+  /* fade in and stay — used for the final main preview */
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hpd-main-fade {
+  animation: hpd-main-fade 3s ease-in-out both;
+}
+.hpd-main-stay {
+  animation: hpd-main-stay 900ms ease-out both;
+}
+
+@keyframes hpd-floater-fade {
+  /* slide up + fade in, hold, then fade out — for non-final cards */
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  82% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes hpd-floater-stay {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hpd-floater-fade {
+  animation: hpd-floater-fade 1.6s ease-in-out both;
+}
+.hpd-floater-stay {
+  animation: hpd-floater-stay 500ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hpd-prompt-line,
+  .hpd-prompt-line-stay,
+  .hpd-prompt-text,
+  .hpd-prompt-shimmer,
+  .hpd-prompt-caret,
+  .hpd-placeholder,
+  .hpd-caret-blink,
+  .hpd-entry,
+  .hpd-welcome,
+  .hpd-main-fade,
+  .hpd-main-stay,
+  .hpd-floater-fade,
+  .hpd-floater-stay {
+    animation-duration: 1ms !important;
