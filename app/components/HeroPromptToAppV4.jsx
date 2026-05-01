@@ -167,7 +167,7 @@ function HelpdeskView() {
 function PaymentsView() {
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <PanelHeader title="Payments" trailing="This month" />
+      <PanelHeader title="Payments" />
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
         <div className="grid grid-cols-3 gap-2">
           {[
@@ -186,9 +186,9 @@ function PaymentsView() {
         </div>
         <div className="space-y-1.5">
           {[
-            { client: "Acme", id: "INV-204", amount: "$12,400", state: "Paid", tone: "paid" },
-            { client: "Lyra", id: "INV-205", amount: "$8,600", state: "Pending", tone: "pending" },
-            { client: "Northwind", id: "INV-206", amount: "$3,800", state: "Draft", tone: "draft" },
+            { client: "Acme", id: "INV-204", amount: "$12,400" },
+            { client: "Lyra", id: "INV-205", amount: "$8,600" },
+            { client: "Northwind", id: "INV-206", amount: "$3,800" },
           ].map((row, i) => (
             <div
               key={i}
@@ -202,17 +202,6 @@ function PaymentsView() {
               </span>
               <span className="ml-auto shrink-0 whitespace-nowrap font-mono text-[10.5px] text-white/85">
                 {row.amount}
-              </span>
-              <span
-                className={
-                  row.tone === "paid"
-                    ? "shrink-0 whitespace-nowrap rounded-full border border-white/25 bg-white/[0.06] px-2 py-[1px] text-[9.5px] text-white/80"
-                    : row.tone === "pending"
-                    ? "shrink-0 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.03] px-2 py-[1px] text-[9.5px] text-white/65"
-                    : "shrink-0 whitespace-nowrap rounded-full border border-white/10 px-2 py-[1px] text-[9.5px] text-white/45"
-                }
-              >
-                {row.state}
               </span>
             </div>
           ))}
