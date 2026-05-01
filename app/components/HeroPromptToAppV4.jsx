@@ -259,12 +259,19 @@ const APPS = [
 
 // ── Timing (ms within one cycle) ──────────────────────────────────
 
-const CYCLE_MS = 9500;
+const CYCLE_MS = 10500;
 const TYPE_START = 300;
 const TYPE_END = 2700;
 const SEND = 3100;
-const FLY_END = 4200; // longer travel for a more dramatic fly-in
-const HIGHLIGHT_END = 5400; // pulse + scale settle on the new sidebar row
+// Two-stage send animation:
+//  • SEND..TEXT_FADE_END: bubble holds in place; text content gracefully
+//    fades out so the moving shape never carries shrinking glyphs.
+//  • TEXT_FADE_END..FLY_END: empty bubble shape glides along an arced
+//    path into the sidebar landing point with ease-in-out cubic — feels
+//    weighted, not dissolved.
+const TEXT_FADE_END = 3450;
+const FLY_END = 4400;
+const HIGHLIGHT_END = 5800;
 const RESET_PAUSE = 1800;
 
 // ── Hook: cycle clock ─────────────────────────────────────────────
@@ -299,16 +306,40 @@ function typed(text, t) {
 
 function SidebarRow({ iconSrc, label, active, entryT }) {
   // entryT: 0 → 1 over the entry window; null/undefined when settled.
+  // Phases inside the entry window:
+  //   0   .. 0.40 — invisible (the bubble is still in flight)
+  //   0.40.. 0.55 — pop in: opacity 0→1, scale 0.7 → 1.06 (overshoot)
+  //   0.55.. 0.75 — settle: scale 1.06 → 1, glow brightest
+  //   0.75.. 1    — glow fades to nothing
   const entering = entryT !== null && entryT !== undefined;
   let style = {};
   if (entering) {
-    // 0 → 0.5: scale in + fade in. 0.5 → 1: highlight glow fading out.
-    const inP = Math.min(1, entryT / 0.5);
-    const glowP = Math.max(0, 1 - (entryT - 0.5) / 0.5);
+    let opacity = 0;
+    let scale = 0.7;
+    let glow = 0;
+    if (entryT < 0.4) {
+      opacity = 0;
+      scale = 0.7;
+    } else if (entryT < 0.55) {
+      const p = (entryT - 0.4) / 0.15;
+      opacity = p;
+      scale = 0.7 + p * 0.36; // → 1.06
+      glow = p;
+    } else if (entryT < 0.75) {
+      const p = (entryT - 0.55) / 0.2;
+      opacity = 1;
+      scale = 1.06 - p * 0.06; // 1.06 → 1
+      glow = 1;
+    } else {
+      const p = (entryT - 0.75) / 0.25;
+      opacity = 1;
+      scale = 1;
+      glow = 1 - p;
+    }
     style = {
-      opacity: inP,
-      transform: `scale(${0.85 + inP * 0.15})`,
-      boxShadow: `0 0 0 ${glowP * 1.5}px rgba(255,255,255,${glowP * 0.18})`,
+      opacity,
+      transform: `scale(${scale})`,
+      boxShadow: `0 0 0 ${glow * 2}px rgba(255,255,255,${glow * 0.22}), 0 6px 20px rgba(255,255,255,${glow * 0.06})`,
     };
   }
   return (
@@ -360,27 +391,59 @@ export function HeroPromptToAppV4() {
       ? (cycleT - SEND) / (HIGHLIGHT_END - SEND)
       : null;
 
-  // Bubble fly: types in place at the top, then translates down + left
-  // toward the sidebar, scaling and fading as it lands as a new entry.
-  const flyP = sending ? (cycleT - SEND) / (FLY_END - SEND) : sent ? 1 : 0;
-  const flyEase = flyP === 0 ? 0 : flyP === 1 ? 1 : 1 - Math.pow(1 - flyP, 2.2);
+  // Two-stage send animation. Stage 1: text fades out while the bubble
+  // holds in place (so glyphs never shrink mid-flight). Stage 2: empty
+  // bubble glides along an arced path into the sidebar with ease-in-out
+  // cubic, scale tapering at the end so it dovetails into the new row.
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  const easeInOutCubic = (t) =>
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+  const textFadeP = clamp01(
+    (cycleT - SEND) / (TEXT_FADE_END - SEND)
+  );
+  const flyRawP =
+    cycleT < TEXT_FADE_END
+      ? 0
+      : cycleT >= FLY_END
+      ? 1
+      : (cycleT - TEXT_FADE_END) / (FLY_END - TEXT_FADE_END);
+  const flyP = easeInOutCubic(flyRawP);
+
   const bubbleVisible = cycleT >= TYPE_START && !sent;
+  const TX = -360; // landing x relative to bubble center
+  const TY = 230;  // landing y
+  // Arc: extra Y dip in the middle of the path so the bubble feels like
+  // it's being thrown rather than dragged in a straight line.
+  const arcY = Math.sin(flyP * Math.PI) * 18;
+  const bubbleScale = 1 - flyP * 0.65;
+  const bubbleOpacity =
+    flyP < 0.85 ? 1 - flyP * 0.55 : Math.max(0, 1 - (flyP - 0.85) / 0.15);
+
+  // Pre-fly intro: gentle 240ms fade-in once the bubble appears so it
+  // doesn't pop in at TYPE_START.
+  const introP = clamp01((cycleT - TYPE_START) / 240);
+
   const bubbleStyle = sending
     ? {
-        opacity: 1 - flyEase * 0.95,
-        transform: `translate(calc(-50% + ${flyEase * -340}px), ${flyEase * 200}px) scale(${
-          1 - flyEase * 0.55
-        })`,
+        opacity: bubbleOpacity,
+        transform: `translate(calc(-50% + ${flyP * TX}px), ${flyP * TY + arcY}px) scale(${bubbleScale})`,
       }
     : sent
     ? {
         opacity: 0,
-        transform: "translate(calc(-50% - 340px), 200px) scale(0.45)",
+        transform: `translate(calc(-50% + ${TX}px), ${TY}px) scale(${1 - 0.65})`,
       }
     : {
-        opacity: bubbleVisible ? 1 : 0,
-        transform: "translate(-50%, 0) scale(1)",
+        opacity: bubbleVisible ? introP : 0,
+        transform: `translate(-50%, ${(1 - introP) * -8}px) scale(${0.96 + introP * 0.04})`,
       };
+  const bubbleContentOpacity =
+    cycleT < SEND
+      ? introP
+      : cycleT >= TEXT_FADE_END
+      ? 0
+      : 1 - textFadeP;
 
   return (
     <div
@@ -392,14 +455,20 @@ export function HeroPromptToAppV4() {
             then translates down + left into the sidebar position as the
             new app entry. */}
         <div
-          className="absolute left-1/2 top-0 z-20 w-full max-w-[520px] transition-all duration-700 ease-out"
-          style={bubbleStyle}
+          className="absolute left-1/2 top-0 z-20 w-full max-w-[520px]"
+          style={{
+            ...bubbleStyle,
+            transformOrigin: "left top",
+          }}
         >
           <div className="flex items-start gap-3 rounded-2xl border border-white/[0.08] bg-[#141416] px-4 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.45)]">
             <span className="mt-[1px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/85">
               <SparkleIcon className="h-3.5 w-3.5" />
             </span>
-            <div className="min-w-0 flex-1 text-[13px] leading-[1.45] text-white/85">
+            <div
+              className="min-w-0 flex-1 text-[13px] leading-[1.45] text-white/85"
+              style={{ opacity: bubbleContentOpacity }}
+            >
               {promptText || (
                 <span className="text-white/35">
                   e.g. Build a time tracker for my team
