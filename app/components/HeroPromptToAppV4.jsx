@@ -258,25 +258,21 @@ const APPS = [
 ];
 
 // ── Timing (ms within one cycle) ──────────────────────────────────
+//
+// Pure-portal pattern: no prompt, no text, no LLM artifacts. Each
+// cycle is short (~3.6s) so a user arriving mid-loop sees a fresh app
+// arrive within seconds. Per cycle:
+//   • 0..ANTICIPATE_END    — soft sparkle pulse at sidebar top
+//   • ANTICIPATE_END..ARRIVE_END — shimmer sweeps; new sidebar row
+//     pops in with overshoot + glow; main panel cross-fades
+//   • ARRIVE_END..CYCLE_MS — settled hold
 
-const CYCLE_MS = 10500;
-const TYPE_START = 300;
-const TYPE_END = 2700;
-const SEND = 3100;
-// Message-send pattern:
-//  • SEND..LOADING_END: bubble shows three pulsing dots beneath the
-//    prompt — the "AI is generating" beat.
-//  • LOADING_END..SHIMMER_END: a diagonal shimmer sweeps across the
-//    portal panel and at the same time the sidebar entry pops in and
-//    the main panel cross-fades. By the end of the shimmer everything
-//    has updated.
-//  • TEXT_FADE_START..CYCLE_MS: bubble text gently fades out so the
-//    next cycle starts from a clean bubble.
-const LOADING_END = 3800;
-const SHIMMER_END = 4600;
-const UPDATE_END = 4600; // sidebar + main settle by here
-const TEXT_FADE_START = 8800;
-const RESET_PAUSE = 1800;
+const CYCLE_MS = 3600;
+const ANTICIPATE_START = 0;
+const ANTICIPATE_END = 350;
+const ARRIVE_START = 350;
+const ARRIVE_END = 1300;
+const RESET_PAUSE = 1500;
 
 // ── Hook: cycle clock ─────────────────────────────────────────────
 
@@ -293,17 +289,6 @@ function useCycleClock() {
     return () => cancelAnimationFrame(raf);
   }, []);
   return now;
-}
-
-// ── Utility: typewriter substring ─────────────────────────────────
-
-function typed(text, t) {
-  if (t <= TYPE_START) return "";
-  if (t >= TYPE_END) return text;
-  const progress = (t - TYPE_START) / (TYPE_END - TYPE_START);
-  const eased = 1 - Math.pow(1 - progress, 1.4);
-  const chars = Math.floor(eased * text.length);
-  return text.slice(0, chars);
 }
 
 // ── Sidebar primitives ────────────────────────────────────────────
@@ -376,81 +361,52 @@ export function HeroPromptToAppV4() {
 
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
-  // Sidebar updates at UPDATE_END (= start of shimmer). Main panel
-  // cross-fades during the same window.
-  const updated = cycleT >= UPDATE_END;
+  // Sidebar updates at the moment the new row pops in (mid-arrive).
+  // The arrival animation itself is staged inside SidebarRow.
+  const arrived = cycleT >= ARRIVE_START + 200; // brief delay after anticipate
   let installed = cycleIndex;
-  if (updated) installed = cycleIndex + 1;
+  if (arrived) installed = cycleIndex + 1;
   if (inResetPause) installed = APPS.length;
 
-  // Active app in main = the most recently committed one. Before the
-  // very first update, show a clean Home empty state.
-  const showHome = cycleIndex === 0 && !updated;
-  const activeApp = updated ? app : cycleIndex > 0 ? APPS[cycleIndex - 1] : null;
+  const showHome = cycleIndex === 0 && !arrived;
+  const activeApp = arrived ? app : cycleIndex > 0 ? APPS[cycleIndex - 1] : null;
 
   // Entry progress for the just-installed row, normalized 0→1 across
-  // the shimmer window so the row pops in mid-shimmer.
+  // the arrive window so the row pops in dramatically.
   const entryT =
-    cycleT >= LOADING_END && cycleT < SHIMMER_END + 800
-      ? (cycleT - LOADING_END) / (SHIMMER_END + 800 - LOADING_END)
+    cycleT >= ARRIVE_START && cycleT < ARRIVE_END
+      ? (cycleT - ARRIVE_START) / (ARRIVE_END - ARRIVE_START)
+      : cycleT >= ARRIVE_END
+      ? 1
       : null;
 
-  // Shimmer sweep across the portal.
-  const shimmerActive = cycleT >= LOADING_END && cycleT < SHIMMER_END;
+  // Anticipate: a soft sparkle pulse near the top of the sidebar
+  // signaling "an app is being added" without any text.
+  const anticipateActive =
+    cycleT >= ANTICIPATE_START && cycleT < ANTICIPATE_END + 200;
+  const anticipateP = anticipateActive
+    ? clamp01((cycleT - ANTICIPATE_START) / (ANTICIPATE_END + 200 - ANTICIPATE_START))
+    : 0;
+  const anticipateOpacity = anticipateActive
+    ? Math.sin(anticipateP * Math.PI) // 0 → 1 → 0 over the window
+    : 0;
+
+  // Shimmer sweep across the portal during the arrive window.
+  const shimmerActive = cycleT >= ARRIVE_START && cycleT < ARRIVE_END;
   const shimmerP = shimmerActive
-    ? (cycleT - LOADING_END) / (SHIMMER_END - LOADING_END)
+    ? (cycleT - ARRIVE_START) / (ARRIVE_END - ARRIVE_START)
     : 0;
   const shimmerCenter = -30 + shimmerP * 160;
   const shimmerStyle = shimmerActive
     ? {
-        opacity: Math.sin(shimmerP * Math.PI),
+        opacity: Math.sin(shimmerP * Math.PI) * 0.85,
         background: `linear-gradient(105deg, transparent ${
           shimmerCenter - 20
-        }%, rgba(255,255,255,0.10) ${shimmerCenter}%, transparent ${
+        }%, rgba(255,255,255,0.12) ${shimmerCenter}%, transparent ${
           shimmerCenter + 20
         }%)`,
       }
     : { opacity: 0 };
-
-  // Loop fade: in the last 600ms before the totalMs wrap, fade the
-  // entire bubble stack out so the next loop starts from a clean slate.
-  const loopFadeStart = totalMs - 600;
-  const loopFadeP = elapsed > loopFadeStart
-    ? clamp01((elapsed - loopFadeStart) / 600)
-    : 0;
-  const stackOpacity = 1 - loopFadeP;
-
-  // Build the stacked-bubble list. For every cycle index that's been
-  // reached, render a bubble. Earlier cycles render as 'settled'
-  // (full text, no cursor, no dots). The current cycle's bubble is
-  // 'typing', 'loading', or 'settled' depending on cycleT.
-  const introP = clamp01((cycleT - TYPE_START) / 240);
-  const bubbles = [];
-  for (let i = 0; i <= cycleIndex; i++) {
-    const a = APPS[i];
-    if (i < cycleIndex) {
-      bubbles.push({
-        key: a.id,
-        text: a.prompt,
-        cursor: false,
-        dots: false,
-        opacity: 1,
-      });
-    } else {
-      // Current cycle. Mode is derived from cycleT.
-      const text = typed(a.prompt, cycleT);
-      const isTyping = cycleT >= TYPE_START && cycleT < SEND;
-      const isLoading = cycleT >= SEND && cycleT < LOADING_END;
-      const isSettled = cycleT >= LOADING_END;
-      bubbles.push({
-        key: a.id,
-        text: isSettled ? a.prompt : text,
-        cursor: isTyping,
-        dots: isLoading,
-        opacity: isSettled ? 1 : introP,
-      });
-    }
-  }
 
   return (
     <div
@@ -458,26 +414,10 @@ export function HeroPromptToAppV4() {
       className="pointer-events-none relative w-full"
     >
       <div className="relative mx-auto w-full max-w-[1080px]">
-        {/* Stacked prompt thread — fixed height reserves space for the
-            full thread so the portal below never shifts as new bubbles
-            appear. Bubbles stack from the bottom upward, so the most
-            recently sent prompt always sits closest to the portal. */}
-        <div
-          className="mb-5 flex w-full max-w-[420px] flex-col justify-end gap-1.5"
-          style={{ opacity: stackOpacity, minHeight: 132 }}
-        >
-          {bubbles.map((b) => (
-            <PromptBubble
-              key={b.key}
-              text={b.text}
-              cursor={b.cursor}
-              dots={b.dots}
-              opacity={b.opacity}
-            />
-          ))}
-        </div>
-
-        {/* Single dominant Client Portal panel ─────────────────── */}
+        {/* Single dominant Client Portal panel — the only UI element on
+            stage. Apps materialize in the sidebar with shimmer + glow,
+            no prompt UI, no LLM text. The rhythmic arrivals are the
+            entire message: 'apps keep appearing in your portal'. */}
         <div
           className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0c0c0d]"
           style={{
@@ -505,6 +445,19 @@ export function HeroPromptToAppV4() {
                 </span>
                 <span className="truncate text-[11px] font-medium text-white/85">
                   BrandMages
+                </span>
+                {/* Anticipate sparkle — flashes briefly before each new
+                    app row arrives, signaling visually that something is
+                    about to be added (no text needed). */}
+                <span
+                  aria-hidden="true"
+                  className="ml-auto flex h-5 w-5 shrink-0 items-center justify-center text-white"
+                  style={{
+                    opacity: anticipateOpacity,
+                    transform: `scale(${0.8 + anticipateOpacity * 0.4})`,
+                  }}
+                >
+                  <SparkleIcon className="h-3.5 w-3.5" />
                 </span>
               </div>
               <div className="space-y-0.5">
@@ -547,45 +500,6 @@ export function HeroPromptToAppV4() {
         </div>
       </div>
     </div>
-  );
-}
-
-function PromptBubble({ text, cursor, dots, opacity }) {
-  return (
-    <div
-      className="flex items-center gap-2.5 rounded-xl border border-white/[0.07] bg-[#141416] px-3 py-2 transition-opacity duration-300"
-      style={{ opacity }}
-    >
-      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/80">
-        <SparkleIcon className="h-3 w-3" />
-      </span>
-      <div className="min-w-0 flex-1 text-[12px] leading-[1.35] text-white/85">
-        {text || (
-          <span className="text-white/35">
-            e.g. Build a time tracker for my team
-          </span>
-        )}
-        {cursor && (
-          <span className="ml-[1px] inline-block h-[11px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
-        )}
-      </div>
-      {dots && (
-        <div className="flex shrink-0 items-center gap-1" aria-hidden="true">
-          <LoadingDot delay={0} />
-          <LoadingDot delay={160} />
-          <LoadingDot delay={320} />
-        </div>
-      )}
-    </div>
-  );
-}
-
-function LoadingDot({ delay = 0 }) {
-  return (
-    <span
-      className="studio-thinking-dot inline-block h-1.5 w-1.5 rounded-full bg-white/65"
-      style={{ animationDelay: `${delay}ms` }}
-    />
   );
 }
 
