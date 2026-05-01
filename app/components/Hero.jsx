@@ -41,72 +41,64 @@ export function Hero({
   };
 
   return (
-    <section
-      className="relative overflow-hidden flex flex-col"
-      style={{
-        height: "min(100vh, 1080px)",
-      }}
-    >
-      <HeroVersionToggle version={version} onChange={choose} />
-
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0"
+    <>
+      <section
+        className="relative overflow-hidden flex flex-col"
         style={{
-          background:
-            "radial-gradient(40% 35% at 30% 35%, rgba(255,255,255,0.04) 0%, transparent 70%), radial-gradient(35% 30% at 75% 55%, rgba(217,237,146,0.04) 0%, transparent 75%)",
+          height: "min(100vh, 1080px)",
         }}
-      />
+      >
+        <HeroVersionToggle version={version} onChange={choose} />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 text-center md:pt-36 lg:pt-40">
-        <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
-          {heading}
-        </h1>
-        <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
-          {subheading}
-        </p>
-        <EmailCTA />
-      </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background:
+              "radial-gradient(40% 35% at 30% 35%, rgba(255,255,255,0.04) 0%, transparent 70%), radial-gradient(35% 30% at 75% 55%, rgba(217,237,146,0.04) 0%, transparent 75%)",
+          }}
+        />
 
-      <div className="relative z-10 mt-auto w-full px-4 pt-12 pb-32 md:px-6 md:pt-16 md:pb-36 lg:px-10">
-        {version === "v1" ? (
-          <HeroPromptToAppV1 />
-        ) : version === "v3" ? (
-          <HeroPromptToAppV3 />
-        ) : (
-          <HeroPromptToApp />
-        )}
-      </div>
+        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 text-center md:pt-36 lg:pt-40">
+          <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
+            {heading}
+          </h1>
+          <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
+            {subheading}
+          </p>
+          <EmailCTA />
+        </div>
+
+        <div className="relative z-10 mt-auto w-full px-4 pt-12 md:px-6 md:pt-16 lg:px-10">
+          {version === "v1" ? (
+            <HeroPromptToAppV1 />
+          ) : version === "v3" ? (
+            <HeroPromptToAppV3 />
+          ) : (
+            <HeroPromptToApp />
+          )}
+        </div>
+      </section>
 
       {alphaLogos && alphaLogos.length > 0 && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
-          <div
-            aria-hidden="true"
-            className="h-20"
-            style={{
-              background:
-                "linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 60%, rgba(10,10,10,0) 100%)",
-            }}
-          />
-          <div className="bg-[#0a0a0a]/95 pb-2 pt-4 md:pb-3">
-            <div className="mx-auto w-full max-w-[620px] px-6">
-              {alphaLabel && (
-                <p
-                  className="mb-3 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
-                  style={{
-                    fontFamily:
-                      '"ABC Diatype Mono", ui-monospace, monospace',
-                  }}
-                >
-                  {alphaLabel}
-                </p>
-              )}
-              <LogoStrip logos={alphaLogos} variant="dark" />
-            </div>
+        <div className="bg-[#0a0a0a] pb-10 pt-12 md:pb-12 md:pt-14">
+          <div className="mx-auto w-full max-w-[620px] px-6">
+            {alphaLabel && (
+              <p
+                className="mb-4 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
+                style={{
+                  fontFamily:
+                    '"ABC Diatype Mono", ui-monospace, monospace',
+                }}
+              >
+                {alphaLabel}
+              </p>
+            )}
+            <LogoStrip logos={alphaLogos} variant="dark" />
           </div>
         </div>
       )}
-    </section>
+    </>
   );
 }
 
