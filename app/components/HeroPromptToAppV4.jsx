@@ -382,29 +382,6 @@ export function HeroPromptToAppV4() {
     ? Math.sin(anticipateP * Math.PI) // 0 → 1 → 0 over the window
     : 0;
 
-  // Toast notification that pops up when a new app is built. Appears
-  // at the start of the arrive window, holds for most of the cycle,
-  // then slides out before the next cycle begins.
-  const TOAST_IN_END = ARRIVE_START + 500; // slide-in completes
-  const TOAST_OUT_START = CYCLE_MS - 700;
-  const TOAST_OUT_END = CYCLE_MS - 100;
-  let toastP = 0; // 0 = hidden, 1 = fully visible
-  if (cycleT < ARRIVE_START) {
-    toastP = 0;
-  } else if (cycleT < TOAST_IN_END) {
-    toastP = (cycleT - ARRIVE_START) / (TOAST_IN_END - ARRIVE_START);
-  } else if (cycleT < TOAST_OUT_START) {
-    toastP = 1;
-  } else if (cycleT < TOAST_OUT_END) {
-    toastP = 1 - (cycleT - TOAST_OUT_START) / (TOAST_OUT_END - TOAST_OUT_START);
-  } else {
-    toastP = 0;
-  }
-  // While the toast is in-flight (before the row pops in) we want
-  // to show the *incoming* app's label, since the row itself is
-  // appearing simultaneously.
-  const toastApp = app;
-
   // Shimmer sweep across the portal during the arrive window.
   const shimmerActive = cycleT >= ARRIVE_START && cycleT < ARRIVE_END;
   const shimmerP = shimmerActive
@@ -443,32 +420,6 @@ export function HeroPromptToAppV4() {
             className="pointer-events-none absolute inset-0 z-10"
             style={shimmerStyle}
           ></div>
-
-          {/* Build-success toast — pops up at the bottom-right whenever
-              a new app is built, holds for most of the cycle, then
-              slides out before the next one. */}
-          <div
-            className="absolute z-30 flex items-center gap-2.5 rounded-xl border border-white/10 bg-[#161618] px-3 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.55)]"
-            style={{
-              right: 16,
-              bottom: "26%",
-              opacity: toastP,
-              transform: `translateX(${(1 - toastP) * 24}px)`,
-              transition: "none",
-            }}
-          >
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#d9ed92] text-black">
-              <CheckIcon className="h-3 w-3" />
-            </span>
-            <div className="flex flex-col gap-0.5 leading-tight">
-              <span className="text-[11px] font-medium text-white/90">
-                {toastApp.label} built
-              </span>
-              <span className="text-[10px] text-white/45">
-                Added to your portal
-              </span>
-            </div>
-          </div>
 
           <div className="grid h-full min-w-0 grid-cols-[180px_1fr] gap-0">
             {/* Sidebar */}
@@ -536,20 +487,6 @@ export function HeroPromptToAppV4() {
     </div>
   );
 }
-
-const CheckIcon = ({ className = "h-3 w-3" }) => (
-  <svg
-    viewBox="0 0 16 16"
-    className={className}
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3.5 8.5l3 3 6-6" />
-  </svg>
-);
 
 const SparkleIcon = ({ className = "h-3.5 w-3.5" }) => (
   <svg
