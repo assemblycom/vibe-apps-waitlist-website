@@ -98,7 +98,7 @@ function HomeEmpty() {
 function TimeTrackerView() {
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <PanelHeader title="Time Tracker" trailing="This week" />
+      <PanelHeader title="Time Tracker" />
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
         <div className="flex min-w-0 items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
           <span className="whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-white/85">
