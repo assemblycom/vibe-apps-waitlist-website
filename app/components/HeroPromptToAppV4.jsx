@@ -539,7 +539,7 @@ export function HeroPromptToAppV4() {
 function BuildAppRow() {
   return (
     <div
-      className="group pointer-events-auto relative mt-1 flex cursor-pointer items-center gap-2 overflow-hidden rounded-md border border-dashed border-white/15 px-2 py-1.5 text-[11px] leading-none text-white/55 transition-colors duration-200 hover:border-white/35 hover:text-white"
+      className="group pointer-events-auto relative mt-3 flex cursor-pointer items-center gap-2 overflow-hidden rounded-md border border-dashed border-white/15 px-2 py-1 text-[11px] leading-none text-white/55 transition-colors duration-200 hover:border-white/35 hover:text-white"
     >
       <span className="flex h-3 w-3 shrink-0 items-center justify-center text-current">
         <PlusIcon className="h-3 w-3" />
