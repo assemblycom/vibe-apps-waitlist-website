@@ -67,17 +67,17 @@ function BuildAppView() {
   return (
     <div className="flex h-full min-w-0 flex-col">
       <PanelHeader title="Build an app" />
-      <div className="flex flex-1 flex-col items-center gap-4 px-8 pt-12 text-center">
+      <div className="flex flex-1 flex-col items-center gap-3 px-8 pt-12 text-center">
         <span
           aria-hidden="true"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.05] text-white/70"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.04] text-white/55"
         >
-          <SparkleIcon className="h-4 w-4" />
+          <SparkleIcon className="h-3.5 w-3.5" />
         </span>
-        <div className="text-[14px] font-medium text-white/90">
+        <div className="text-[12.5px] font-medium text-white/65">
           Ready for your next app?
         </div>
-        <div className="max-w-[260px] text-[11.5px] leading-[1.5] text-white/45">
+        <div className="max-w-[240px] text-[11px] leading-[1.5] text-white/35">
           Describe what you need and Assembly builds it into your client portal.
         </div>
       </div>
@@ -488,7 +488,7 @@ export function HeroPromptToAppV4() {
             no prompt UI, no LLM text. The rhythmic arrivals are the
             entire message: 'apps keep appearing in your portal'. */}
         <div
-          className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0c0c0d]"
+          className="relative overflow-hidden rounded-2xl border border-white/[0.09] bg-[#17181a]"
           style={{ height: "min(58vh, 560px)" }}
         >
           {/* Shimmer sweep — diagonal highlight that crosses the panel
