@@ -411,12 +411,14 @@ export function HeroPromptToAppV4() {
   const flyP = easeInOutCubic(flyRawP);
 
   const bubbleVisible = cycleT >= TYPE_START && !sent;
-  const TX = -360; // landing x relative to bubble center
-  const TY = 230;  // landing y
-  // Arc: extra Y dip in the middle of the path so the bubble feels like
-  // it's being thrown rather than dragged in a straight line.
+  // Bubble is anchored to the top-left of the portal area, so the fly
+  // path is mostly vertical: it slides down a short distance into the
+  // sidebar landing point with a slight left nudge to slot into the
+  // app-row position inside the sidebar's padding.
+  const TX = 8;   // landing x — tiny right nudge into sidebar padding
+  const TY = 230; // landing y
   const arcY = Math.sin(flyP * Math.PI) * 18;
-  const bubbleScale = 1 - flyP * 0.65;
+  const bubbleScale = 1 - flyP * 0.7;
   const bubbleOpacity =
     flyP < 0.85 ? 1 - flyP * 0.55 : Math.max(0, 1 - (flyP - 0.85) / 0.15);
 
@@ -427,16 +429,16 @@ export function HeroPromptToAppV4() {
   const bubbleStyle = sending
     ? {
         opacity: bubbleOpacity,
-        transform: `translate(calc(-50% + ${flyP * TX}px), ${flyP * TY + arcY}px) scale(${bubbleScale})`,
+        transform: `translate(${flyP * TX}px, ${flyP * TY + arcY}px) scale(${bubbleScale})`,
       }
     : sent
     ? {
         opacity: 0,
-        transform: `translate(calc(-50% + ${TX}px), ${TY}px) scale(${1 - 0.65})`,
+        transform: `translate(${TX}px, ${TY}px) scale(${1 - 0.7})`,
       }
     : {
         opacity: bubbleVisible ? introP : 0,
-        transform: `translate(-50%, ${(1 - introP) * -8}px) scale(${0.96 + introP * 0.04})`,
+        transform: `translate(0, ${(1 - introP) * -8}px) scale(${0.96 + introP * 0.04})`,
       };
   const bubbleContentOpacity =
     cycleT < SEND
@@ -455,7 +457,7 @@ export function HeroPromptToAppV4() {
             then translates down + left into the sidebar position as the
             new app entry. */}
         <div
-          className="absolute left-1/2 top-0 z-20 w-full max-w-[520px]"
+          className="absolute left-0 top-0 z-20 w-full max-w-[420px]"
           style={{
             ...bubbleStyle,
             transformOrigin: "left top",
