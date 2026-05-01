@@ -68,7 +68,7 @@ export function Hero({
         <EmailCTA />
       </div>
 
-      <div className="relative z-10 mt-auto w-full px-4 pt-12 md:px-6 md:pt-16 lg:px-10">
+      <div className="relative z-10 mt-auto w-full px-4 pt-12 pb-32 md:px-6 md:pt-16 md:pb-36 lg:px-10">
         {version === "v1" ? (
           <HeroPromptToAppV1 />
         ) : version === "v3" ? (
