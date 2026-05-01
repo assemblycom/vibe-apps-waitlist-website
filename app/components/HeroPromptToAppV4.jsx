@@ -484,7 +484,13 @@ export function HeroPromptToAppV4() {
         {/* Single dominant Client Portal panel ─────────────────── */}
         <div
           className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0c0c0d]"
-          style={{ height: "min(58vh, 560px)" }}
+          style={{
+            height: "min(58vh, 560px)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, black 0%, black 82%, transparent 100%)",
+            maskImage:
+              "linear-gradient(to bottom, black 0%, black 82%, transparent 100%)",
+          }}
         >
           <div className="grid h-full min-w-0 grid-cols-[180px_1fr] gap-0">
             {/* Sidebar */}
