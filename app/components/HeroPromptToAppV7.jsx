@@ -84,6 +84,9 @@ const APPS = [
     label: "Time Tracker",
     slug: "time-tracker",
     iconSrc: "/Icons/clock-three.svg",
+    // clock-three.svg fills more of its viewBox than the chat glyph,
+    // so render it a step smaller to match the Messages row visually.
+    iconClass: "h-3 w-3",
     prompt:
       "Build a time tracker where the team can log work and associate it with clients",
     main: <TimeTrackerView />,
@@ -108,8 +111,19 @@ const APPS = [
   },
 ];
 
+// iconClass per row: the source SVGs render at slightly different
+// optical sizes inside the same h-w container (the home/clock glyphs
+// fill more of their viewBox than the chat glyph), so without a
+// per-icon override they look mismatched in the sidebar. Setting the
+// home + clock to a touch smaller normalizes the visual weight to the
+// Messages icon, which uses the default h-3.5 (14px).
 const BUILT_IN = [
-  { id: "home", label: "Home", iconSrc: "/Icons/clienthome.svg" },
+  {
+    id: "home",
+    label: "Home",
+    iconSrc: "/Icons/clienthome.svg",
+    iconClass: "h-3 w-3",
+  },
   { id: "messages", label: "Messages", iconSrc: "/Icons/messages.svg" },
 ];
 
@@ -297,7 +311,7 @@ function CommunityView() {
 
 // ── Sidebar primitives ───────────────────────────────────────────
 
-function SidebarRow({ iconSrc, label, active, muted, entryT }) {
+function SidebarRow({ iconSrc, iconClass, label, active, muted, entryT }) {
   // entryT: 0..1 across the SEND → FLY_END window for the just-
   // installed row (null otherwise). This animation is the hero of
   // the visual — the "your app appears in the portal" moment — so
@@ -346,7 +360,10 @@ function SidebarRow({ iconSrc, label, active, muted, entryT }) {
       ].join(" ")}
       style={style}
     >
-      <MaskIcon src={iconSrc} className="h-3.5 w-3.5 shrink-0" />
+      <MaskIcon
+        src={iconSrc}
+        className={`${iconClass ?? "h-3.5 w-3.5"} shrink-0`}
+      />
       <span className="truncate">{label}</span>
     </div>
   );
@@ -546,6 +563,7 @@ export function HeroPromptToAppV7() {
                     <SidebarRow
                       key={b.id}
                       iconSrc={b.iconSrc}
+                      iconClass={b.iconClass}
                       label={b.label}
                       muted
                     />
@@ -554,6 +572,7 @@ export function HeroPromptToAppV7() {
                     <SidebarRow
                       key={a.id}
                       iconSrc={a.iconSrc}
+                      iconClass={a.iconClass}
                       label={a.label}
                       active={activeApp && a.id === activeApp.id}
                       entryT={i === cycleIndex ? entryT : null}
