@@ -54,26 +54,6 @@ const StrokeIcon = ({ d, className = "h-3 w-3" }) => (
 );
 const ArrowIcon = (p) => <StrokeIcon {...p} d="M3 8h10M9 4l4 4-4 4" />;
 
-// Classic macOS-style pointer: white fill with a thin dark outline so
-// it stays legible on either light or dark surfaces. The tip is at
-// (0, 0) of the viewBox so positioning math can place the tip exactly
-// on the target — the rest of the glyph trails down-right.
-const CursorIcon = ({ className = "h-[18px] w-[18px]" }) => (
-  <svg
-    viewBox="0 0 16 16"
-    className={className}
-    aria-hidden="true"
-  >
-    <path
-      d="M0.6 0.6 L0.6 11.5 L3.7 8.6 L6.0 13.4 L8.0 12.5 L5.7 7.7 L10 7.7 Z"
-      fill="white"
-      stroke="rgba(0,0,0,0.65)"
-      strokeWidth="0.7"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
 // BrandMages mark — three stacked rounded shelves taken from
 // /logos/brandmages-mark.svg. Inlined so the symbol can be painted in
 // any currentColor and never drags along a background plate.
@@ -401,43 +381,6 @@ export function HeroPromptToAppV6() {
   const pressRing = pressP === null ? 0 : 1 - pressP;
   const ready = cycleT >= TYPE_END;
 
-  // Cursor — a small pointer that approaches the button, clicks it at
-  // SEND, then exits. Three phases: approach (fades in + slides up to
-  // the button from below-right), click (sticks to the button through
-  // the press window), exit (fades + slides away). The tip of the
-  // cursor SVG is at viewBox (0,0), so the offsets below place that
-  // exact tip on the button center.
-  const APPROACH_MS = 600;
-  const EXIT_MS = 320;
-  const approachStart = SEND - APPROACH_MS;
-  const exitStart = SEND + PRESS_MS;
-  const exitEnd = exitStart + EXIT_MS;
-
-  let cursorOpacity = 0;
-  // Offset from the cursor's resting position (tip on the button
-  // center). Positive x/y means below-right of the resting position.
-  let cursorDx = 0;
-  let cursorDy = 0;
-  if (cycleT >= approachStart && cycleT < SEND) {
-    // Slide in from below-right with an ease-out curve.
-    const p = (cycleT - approachStart) / APPROACH_MS;
-    const eased = 1 - Math.pow(1 - p, 2);
-    cursorOpacity = eased;
-    cursorDx = (1 - eased) * 22;
-    cursorDy = (1 - eased) * 16;
-  } else if (pressP !== null) {
-    // Stays on the button through the click; small downward nudge at
-    // the start that eases back as the button springs out.
-    cursorOpacity = 1;
-    cursorDy = 1.5 * Math.sin(pressP * Math.PI);
-  } else if (cycleT >= exitStart && cycleT < exitEnd) {
-    // Fade out + drift down-right.
-    const p = (cycleT - exitStart) / EXIT_MS;
-    cursorOpacity = 1 - p;
-    cursorDx = p * 8;
-    cursorDy = p * 6;
-  }
-
   // Sidebar fill: how many of APPS have been installed so far.
   let installed = cycleIndex;
   if (sent) installed = cycleIndex + 1;
@@ -480,17 +423,22 @@ export function HeroPromptToAppV6() {
           separation is carried by the vertical divider only, so the
           card reads as part of the dark chapter rather than a lifted
           one-off grey panel that doesn't appear anywhere else. */}
+      {/* Card height/layout is responsive:
+          - <lg: card height is content-driven (auto); the two halves
+            stack vertically with the composer on top and the portal
+            below. Each half has its own explicit height so the
+            sidebar-fill / shimmer / main-canvas timings stay readable
+            without the visual collapsing.
+          - lg+: original 1100×min(50vh,480px) two-column card.
+          The vertical-vs-horizontal divider also flips: border-b on
+          mobile (between stacked halves), border-r at lg+. */}
       <div
-        className="relative mx-auto w-full max-w-[1100px] overflow-hidden rounded-t-2xl border border-white/[0.11] bg-[#101010] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset]"
-        style={{ height: "min(50vh, 480px)" }}
+        className="relative mx-auto h-auto w-full max-w-[1100px] overflow-hidden rounded-t-2xl border border-white/[0.11] bg-[#101010] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] lg:h-[min(50vh,480px)]"
       >
-        <div className="grid h-full grid-cols-[1fr_1.25fr] gap-0">
-          {/* Left: prompt composer. No eyebrow header. Same surface
-              color as the right portal — Linear-style, one unified
-              card bg with the vertical divider doing the separation
-              instead of a panel-bg shift. */}
-          <div className="relative flex h-full min-w-0 flex-col border-r border-white/[0.09] bg-[#101010]">
-            <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-14 md:pt-16">
+        <div className="flex h-full flex-col lg:grid lg:grid-cols-[1fr_1.25fr] lg:gap-0">
+          {/* Composer: top half on mobile, left column at lg+. */}
+          <div className="relative flex h-[260px] min-w-0 flex-col border-b border-white/[0.09] bg-[#101010] lg:h-full lg:border-b-0 lg:border-r">
+            <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-10 md:pt-14 lg:pt-16">
               <div className="w-full max-w-[320px]">
                 <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-3 py-2.5">
                   {/* min-h reserves space for the longest wrapped
@@ -507,7 +455,7 @@ export function HeroPromptToAppV6() {
                       <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
                     )}
                   </div>
-                  <div className="relative mt-2 flex items-center justify-end">
+                  <div className="mt-2 flex items-center justify-end">
                     {/* Press animation runs at SEND: smooth sin-pulse
                         scale dip + a brighter white surface + soft
                         white ring pulse. No brand-green flash — that
@@ -537,46 +485,18 @@ export function HeroPromptToAppV6() {
                       <ArrowIcon className="h-3 w-3" />
                     </span>
 
-                    {/* Cursor — flies in from below-right, "clicks" the
-                        button at SEND, then drifts away. Positioned so
-                        the cursor SVG's tip (viewBox 0,0) sits on the
-                        button center: the wrapper's right/top values
-                        center on the 24px button (right ~12px from the
-                        row's right edge, then nudged in by half the
-                        cursor's width) and the dx/dy offsets animate
-                        relative to that resting position. */}
-                    {cursorOpacity > 0 && (
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute"
-                        style={{
-                          opacity: cursorOpacity,
-                          // Tip of the cursor lands ~2px inside the
-                          // button's top-left so the click reads as
-                          // "on the button" rather than dead-center
-                          // (which would hide the tip behind the icon).
-                          right: "16px",
-                          top: "8px",
-                          transform: `translate(${cursorDx}px, ${cursorDy}px)`,
-                          filter:
-                            "drop-shadow(0 1px 2px rgba(0,0,0,0.45))",
-                        }}
-                      >
-                        <CursorIcon />
-                      </span>
-                    )}
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right: client portal. Same surface tone as the left half
-              and the outer card — Linear-style flat dark — so the seam
-              is carried by the vertical divider, not by stacking
-              different shades of near-black against each other. */}
-          <div className="relative flex h-full min-w-0 flex-col bg-[#101010]">
-            <div className="grid h-full min-h-0 grid-cols-[180px_1fr] gap-0">
+          {/* Portal: bottom half on mobile, right column at lg+.
+              Sidebar narrows to 140px below lg so the main canvas
+              keeps enough room for the Time Tracker / Helpdesk /
+              Community views to read at narrow widths. */}
+          <div className="relative flex h-[420px] min-w-0 flex-col bg-[#101010] lg:h-full">
+            <div className="grid h-full min-h-0 grid-cols-[140px_1fr] gap-0 lg:grid-cols-[180px_1fr]">
               {/* Sidebar — flat list: BrandMages, Home, Messages,
                   installed apps. The slot-in motion carries the
                   integration story; no section headers needed. */}
