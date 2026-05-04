@@ -380,108 +380,109 @@ export function HeroPromptToAppV6() {
 
   return (
     <div aria-hidden="true" className="pointer-events-none relative w-full">
-      {/* Two separate cards with whitespace between them. The page bg
-          shows in the gap so the visual reads as 'builder on the left,
-          deployed portal on the right' instead of one combined frame. */}
+      {/* Single combined card. The two halves still read as distinct
+          environments via internal bg shift (#0a0a0a builder vs.
+          #0c0c0d portal) plus a thin divider, but they share one
+          frame so the whole visual stays compact and on-brand for
+          the dark page (no washed-out lifted greys). */}
       <div
-        className="relative mx-auto flex w-full max-w-[1100px] gap-4 md:gap-6"
+        className="relative mx-auto w-full max-w-[1100px] overflow-hidden rounded-t-2xl border border-white/[0.07] bg-[#0e0e0f]"
         style={{ height: "min(56vh, 540px)" }}
       >
-        {/* Left: prompt composer. No eyebrow header — the centered
-            composer is the whole panel, which makes the "type a
-            prompt" intent unmistakable. */}
-        <div className="relative flex h-full flex-[1] flex-col overflow-hidden rounded-2xl border border-white/[0.12] bg-[#15171a]">
-          <div className="flex min-w-0 flex-1 flex-col items-center justify-center px-6">
-            <div className="w-full max-w-[360px]">
-              <div className="rounded-2xl border border-white/[0.1] bg-white/[0.03] p-4">
-                <div className="min-h-[80px] text-[13px] leading-[1.5] text-white/90">
-                  {promptText || (
-                    <span className="text-white/30">
-                      Build a time tracker for my team…
+        <div className="grid h-full grid-cols-[1fr_1.25fr] gap-0">
+          {/* Left: prompt composer. No eyebrow header. The composer
+              sits centered so it reads as the focal point. */}
+          <div className="relative flex h-full min-w-0 flex-col border-r border-white/[0.06] bg-[#0a0a0a]">
+            <div className="flex min-w-0 flex-1 flex-col items-center justify-center px-6">
+              <div className="w-full max-w-[320px]">
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-3 py-2.5">
+                  <div className="text-[13px] leading-[1.5] text-white/85">
+                    {promptText || (
+                      <span className="text-white/30">
+                        Build a time tracker for my team…
+                      </span>
+                    )}
+                    {showCursor && (
+                      <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
+                    )}
+                  </div>
+                  <div className="mt-2 flex items-center justify-end">
+                    <span
+                      className={[
+                        "flex h-6 w-6 items-center justify-center rounded-full transition-colors duration-300",
+                        cycleT >= TYPE_END
+                          ? "bg-white/25 text-white/95"
+                          : "bg-white/10 text-white/55",
+                      ].join(" ")}
+                    >
+                      <ArrowIcon className="h-3 w-3" />
                     </span>
-                  )}
-                  {showCursor && (
-                    <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
-                  )}
-                </div>
-                <div className="mt-3 flex items-center justify-end">
-                  <span
-                    className={[
-                      "flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-300",
-                      cycleT >= TYPE_END
-                        ? "bg-white/30 text-white"
-                        : "bg-white/10 text-white/55",
-                    ].join(" ")}
-                  >
-                    <ArrowIcon className="h-3 w-3" />
-                  </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right: client portal. No eyebrow header — the BrandMages
-            row at the top of the sidebar names the surface, and each
-            app view brings its own internal title. Lifted bg
-            (#1d1f23) so the portal pops against the page. */}
-        <div className="relative flex h-full flex-[1.25] flex-col overflow-hidden rounded-2xl border border-white/[0.12] bg-[#1d1f23]">
-          <div className="grid h-full min-h-0 grid-cols-[180px_1fr] gap-0">
-            {/* Sidebar — flat list: BrandMages, Home, Messages, then
-                whatever's been installed. No section headers, no
-                placeholder rows; the slot-in motion does the work. */}
-            <div className="flex h-full min-w-0 flex-col border-r border-white/[0.05] p-3">
-              <div className="mb-3 flex items-center gap-2 px-2 py-2">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-white/[0.18] text-white">
-                  <BrandMagesMark className="h-3 w-3" />
-                </span>
-                <span className="truncate text-[12px] font-medium text-white">
-                  BrandMages
-                </span>
+          {/* Right: client portal. No eyebrow header — the BrandMages
+              row at the top of the sidebar names the surface. */}
+          <div className="relative flex h-full min-w-0 flex-col bg-[#0c0c0d]">
+            <div className="grid h-full min-h-0 grid-cols-[180px_1fr] gap-0">
+              {/* Sidebar — flat list: BrandMages, Home, Messages,
+                  installed apps. The slot-in motion carries the
+                  integration story; no section headers needed. */}
+              <div className="flex h-full min-w-0 flex-col border-r border-white/[0.05] p-3">
+                <div className="mb-3 flex items-center gap-2 px-2 py-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-white/[0.18] text-white">
+                    <BrandMagesMark className="h-3 w-3" />
+                  </span>
+                  <span className="truncate text-[12px] font-medium text-white/90">
+                    BrandMages
+                  </span>
+                </div>
+
+                <div className="space-y-1">
+                  {BUILT_IN.map((b) => (
+                    <SidebarRow
+                      key={b.id}
+                      iconSrc={b.iconSrc}
+                      label={b.label}
+                      muted
+                    />
+                  ))}
+                  {APPS.slice(0, installed).map((a, i) => (
+                    <SidebarRow
+                      key={a.id}
+                      iconSrc={a.iconSrc}
+                      label={a.label}
+                      active={activeApp && a.id === activeApp.id}
+                      entryT={i === cycleIndex ? entryT : null}
+                    />
+                  ))}
+                </div>
               </div>
 
-              <div className="space-y-1">
-                {BUILT_IN.map((b) => (
-                  <SidebarRow
-                    key={b.id}
-                    iconSrc={b.iconSrc}
-                    label={b.label}
-                    muted
-                  />
-                ))}
-                {APPS.slice(0, installed).map((a, i) => (
-                  <SidebarRow
-                    key={a.id}
-                    iconSrc={a.iconSrc}
-                    label={a.label}
-                    active={activeApp && a.id === activeApp.id}
-                    entryT={i === cycleIndex ? entryT : null}
-                  />
-                ))}
+              {/* Main */}
+              <div className="relative h-full min-w-0">
+                <div
+                  className="absolute inset-0 transition-opacity duration-500"
+                  style={{ opacity: showHome ? 1 : 0 }}
+                >
+                  <HomeEmpty />
+                </div>
+                {APPS.map((a) => {
+                  const isActive =
+                    !showHome && activeApp && a.id === activeApp.id;
+                  return (
+                    <div
+                      key={a.id}
+                      className="absolute inset-0 transition-opacity duration-500"
+                      style={{ opacity: isActive ? 1 : 0 }}
+                    >
+                      {a.main}
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-
-            {/* Main */}
-            <div className="relative h-full min-w-0">
-              <div
-                className="absolute inset-0 transition-opacity duration-500"
-                style={{ opacity: showHome ? 1 : 0 }}
-              >
-                <HomeEmpty />
-              </div>
-              {APPS.map((a) => {
-                const isActive =
-                  !showHome && activeApp && a.id === activeApp.id;
-                return (
-                  <div
-                    key={a.id}
-                    className="absolute inset-0 transition-opacity duration-500"
-                    style={{ opacity: isActive ? 1 : 0 }}
-                  >
-                    {a.main}
-                  </div>
-                );
-              })}
             </div>
           </div>
         </div>
