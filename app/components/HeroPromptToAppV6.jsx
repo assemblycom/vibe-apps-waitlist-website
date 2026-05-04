@@ -89,10 +89,11 @@ const APPS = [
 // opacity in the sidebar with a faint "Built-in" group label so the
 // viewer reads them as Assembly primitives the new app slots in next
 // to (vs. blank chrome a standalone tool would otherwise replace).
+// Two rows is plenty to convey 'already populated' without piling up
+// chrome on the right side.
 const BUILT_IN = [
   { id: "home", label: "Home", iconSrc: "/Icons/clienthome.svg" },
   { id: "messages", label: "Messages", iconSrc: "/Icons/messages.svg" },
-  { id: "files", label: "Files", iconSrc: "/Icons/folder.svg" },
 ];
 
 // ── Timing (ms within one cycle) ─────────────────────────────────
@@ -175,11 +176,11 @@ function TimeTrackerView() {
     <div className="flex h-full min-w-0 flex-col">
       <PanelHeader title="Time Tracker" />
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
-        <div className="flex min-w-0 items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
-          <span className="whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-white/85">
+        <div className="flex min-w-0 items-center gap-3 rounded-xl border border-white/[0.1] bg-white/[0.04] p-3">
+          <span className="whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-white/95">
             02:34:18
           </span>
-          <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/15 text-white/85">
+          <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/20 text-white">
             <PlayIcon className="h-3 w-3" />
           </span>
         </div>
@@ -187,20 +188,19 @@ function TimeTrackerView() {
           {[
             { client: "Acme", task: "Brand sprint kickoff", time: "1h 20m" },
             { client: "Lyra", task: "Wireframe review", time: "0h 55m" },
-            { client: "Acme", task: "Design QA", time: "1h 57m" },
           ].map((row, i) => (
             <div
               key={i}
-              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.05] bg-white/[0.015] px-3 py-1.5"
+              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.03] px-3 py-1.5"
             >
-              <span className="shrink-0 text-[10.5px] font-medium text-white/80">
+              <span className="shrink-0 text-[10.5px] font-medium text-white/85">
                 {row.client}
               </span>
               <span className="shrink-0 text-[10.5px] text-white/45">·</span>
-              <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/65">
+              <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/70">
                 {row.task}
               </span>
-              <span className="shrink-0 whitespace-nowrap font-mono text-[10px] leading-none text-white/75">
+              <span className="shrink-0 whitespace-nowrap font-mono text-[10px] leading-none text-white/85">
                 {row.time}
               </span>
             </div>
@@ -219,17 +219,16 @@ function HelpdeskView() {
         {[
           { client: "Acme", subject: "Logo file missing from latest delivery" },
           { client: "Lyra", subject: "Question about brand guideline section 3" },
-          { client: "Northwind", subject: "Final asset bundle approved" },
         ].map((row, i) => (
           <div
             key={i}
-            className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.05] bg-white/[0.015] px-3 py-2"
+            className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.03] px-3 py-2"
           >
-            <span className="shrink-0 text-[10.5px] font-medium text-white/80">
+            <span className="shrink-0 text-[10.5px] font-medium text-white/85">
               {row.client}
             </span>
             <span className="shrink-0 text-[10.5px] text-white/45">·</span>
-            <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/65">
+            <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/70">
               {row.subject}
             </span>
           </div>
@@ -244,18 +243,17 @@ function PaymentsView() {
     <div className="flex h-full min-w-0 flex-col">
       <PanelHeader title="Payments" />
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {[
             { label: "Outstanding", value: "$24.8k" },
             { label: "Paid", value: "$12.1k" },
-            { label: "Drafts", value: "3" },
           ].map((s, i) => (
             <div
               key={i}
-              className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2"
+              className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2"
             >
               <div className="text-[9.5px] text-white/45">{s.label}</div>
-              <div className="font-mono text-[14px] text-white/85">{s.value}</div>
+              <div className="font-mono text-[14px] text-white/95">{s.value}</div>
             </div>
           ))}
         </div>
@@ -263,19 +261,18 @@ function PaymentsView() {
           {[
             { client: "Acme", id: "INV-204", amount: "$12,400" },
             { client: "Lyra", id: "INV-205", amount: "$8,600" },
-            { client: "Northwind", id: "INV-206", amount: "$3,800" },
           ].map((row, i) => (
             <div
               key={i}
-              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.05] bg-white/[0.015] px-3 py-1.5"
+              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.03] px-3 py-1.5"
             >
-              <span className="shrink-0 text-[10.5px] font-medium text-white/80">
+              <span className="shrink-0 text-[10.5px] font-medium text-white/85">
                 {row.client}
               </span>
               <span className="shrink-0 font-mono text-[10px] text-white/45">
                 {row.id}
               </span>
-              <span className="ml-auto shrink-0 whitespace-nowrap font-mono text-[10.5px] text-white/85">
+              <span className="ml-auto shrink-0 whitespace-nowrap font-mono text-[10.5px] text-white/95">
                 {row.amount}
               </span>
             </div>
@@ -327,7 +324,7 @@ function SidebarRow({ iconSrc, label, active, muted, entryT }) {
     style = {
       opacity,
       transform: `scale(${scale})`,
-      boxShadow: `0 0 0 ${glow * 1.5}px rgba(217,237,146,${glow * 0.22}), 0 4px 14px rgba(217,237,146,${glow * 0.08})`,
+      boxShadow: `0 0 0 ${glow * 1.5}px rgba(255,255,255,${glow * 0.18}), 0 4px 14px rgba(255,255,255,${glow * 0.06})`,
     };
   }
   return (
@@ -396,12 +393,14 @@ export function HeroPromptToAppV6() {
   return (
     <div aria-hidden="true" className="pointer-events-none relative w-full">
       <div
-        className="relative mx-auto w-full max-w-[1100px] overflow-hidden rounded-t-2xl border border-white/[0.07] bg-[#0e0e0f]"
+        className="relative mx-auto w-full max-w-[1100px] overflow-hidden rounded-t-2xl border border-white/[0.09] bg-[#0e0e0f]"
         style={{ height: "min(56vh, 540px)" }}
       >
         <div className="grid h-full grid-cols-[1fr_1.25fr] gap-0">
-          {/* Left: prompt composer */}
-          <div className="relative flex h-full min-w-0 flex-col border-r border-white/[0.06] bg-[#0a0a0a]">
+          {/* Left: prompt composer. Kept slightly darker than the right
+              portal panel so the two surfaces read as distinct
+              environments (builder vs. deployed portal). */}
+          <div className="relative flex h-full min-w-0 flex-col border-r border-white/[0.09] bg-[#0f1012]">
             <div className="flex h-9 shrink-0 items-center gap-2 border-b border-white/[0.06] px-4">
               <span className="text-[11px] font-medium text-white/55">
                 Describe an app
@@ -426,7 +425,7 @@ export function HeroPromptToAppV6() {
                       className={[
                         "flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-300",
                         cycleT >= TYPE_END
-                          ? "bg-[#d9ed92] text-black"
+                          ? "bg-white text-black"
                           : "bg-white/10 text-white/55",
                       ].join(" ")}
                     >
@@ -441,14 +440,14 @@ export function HeroPromptToAppV6() {
             </div>
           </div>
 
-          {/* Right: client portal — always populated with built-in apps */}
-          <div className="relative flex h-full min-w-0 flex-col bg-[#0c0c0d]">
+          {/* Right: client portal — always populated with built-in apps.
+              Lifted bg (#17181a, matches v5) for higher contrast against
+              the darker left builder panel and the page behind it, so
+              the portal reads as a distinct, lit-up surface. */}
+          <div className="relative flex h-full min-w-0 flex-col bg-[#17181a]">
             <div className="flex h-9 shrink-0 items-center gap-2 border-b border-white/[0.06] px-4">
               <span className="text-[11px] font-medium text-white/55">
                 Already part of your client portal
-              </span>
-              <span className="ml-auto whitespace-nowrap rounded-full border border-white/10 bg-white/[0.02] px-2 py-[2px] font-mono text-[9.5px] text-white/40">
-                brandmages.com
               </span>
             </div>
 
@@ -456,7 +455,7 @@ export function HeroPromptToAppV6() {
               {/* Sidebar */}
               <div className="flex h-full min-w-0 flex-col border-r border-white/[0.05] p-3">
                 <div className="mb-2 flex items-center gap-2 px-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#d9ed92]/15 text-[10px] font-semibold text-[#d9ed92]">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-white/10 text-[10px] font-semibold text-white/85">
                     B
                   </span>
                   <span className="truncate text-[11px] font-medium text-white/85">
@@ -524,8 +523,7 @@ export function HeroPromptToAppV6() {
         {/* Connector trail — soft horizontal line that lights up during
             the send window, visually narrating "prompt becomes a row in
             the portal sidebar." Sits at roughly the prompt-card's
-            vertical center, dimmed to ~white/10 baseline so it doesn't
-            distract while idle. */}
+            vertical center, only visible during the fly-in. */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute left-0 right-0"
@@ -533,7 +531,7 @@ export function HeroPromptToAppV6() {
             top: "47%",
             height: 1,
             background:
-              "linear-gradient(90deg, transparent 18%, rgba(217,237,146,0.55) 50%, transparent 82%)",
+              "linear-gradient(90deg, transparent 18%, rgba(255,255,255,0.55) 50%, transparent 82%)",
             opacity: trailOpacity,
             transition: "opacity 200ms ease-out",
           }}
