@@ -119,7 +119,7 @@ export function Hero({
             portion reveals into view. Once the section's natural
             bottom reaches the viewport bottom (~30vh of scroll), the
             logos un-stick and the page continues normally. */}
-        {version === "v7" && alphaLogos && alphaLogos.length > 0 && (
+        {(version === "v7" || version === "v8") && alphaLogos && alphaLogos.length > 0 && (
           <div className="hidden lg:sticky lg:bottom-0 lg:z-20 lg:block lg:bg-[var(--color-bg)] lg:py-6">
             <div className="mx-auto w-full max-w-[620px] px-6">
               {alphaLabel && (
@@ -148,7 +148,7 @@ export function Hero({
       {alphaLogos && alphaLogos.length > 0 && (
         <div
           className={`bg-[var(--color-bg)] pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v7" ? "lg:hidden" : ""
+            version === "v7" || version === "v8" ? "lg:hidden" : ""
           }`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">

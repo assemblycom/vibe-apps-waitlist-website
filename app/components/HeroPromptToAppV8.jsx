@@ -81,15 +81,6 @@ function TimeTrackerPreviewLight() {
   ];
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <div className="flex h-10 shrink-0 items-center gap-2 border-b border-black/[0.06] px-4">
-        <span className="truncate text-[12px] font-medium text-[#101010]/85">
-          Time Tracker
-        </span>
-        <span className="ml-auto whitespace-nowrap rounded-full border border-black/[0.10] px-2 py-[2px] text-[10px] text-[#101010]/55">
-          This week
-        </span>
-      </div>
-
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
         {/* Big timer */}
         <div className="flex min-w-0 items-center gap-3 rounded-xl border border-black/[0.08] bg-black/[0.02] p-3">
@@ -99,7 +90,7 @@ function TimeTrackerPreviewLight() {
           <span className="hidden truncate text-[10.5px] text-[#101010]/55 lg:inline">
             Acme · Brand sprint
           </span>
-          <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#101010] text-white">
+          <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-black/[0.08] bg-white text-[#101010]/55">
             <PlayIcon className="h-3 w-3" />
           </span>
         </div>
