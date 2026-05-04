@@ -156,16 +156,25 @@ function PanelHeader({ title }) {
 }
 
 function HomeEmpty() {
+  // First-frame empty state: an 'Add an app' CTA so the right side
+  // reads as inviting the prompt on the left to land here, rather
+  // than a generic welcome screen.
   return (
     <div className="flex h-full min-w-0 flex-col">
       <PanelHeader title="Home" />
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 text-center">
+        <span
+          aria-hidden="true"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-dashed border-white/20 text-white/55"
+        >
+          <PlusIcon className="h-4 w-4" />
+        </span>
         <div className="text-[13px] font-medium text-white/85">
-          Welcome to BrandMages
+          Add an app
         </div>
         <div className="max-w-[240px] text-[11px] leading-[1.5] text-white/45">
-          Your branded client portal. New apps your team builds will appear in
-          the sidebar.
+          Describe what you need on the left. The app lands here in your
+          client portal.
         </div>
       </div>
     </div>
@@ -177,11 +186,11 @@ function TimeTrackerView() {
     <div className="flex h-full min-w-0 flex-col">
       <PanelHeader title="Time Tracker" />
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
-        <div className="flex min-w-0 items-center gap-3 rounded-xl border border-white/[0.1] bg-white/[0.04] p-3">
-          <span className="whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-white/95">
+        <div className="flex min-w-0 items-center gap-3 rounded-xl border border-white/[0.07] bg-white/[0.02] p-3">
+          <span className="whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-white/80">
             02:34:18
           </span>
-          <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/20 text-white">
+          <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/15 text-white/85">
             <PlayIcon className="h-3 w-3" />
           </span>
         </div>
@@ -192,16 +201,16 @@ function TimeTrackerView() {
           ].map((row, i) => (
             <div
               key={i}
-              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.03] px-3 py-1.5"
+              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-1.5"
             >
-              <span className="shrink-0 text-[10.5px] font-medium text-white/85">
+              <span className="shrink-0 text-[10.5px] font-medium text-white/75">
                 {row.client}
               </span>
               <span className="shrink-0 text-[10.5px] text-white/45">·</span>
-              <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/70">
+              <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/60">
                 {row.task}
               </span>
-              <span className="shrink-0 whitespace-nowrap font-mono text-[10px] leading-none text-white/85">
+              <span className="shrink-0 whitespace-nowrap font-mono text-[10px] leading-none text-white/75">
                 {row.time}
               </span>
             </div>
@@ -223,7 +232,7 @@ function HelpdeskView() {
         ].map((row, i) => (
           <div
             key={i}
-            className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.03] px-3 py-2"
+            className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2"
           >
             <span className="shrink-0 text-[10.5px] font-medium text-white/85">
               {row.client}
@@ -251,10 +260,10 @@ function PaymentsView() {
           ].map((s, i) => (
             <div
               key={i}
-              className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2"
+              className="rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2"
             >
               <div className="text-[9.5px] text-white/45">{s.label}</div>
-              <div className="font-mono text-[14px] text-white/95">{s.value}</div>
+              <div className="font-mono text-[14px] text-white/80">{s.value}</div>
             </div>
           ))}
         </div>
@@ -265,9 +274,9 @@ function PaymentsView() {
           ].map((row, i) => (
             <div
               key={i}
-              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.03] px-3 py-1.5"
+              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-1.5"
             >
-              <span className="shrink-0 text-[10.5px] font-medium text-white/85">
+              <span className="shrink-0 text-[10.5px] font-medium text-white/75">
                 {row.client}
               </span>
               <span className="shrink-0 font-mono text-[10px] text-white/45">
