@@ -406,9 +406,14 @@ export function HeroPromptToAppV7() {
     buildShimmerMain = Math.max(0, fadeIn * fadeOut);
   }
 
-  // Active app in main panel: the latest one that's been sent.
-  const showHome = !sent && cycleIndex === 0;
-  const activeApp = sent ? app : cycleIndex > 0 ? APPS[cycleIndex - 1] : null;
+  // Active app in main panel: the latest one that's been sent. On
+  // initial load (first cycle, not yet sent) we wrap to the last app
+  // in the list so the right pane is never empty — viewers always see
+  // a fully populated generated-app preview, not a placeholder.
+  const showHome = false;
+  const activeApp = sent
+    ? app
+    : APPS[(cycleIndex - 1 + APPS.length) % APPS.length];
 
   return (
     <div aria-hidden="true" className="pointer-events-none relative w-full">
