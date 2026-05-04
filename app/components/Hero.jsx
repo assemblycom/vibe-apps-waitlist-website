@@ -47,11 +47,19 @@ export function Hero({
     <>
       {/* Section height:
           - mobile: content-driven (auto)
-          - lg+ all versions: 100vh, hero fits in one viewport so the
-            whole hero (headline, CTA, generated-app preview, and the
-            sticky logo strip for v7) is visible without being cut off. */}
+          - lg+ v7: content-driven so the whole hero card is visible
+            without clipping. The page scrolls a little to reach the
+            bottom of the card on shorter desktops, and the sticky
+            logo strip below pins to the viewport while the hero is in
+            view (un-sticks at the seam to the next section).
+          - lg+ v1–v5: original 100vh-capped section with overflow-
+            hidden, unchanged. */}
       <section
-        className="relative overflow-hidden flex flex-col lg:h-[min(100vh,1080px)]"
+        className={`relative flex flex-col ${
+          version === "v7"
+            ? ""
+            : "overflow-hidden lg:h-[min(100vh,1080px)]"
+        }`}
       >
         <HeroVersionToggle version={version} onChange={choose} />
 
