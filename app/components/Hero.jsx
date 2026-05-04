@@ -10,18 +10,18 @@ export function Hero({
   alphaLogos,
 }) {
   return (
-    // Notion-style stacked hero: headline + CTA at the top, the
-    // studio/client-portal visual anchored below it, and the logo
-    // strip on its own band at the bottom of the viewport. The
-    // visual is taller than the available middle slot so it bleeds
-    // below the logo band — the section's overflow-hidden clips
-    // anything past the viewport edge, giving the "screen continues
-    // off-canvas" feel.
+    // V7: full-screen hero. The section is exactly one viewport tall so
+    // the dark hero ends cleanly at the fold, and the cream NarrativeBlock
+    // below carries the color transition (Notion-style hard flip — no
+    // scroll-driven scale/zoom).
+    //
+    // The section itself does NOT use overflow-hidden, because that would
+    // turn the section into a sticky containment context and the bottom
+    // logo row would no longer track the viewport. Bleed clipping for the
+    // tall studio/portal mock is moved to the visual wrapper instead.
     <section
-      className="relative flex flex-col overflow-hidden"
-      style={{
-        height: "min(100vh, 1080px)",
-      }}
+      className="relative flex flex-col"
+      style={{ height: "100vh", minHeight: "100vh" }}
     >
       {/* Soft halo behind the headline area so the text has somewhere
           to sit visually against the dark field. */}
@@ -46,24 +46,26 @@ export function Hero({
       </div>
 
       {/* Visual slot — takes the remaining vertical space between the
-          CTA and the logo band. The HeroPromptToApp card has a fixed
-          640px height; when the slot is shorter than that (typical
-          laptop viewports) the card overflows downward and the
-          section's overflow-hidden clips it at the logo band, which
-          is exactly the Notion-style bleed we want. min-h-0 is needed
-          so flex-1 can actually shrink under its content height. */}
-      <div className="relative z-10 mt-10 flex min-h-0 flex-1 items-start justify-center px-6 md:mt-12">
+          CTA and the bottom edge. The HeroPromptToApp card is taller than
+          the slot on most viewports; its own overflow-hidden wrapper
+          clips the bleed so the section can keep overflow visible (which
+          is what lets the sticky logo row work). min-h-0 is needed so
+          flex-1 can shrink under its content height. */}
+      <div className="relative z-10 mt-10 flex min-h-0 flex-1 items-start justify-center overflow-hidden px-6 md:mt-12">
         <div className="w-full max-w-[1100px]">
           <HeroPromptToApp />
         </div>
       </div>
 
-      {/* Alpha-user credential band — sits on top of the bleeding
-          visual, on its own dark strip so the logos read against a
-          flat backdrop instead of against the partially-visible
-          mock chrome behind them. */}
+      {/* Alpha-user credential band — sticky to the viewport bottom while
+          the hero is on screen, then locks at the section's bottom edge
+          (standard `position: sticky; bottom: 0` behavior; the section is
+          the containing block, so the strip stops moving with the viewport
+          when the hero scrolls past).
+          Background is opaque so the bleeding visual underneath stays
+          covered as the strip slides over it. */}
       {alphaLogos && alphaLogos.length > 0 && (
-        <div className="relative z-20 shrink-0 bg-[var(--color-bg)]">
+        <div className="sticky bottom-0 z-20 mt-auto shrink-0 bg-[var(--color-bg)]">
           <div className="pb-2 pt-4 md:pb-3">
             <div className="mx-auto w-full max-w-[620px] px-6">
               {alphaLabel && (

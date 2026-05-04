@@ -9,7 +9,6 @@ import { FAQ } from "./components/FAQ";
 import { FinalCTA } from "./components/FinalCTA";
 import { Footer } from "./components/Footer";
 import { GradientReveal } from "./components/GradientReveal";
-import { ZoomHero } from "./components/ZoomHero";
 import { Reveal } from "./components/Reveal";
 import { HOME_CONTENT } from "./content/home";
 
@@ -38,14 +37,16 @@ export default function Home() {
           move with the content — the gradient appears under them, not
           on top. */}
       <GradientReveal>
-        <ZoomHero>
-          <Hero
-            heading={c.hero.heading}
-            subheading={c.hero.subheading}
-            alphaLabel={c.logoStrip.label}
-            alphaLogos={c.logoStrip.logos}
-          />
-        </ZoomHero>
+        {/* V7: hero is a full-viewport screen with a sticky logo row at
+            the bottom — no ZoomHero scale/round-corners scroll effect.
+            The transition between hero and the next section is a clean
+            color flip (dark hero → cream NarrativeBlock), Notion-style. */}
+        <Hero
+          heading={c.hero.heading}
+          subheading={c.hero.subheading}
+          alphaLabel={c.logoStrip.label}
+          alphaLogos={c.logoStrip.logos}
+        />
 
       {/* NarrativeBlock manages its own staged reveal (heading first, then
           body) — no outer <Reveal> wrapper so the two effects don't
