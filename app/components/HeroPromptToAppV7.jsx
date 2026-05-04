@@ -483,36 +483,24 @@ export function HeroPromptToAppV7() {
                   </div>
                 </div>
 
-                {/* Suggestion chips — one per cycling app. The chip for
-                    the app currently being demoed in the cycle is
-                    highlighted (border + bg lift) so the row feels
-                    connected to whatever the prompt is typing right
-                    now, instead of a static decoration. */}
-                <div className="mt-3 flex flex-wrap items-center justify-start gap-2">
-                  {APPS.map((a, i) => {
-                    const isCurrent = i === cycleIndex;
-                    return (
-                      <span
-                        key={a.id}
-                        style={{
-                          transition:
-                            "background-color 220ms ease, border-color 220ms ease, color 220ms ease",
-                        }}
-                        className={[
-                          "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] leading-none",
-                          isCurrent
-                            ? "border-black/[0.18] bg-black/[0.05] text-black/85"
-                            : "border-black/[0.08] bg-transparent text-black/55",
-                        ].join(" ")}
-                      >
-                        <MaskIcon
-                          src={a.iconSrc}
-                          className="h-3.5 w-3.5 shrink-0"
-                        />
-                        {a.label}
-                      </span>
-                    );
-                  })}
+                {/* Suggestion chips — quiet, static row of app
+                    examples sitting under the composer. No selected
+                    state and no cycle-tracking; they're decoration
+                    that hints at what the prompt can build, not an
+                    interactive control surface. */}
+                <div className="mt-3 flex flex-wrap items-center justify-start gap-1.5">
+                  {APPS.map((a) => (
+                    <span
+                      key={a.id}
+                      className="inline-flex items-center gap-1 rounded-full border border-black/[0.08] px-2 py-0.5 text-[10.5px] leading-none text-black/55"
+                    >
+                      <MaskIcon
+                        src={a.iconSrc}
+                        className="h-3 w-3 shrink-0"
+                      />
+                      {a.label}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
