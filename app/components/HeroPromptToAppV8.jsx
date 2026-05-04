@@ -287,26 +287,6 @@ export function HeroPromptToAppV8() {
 
           {/* ── Generated app preview (right) ──────────────── */}
           <div className="relative hidden flex-1 flex-col lg:flex">
-            {/* URL bar with Internal / Client tabs */}
-            <div className="flex h-10 shrink-0 items-center gap-3 border-b border-black/[0.06] px-3">
-              <div className="flex items-center gap-0 rounded-md border border-black/[0.08] bg-white p-[2px] text-[10.5px]">
-                <span className="rounded-[4px] bg-[#101010]/[0.06] px-2 py-[3px] text-[#101010]">
-                  Internal
-                </span>
-                <span className="px-2 py-[3px] text-[#101010]/55">Client</span>
-              </div>
-              <div className="flex flex-1 items-center gap-2 rounded-md border border-black/[0.08] bg-white px-2.5 py-[5px] text-[10.5px] text-[#101010]/65">
-                <span className="truncate font-mono">
-                  brandmages.assembly.com/timetracker
-                </span>
-                <span className="ml-auto flex items-center gap-1.5 text-[#101010]/45">
-                  <RefreshIcon className="h-3 w-3" />
-                  <ExternalIcon className="h-3 w-3" />
-                  <MobileIcon className="h-3 w-3" />
-                </span>
-              </div>
-            </div>
-
             <main className="relative flex-1 overflow-hidden bg-white">
               <div
                 aria-hidden="true"
