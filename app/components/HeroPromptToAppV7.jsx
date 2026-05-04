@@ -450,56 +450,49 @@ export function HeroPromptToAppV7() {
                   Build an app
                 </div>
 
-                {/* Conversation stack — each app in turn appears as a
-                    sent prompt + status line (Building → Build
-                    complete). Once an app finishes, the next prompt
-                    lands beneath it so the column reads as a growing
-                    chat thread. After all apps are built, the next
-                    cycle resets back to a single prompt. */}
-                {APPS.slice(0, inResetPause ? APPS.length : cycleIndex + 1).map(
-                  (a, i) => {
-                    const complete =
-                      inResetPause ||
-                      i < cycleIndex ||
-                      (i === cycleIndex && cycleT >= FLY_END);
-                    return (
-                      <div key={a.id} className={i === 0 ? "" : "mt-5"}>
-                        <div className="rounded-2xl bg-black/[0.05] px-4 py-3 text-[13px] leading-[1.5] text-black/85">
-                          {a.prompt}
-                        </div>
-                        <div
-                          className={`mt-3 flex items-center gap-2 text-[12.5px] ${
-                            complete ? "text-black/70" : "text-black/55"
-                          }`}
-                        >
-                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-black/[0.08] text-black/85">
-                            {complete ? (
-                              <CheckIcon className="h-3 w-3" />
-                            ) : (
-                              <BrandMagesMark className="h-3 w-3" />
-                            )}
-                          </span>
-                          <span>
-                            {complete ? "Build complete" : "Building your app"}
-                          </span>
-                          {!complete && (
-                            <span className="flex items-center gap-0.5">
-                              <span className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55" />
-                              <span
-                                className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
-                                style={{ animationDelay: "0.15s" }}
-                              />
-                              <span
-                                className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
-                                style={{ animationDelay: "0.3s" }}
-                              />
-                            </span>
-                          )}
-                        </div>
+                {/* Single prompt + status. Each cycle replaces the
+                    prompt with the next app's; the status flips from
+                    "Building your app…" to "Build complete" once the
+                    current cycle's FLY_END is reached. */}
+                {(() => {
+                  const complete = inResetPause || cycleT >= FLY_END;
+                  return (
+                    <div>
+                      <div className="rounded-2xl bg-black/[0.05] px-4 py-3 text-[13px] leading-[1.5] text-black/85">
+                        {app.prompt}
                       </div>
-                    );
-                  }
-                )}
+                      <div
+                        className={`mt-3 flex items-center gap-2 text-[12.5px] ${
+                          complete ? "text-black/70" : "text-black/55"
+                        }`}
+                      >
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-black/[0.08] text-black/85">
+                          {complete ? (
+                            <CheckIcon className="h-3 w-3" />
+                          ) : (
+                            <BrandMagesMark className="h-3 w-3" />
+                          )}
+                        </span>
+                        <span>
+                          {complete ? "Build complete" : "Building your app"}
+                        </span>
+                        {!complete && (
+                          <span className="flex items-center gap-0.5">
+                            <span className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55" />
+                            <span
+                              className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
+                              style={{ animationDelay: "0.15s" }}
+                            />
+                            <span
+                              className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
+                              style={{ animationDelay: "0.3s" }}
+                            />
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Spacer — pushes the follow-up input to the bottom. */}
                 <div className="hidden flex-1 lg:block" />
