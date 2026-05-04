@@ -169,16 +169,10 @@ function typed(text, t) {
 }
 
 // ── Sub-views (right-side main panel content per app) ────────────
-
-function PanelHeader({ title }) {
-  return (
-    <div className="flex h-9 shrink-0 items-center gap-2 border-b border-black/[0.06] px-4">
-      <span className="truncate text-[12px] font-medium text-black/85">
-        {title}
-      </span>
-    </div>
-  );
-}
+// Each view renders content directly with no panel header — the
+// browser-window URL bar above already names the page (the slug
+// updates per app), so a separate "Time Tracker" / "Helpdesk" header
+// inside the canvas just stuttered the title.
 
 function HomeEmpty() {
   // Quiet Home — no CTA, no instructional copy. Just a placeholder
@@ -187,7 +181,6 @@ function HomeEmpty() {
   // main view doesn't need to repeat it.
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <PanelHeader title="Home" />
       <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
         <div className="text-[12.5px] font-medium text-black/55">
           BrandMages
@@ -203,7 +196,6 @@ function HomeEmpty() {
 function TimeTrackerView() {
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <PanelHeader title="Time Tracker" />
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
         <div className="flex min-w-0 items-center gap-3 rounded-xl border border-black/[0.08] bg-black/[0.03] p-3">
           <span className="whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-black/85">
@@ -240,7 +232,6 @@ function TimeTrackerView() {
 function HelpdeskView() {
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <PanelHeader title="Helpdesk" />
       <div className="flex min-w-0 flex-1 flex-col gap-2 p-4">
         {[
           { client: "Acme", subject: "Logo file missing from latest delivery" },
@@ -271,7 +262,6 @@ function CommunityView() {
   // than a generic list.
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <PanelHeader title="Community" />
       <div className="flex min-w-0 flex-1 flex-col gap-2 p-4">
         {[
           {
@@ -492,8 +482,8 @@ export function HeroPromptToAppV7() {
                         className={[
                           "flex h-6 w-6 items-center justify-center rounded-full",
                           ready
-                            ? "bg-black/25 text-black/95"
-                            : "bg-black/10 text-black/55",
+                            ? "bg-black/15 text-black/75"
+                            : "bg-black/[0.06] text-black/45",
                         ].join(" ")}
                       >
                         <ArrowIcon className="h-3 w-3" />
