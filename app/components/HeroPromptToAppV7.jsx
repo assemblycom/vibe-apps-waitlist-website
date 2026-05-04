@@ -265,23 +265,24 @@ function HelpdeskView() {
 }
 
 function CommunityView() {
-  // Two posts. Avatars are first-letter chips so the chrome stays
-  // self-contained (no extra image requests) but the row reads as a
-  // forum/community thread rather than a generic list.
+  // Two posts. Avatars are two-letter monogram chips (first + last
+  // name initials) so the chrome stays self-contained (no extra image
+  // requests) and the row reads as a real social/forum thread rather
+  // than a generic list.
   return (
     <div className="flex h-full min-w-0 flex-col">
       <PanelHeader title="Community" />
       <div className="flex min-w-0 flex-1 flex-col gap-2 p-4">
         {[
           {
-            initial: "M",
-            name: "Maya · Acme",
+            initials: "MP",
+            name: "Maya Patel",
             body: "Anyone else seeing the new brand kit show up in their portal?",
             replies: "4 replies",
           },
           {
-            initial: "J",
-            name: "Jordan · Lyra",
+            initials: "JB",
+            name: "Jordan Brooks",
             body: "Tip: paste your guideline section number in helpdesk for faster routing.",
             replies: "2 replies",
           },
@@ -290,8 +291,8 @@ function CommunityView() {
             key={i}
             className="flex min-w-0 gap-2.5 rounded-lg border border-black/[0.06] bg-black/[0.025] px-3 py-2"
           >
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black/10 text-[10px] font-medium text-black/85">
-              {p.initial}
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black/10 text-[9.5px] font-medium tracking-tight text-black/85">
+              {p.initials}
             </span>
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
               <span className="text-[10.5px] font-medium text-black/80">
