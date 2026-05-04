@@ -423,23 +423,26 @@ export function HeroPromptToAppV6() {
           separation is carried by the vertical divider only, so the
           card reads as part of the dark chapter rather than a lifted
           one-off grey panel that doesn't appear anywhere else. */}
-      {/* Card height/layout is responsive:
-          - <lg: card height is content-driven (auto); the two halves
-            stack vertically with the composer on top and the portal
-            below. Each half has its own explicit height so the
-            sidebar-fill / shimmer / main-canvas timings stay readable
-            without the visual collapsing.
-          - lg+: original 1100×min(50vh,480px) two-column card.
-          The vertical-vs-horizontal divider also flips: border-b on
-          mobile (between stacked halves), border-r at lg+. */}
+      {/* Card layout is responsive:
+          - <lg: composer-only. The portal half is hidden so the hero
+            stays compact on phones — there isn't enough horizontal
+            room for a 2-pane portal preview to read at narrow widths,
+            and stacking it pushed the card too tall.
+          - lg+: original 1100×min(50vh,480px) two-column card with
+            composer on the left and BrandMages portal on the right. */}
       <div
-        className="relative mx-auto h-auto w-full max-w-[1100px] overflow-hidden rounded-t-2xl border border-white/[0.11] bg-[#101010] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] lg:h-[min(50vh,480px)]"
+        className="relative mx-auto w-full max-w-[1100px] overflow-hidden rounded-t-2xl border border-white/[0.11] bg-[#101010] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] h-[260px] lg:h-[min(50vh,480px)]"
       >
         <div className="flex h-full flex-col lg:grid lg:grid-cols-[1fr_1.25fr] lg:gap-0">
-          {/* Composer: top half on mobile, left column at lg+. */}
-          <div className="relative flex h-[260px] min-w-0 flex-col border-b border-white/[0.09] bg-[#101010] lg:h-full lg:border-b-0 lg:border-r">
+          {/* Composer: full card on mobile, left column at lg+. */}
+          <div className="relative flex h-full min-w-0 flex-col bg-[#101010] lg:border-r lg:border-white/[0.09]">
             <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-10 md:pt-14 lg:pt-16">
-              <div className="w-full max-w-[320px]">
+              {/* Composer width: wider on mobile/tablet (where this is
+                  the whole hero visual and a 320px box would leave a
+                  big empty band on either side) and back to the
+                  original 320px at lg+ where it lives in the left
+                  half of the 2-column card. */}
+              <div className="w-full max-w-[420px] md:max-w-[520px] lg:max-w-[320px]">
                 <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-3 py-2.5">
                   {/* min-h reserves space for the longest wrapped
                       prompt (2 lines at this font/width across all
@@ -491,12 +494,10 @@ export function HeroPromptToAppV6() {
             </div>
           </div>
 
-          {/* Portal: bottom half on mobile, right column at lg+.
-              Sidebar narrows to 140px below lg so the main canvas
-              keeps enough room for the Time Tracker / Helpdesk /
-              Community views to read at narrow widths. */}
-          <div className="relative flex h-[420px] min-w-0 flex-col bg-[#101010] lg:h-full">
-            <div className="grid h-full min-h-0 grid-cols-[140px_1fr] gap-0 lg:grid-cols-[180px_1fr]">
+          {/* Portal: hidden on mobile (the composer is the whole hero
+              visual on phones), right column at lg+. */}
+          <div className="relative hidden h-full min-w-0 flex-col bg-[#101010] lg:flex">
+            <div className="grid h-full min-h-0 grid-cols-[180px_1fr] gap-0">
               {/* Sidebar — flat list: BrandMages, Home, Messages,
                   installed apps. The slot-in motion carries the
                   integration story; no section headers needed. */}
