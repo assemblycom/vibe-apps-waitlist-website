@@ -460,7 +460,7 @@ export function HeroPromptToAppV7() {
                 pinned to the bottom. The right column shows the
                 resulting BrandMages portal preview. */}
             <div className="relative flex min-w-0 flex-col lg:h-full lg:border-r lg:border-black/[0.09]">
-              <div className="flex min-w-0 flex-1 flex-col px-6 pt-2 lg:px-6 lg:pt-6">
+              <div className="flex min-w-0 flex-1 flex-col px-6 pt-2 lg:px-6 lg:pb-6 lg:pt-6">
                 {/* Mobile-only inline label. */}
                 <div className="mb-3 text-[12px] font-medium text-black/65 lg:hidden">
                   Build an app
