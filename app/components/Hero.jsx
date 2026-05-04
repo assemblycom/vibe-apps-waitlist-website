@@ -74,12 +74,14 @@ export function Hero({
           <EmailCTA />
         </div>
 
-        {/* Visual wrapper. On mobile: no mt-auto (just sits inline
-            after the CTA), no mask (the bottom-fade was tied to the
-            bleed that only made sense in a 100vh section), tighter
-            top padding. On lg+: the original bleed treatment. */}
+        {/* Visual wrapper. Hard bottom edge — no gradient bleed mask
+            anymore (Notion-style). The card meets the dark logo band
+            below it on a clean line, and that band carries the visual
+            stop instead of a fade. On mobile the visual sits inline
+            after the CTA; at lg+ mt-auto pushes it to the bottom of
+            the 100vh section. */}
         <div
-          className="hero-visual-wrap relative z-10 w-full overflow-hidden px-4 pt-8 md:px-6 md:pt-12 lg:mt-auto lg:px-10 lg:pt-16"
+          className="relative z-10 w-full overflow-hidden px-4 pt-8 md:px-6 md:pt-12 lg:mt-auto lg:px-10 lg:pt-16"
         >
           {version === "v1" ? (
             <HeroPromptToAppV1 />

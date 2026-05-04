@@ -293,34 +293,6 @@ body::-webkit-scrollbar {
   pointer-events: none;
 }
 
-/* ── Hero visual bleed mask ──
-   The hero card is anchored to the bottom of a 100vh section at lg+
-   and uses a soft gradient mask so the card fades into the section's
-   bottom edge instead of cutting off hard. On mobile the section is
-   content-sized and the visual sits inline after the CTA, so the
-   mask is suppressed there — otherwise the bottom of the visual gets
-   faded out for no reason. */
-@media (min-width: 1024px) {
-  .hero-visual-wrap {
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      black 45%,
-      rgba(0, 0, 0, 0.7) 70%,
-      rgba(0, 0, 0, 0.25) 88%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      black 45%,
-      rgba(0, 0, 0, 0.7) 70%,
-      rgba(0, 0, 0, 0.25) 88%,
-      transparent 100%
-    );
-  }
-}
-
 /* ── HeroPromptToAppV6 building shimmer ──
    Quiet "skeleton is loading" surface for the sidebar slot and main
    canvas during the SEND→FLY_END window. Single low-contrast diagonal
