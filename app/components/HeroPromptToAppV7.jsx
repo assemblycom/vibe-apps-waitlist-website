@@ -422,16 +422,29 @@ export function HeroPromptToAppV7() {
         <div className="flex flex-col lg:grid lg:h-full lg:grid-cols-[1fr_1.25fr] lg:gap-0">
           {/* Composer: free-standing on mobile, left column at lg+. */}
           <div className="relative flex min-w-0 flex-col lg:h-full lg:border-r lg:border-black/[0.09] lg:bg-white">
-            <div className="flex min-w-0 flex-1 flex-col items-center px-6 lg:pt-16">
+            {/* Desktop top bar — mirrors the right panel's PanelHeader
+                ("Time Tracker" / "Helpdesk" / "Community") so both
+                halves of the card share the same chrome and the seam
+                between them reads as one continuous surface. Hidden
+                on mobile where there's no card frame. */}
+            <div className="hidden h-9 shrink-0 items-center border-b border-black/[0.06] px-4 lg:flex">
+              <span className="truncate text-[12px] font-medium text-black/85">
+                Build an app
+              </span>
+            </div>
+
+            <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-2 lg:pt-12">
               {/* Composer width: wider on mobile/tablet (where this is
                   the whole hero visual and a 320px box would leave a
                   big empty band on either side) and back to the
                   original 320px at lg+ where it lives in the left
                   half of the 2-column card. */}
               <div className="w-full max-w-[420px] md:max-w-[520px] lg:max-w-[320px]">
-                {/* Header above the composer — names the surface so
-                    the prompt box doesn't sit alone with no framing. */}
-                <div className="mb-3 text-[12px] font-medium text-black/65 lg:mb-2.5">
+                {/* Mobile-only inline label. On desktop the same name
+                    is carried by the full-width top bar above this
+                    column, so the inline copy is hidden to avoid
+                    duplication. */}
+                <div className="mb-3 text-[12px] font-medium text-black/65 lg:hidden">
                   Build an app
                 </div>
 
