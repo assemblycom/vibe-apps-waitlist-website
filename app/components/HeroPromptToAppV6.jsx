@@ -287,7 +287,7 @@ function PaymentsView() {
 
 function GroupLabel({ children }) {
   return (
-    <div className="px-2 pb-1 pt-2 text-[9px] uppercase tracking-[0.12em] text-white/30">
+    <div className="px-2 pb-1 pt-2 text-[10px] text-white/30">
       {children}
     </div>
   );
