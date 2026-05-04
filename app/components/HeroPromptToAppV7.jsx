@@ -426,15 +426,15 @@ export function HeroPromptToAppV7() {
           carries the seam, same Linear-style flat treatment as v6
           (just inverted in tone). */}
       {/* Layout is responsive:
-          - <lg: just the composer, no card frame. The bordered card
-            on mobile read as an empty container around a single
-            input — like a UI mistake — so on phones we render the
-            composer directly with no surrounding border, bg, or
-            rounded corners.
-          - lg+: original 1100×min(50vh,480px) two-column card with
-            composer on the left and BrandMages portal on the right. */}
+          - <lg: white card frame around the chat thread only. The
+            chat content (prompt bubbles, "Build complete" rows) is
+            authored in black-on-white, so without a white surface
+            mobile read as ghost text on the dark page. The right-
+            side BrandMages portal preview is hidden on mobile.
+          - lg+: 1100×min(78vh,720px) two-column card with chat on
+            the left and BrandMages portal preview on the right. */}
       <div
-        className="relative mx-auto w-full max-w-[1100px] overflow-hidden lg:h-[min(78vh,720px)] lg:rounded-3xl lg:border lg:border-black/[0.08] lg:bg-white lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]"
+        className="relative mx-auto w-full max-w-[1100px] overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-[0_16px_40px_-20px_rgba(0,0,0,0.45)] lg:h-[min(78vh,720px)] lg:rounded-3xl lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]"
       >
         <div className="flex h-full flex-col">
           {/* Body: composer left, embedded browser preview right. */}
