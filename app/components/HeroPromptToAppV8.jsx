@@ -74,37 +74,81 @@ const T = {
 };
 
 function TimeTrackerPreviewLight() {
+  const today = [
+    { client: "Acme", task: "Brand sprint kickoff", time: "1h 20m" },
+    { client: "Lyra", task: "Wireframe review", time: "0h 55m" },
+    { client: "Acme", task: "Design QA", time: "1h 57m" },
+  ];
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <div className="flex min-w-0 flex-1 flex-col items-center justify-start gap-6 px-6 pt-10 md:pt-14">
-        <div className="text-center">
-          <h3 className="text-[20px] font-medium leading-tight tracking-[-0.01em] text-[#101010] md:text-[24px]">
-            Marketing opportunity
-          </h3>
-          <p className="mt-2 max-w-[440px] text-[12.5px] leading-[1.5] text-[#101010]/55">
-            Our best client portal and platform every created and maker this
-            even bet
-          </p>
+      <div className="flex h-10 shrink-0 items-center gap-2 border-b border-black/[0.06] px-4">
+        <span className="truncate text-[12px] font-medium text-[#101010]/85">
+          Time Tracker
+        </span>
+        <span className="ml-auto whitespace-nowrap rounded-full border border-black/[0.10] px-2 py-[2px] text-[10px] text-[#101010]/55">
+          This week
+        </span>
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
+        {/* Big timer */}
+        <div className="flex min-w-0 items-center gap-3 rounded-xl border border-black/[0.08] bg-black/[0.02] p-3">
+          <span className="whitespace-nowrap font-mono text-[20px] leading-none tracking-tight text-[#101010]">
+            02:34:18
+          </span>
+          <span className="hidden truncate text-[10.5px] text-[#101010]/55 lg:inline">
+            Acme · Brand sprint
+          </span>
+          <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#101010] text-white">
+            <PlayIcon className="h-3 w-3" />
+          </span>
         </div>
 
-        <div className="w-full max-w-[520px]">
-          <div className="rounded-xl border border-black/[0.08] bg-black/[0.02] aspect-[16/9]" />
-          <div className="mt-3 flex items-center justify-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-black/[0.10] text-[#101010]/55">
-              <StrokeIcon d="M10 4L6 8l4 4" className="h-3 w-3" />
+        {/* Today */}
+        <div className="min-w-0">
+          <div className="mb-1.5 flex items-center justify-between text-[10.5px] text-[#101010]/55">
+            <span>Today</span>
+            <span className="whitespace-nowrap font-mono text-[#101010]/65">
+              4h 12m
             </span>
-            <span className="flex items-center gap-1">
-              <span className="h-1 w-1 rounded-full bg-black/20" />
-              <span className="h-1 w-1 rounded-full bg-black/20" />
-              <span className="h-1 w-1 rounded-full bg-black/20" />
-              <span className="h-1 w-6 rounded-full bg-[#101010]" />
-              <span className="h-1 w-1 rounded-full bg-black/20" />
-              <span className="h-1 w-1 rounded-full bg-black/20" />
-              <span className="h-1 w-1 rounded-full bg-black/20" />
+          </div>
+          <div className="space-y-1.5">
+            {today.map((row, i) => (
+              <div
+                key={i}
+                className="flex min-w-0 items-center gap-2 rounded-lg border border-black/[0.06] bg-white px-3 py-1.5"
+              >
+                <span className="shrink-0 text-[10.5px] font-medium text-[#101010]">
+                  {row.client}
+                </span>
+                <span className="shrink-0 text-[10.5px] text-[#101010]/35">·</span>
+                <span className="min-w-0 flex-1 truncate text-[10.5px] text-[#101010]/65">
+                  {row.task}
+                </span>
+                <span className="shrink-0 whitespace-nowrap font-mono text-[10px] leading-none text-[#101010]/75">
+                  {row.time}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Weekly summary */}
+        <div className="min-w-0">
+          <div className="mb-1.5 flex items-center justify-between text-[10.5px] text-[#101010]/55">
+            <span>This week</span>
+            <span className="whitespace-nowrap font-mono text-[#101010]/65">
+              22h / 30h
             </span>
-            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-black/[0.10] text-[#101010]/55">
-              <StrokeIcon d="M6 4l4 4-4 4" className="h-3 w-3" />
-            </span>
+          </div>
+          <div className="flex h-12 items-end gap-1.5 rounded-lg border border-black/[0.06] bg-white px-2.5 py-2">
+            {[40, 70, 55, 85, 60, 30, 15].map((h, i) => (
+              <span
+                key={i}
+                className="flex-1 rounded-[2px] bg-[#101010]/70"
+                style={{ height: `${h}%` }}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -119,7 +163,7 @@ export function HeroPromptToAppV8() {
       className="hsv-stage pointer-events-none relative w-full"
     >
       <div
-        className="mx-auto h-[640px] w-full max-w-[1180px] overflow-hidden rounded-t-2xl border border-b-0 border-black/[0.08] bg-white"
+        className="mx-auto h-[clamp(440px,calc(100vh-340px),620px)] w-full max-w-[1180px] overflow-hidden rounded-t-2xl border border-b-0 border-black/[0.08] bg-white"
         style={{
           boxShadow:
             "0 1px 0 rgba(255,255,255,0.6) inset, 0 -16px 80px rgba(16,16,16,0.08)",

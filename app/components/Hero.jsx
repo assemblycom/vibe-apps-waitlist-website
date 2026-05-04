@@ -8,12 +8,11 @@ import { HeroPromptToAppV1 } from "./HeroPromptToAppV1";
 import { HeroPromptToAppV3 } from "./HeroPromptToAppV3";
 import { HeroPromptToAppV4 } from "./HeroPromptToAppV4";
 import { HeroPromptToAppV5 } from "./HeroPromptToAppV5";
-import { HeroPromptToAppV6 } from "./HeroPromptToAppV6";
 import { HeroPromptToAppV7 } from "./HeroPromptToAppV7";
 import { HeroPromptToAppV8 } from "./HeroPromptToAppV8";
 import { LogoStrip } from "./LogoStrip";
 
-const VERSIONS = ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8"];
+const VERSIONS = ["v1", "v2", "v3", "v4", "v5", "v7", "v8"];
 const isVersion = (v) => VERSIONS.includes(v);
 
 const STORAGE_KEY = "hero-version";
@@ -57,8 +56,10 @@ export function Hero({
             the user scrolls within the section — Notion-style. */}
       <section
         className={`relative overflow-hidden flex flex-col ${
-          version === "v7" || version === "v8"
+          version === "v7"
             ? "lg:h-[min(120vh,1320px)]"
+            : version === "v8"
+            ? "lg:h-screen"
             : "lg:h-[min(100vh,1080px)]"
         }`}
       >
@@ -100,8 +101,6 @@ export function Hero({
             <HeroPromptToAppV4 />
           ) : version === "v5" ? (
             <HeroPromptToAppV5 />
-          ) : version === "v6" ? (
-            <HeroPromptToAppV6 />
           ) : version === "v7" ? (
             <HeroPromptToAppV7 />
           ) : version === "v8" ? (
@@ -120,7 +119,7 @@ export function Hero({
             portion reveals into view. Once the section's natural
             bottom reaches the viewport bottom (~30vh of scroll), the
             logos un-stick and the page continues normally. */}
-        {(version === "v7" || version === "v8") && alphaLogos && alphaLogos.length > 0 && (
+        {version === "v7" && alphaLogos && alphaLogos.length > 0 && (
           <div className="hidden lg:sticky lg:bottom-0 lg:z-20 lg:block lg:bg-[var(--color-bg)] lg:py-6">
             <div className="mx-auto w-full max-w-[620px] px-6">
               {alphaLabel && (
@@ -149,7 +148,7 @@ export function Hero({
       {alphaLogos && alphaLogos.length > 0 && (
         <div
           className={`bg-[var(--color-bg)] pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v7" || version === "v8" ? "lg:hidden" : ""
+            version === "v7" ? "lg:hidden" : ""
           }`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">
