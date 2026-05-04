@@ -351,6 +351,29 @@ body::-webkit-scrollbar {
   animation: hpv6-build-shimmer-sweep 2.4s ease-in-out infinite;
 }
 
+/* ── HeroPromptToAppV7 building shimmer (light mode) ──
+   Mirror of the v6 shimmer but inverted for the white card surface.
+   Black-alpha base + black-alpha sweep so the skeleton reads as a
+   "loading" surface on a near-white panel without going to a colored
+   tint. Reuses the v6 keyframes (background-position sweep) since the
+   timing/motion is identical. */
+.hpv7-build-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.04);
+  background-image: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(0, 0, 0, 0.05) 45%,
+    rgba(0, 0, 0, 0.08) 50%,
+    rgba(0, 0, 0, 0.05) 55%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  animation: hpv6-build-shimmer-sweep 2.4s ease-in-out infinite;
+}
+
 /* ── Spec-card row entrance ──
    Each row fades up into view, staggered by index via inline
    animationDelay. Rows start hidden (opacity:0) and animate in once
