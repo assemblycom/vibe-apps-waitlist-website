@@ -1,24 +1,20 @@
 "use client";
 
-// HeroPromptToAppV6 — prompt → useful app, dropped into a real branded
-// client portal (not a standalone tool).
+// HeroPromptToAppV6 — prompt → useful app, slotted into a real branded
+// client portal. Tuned for launch readiness around the latest round of
+// feedback:
 //
-// Built on v3's split layout, tuned around the feedback that v3 was
-// "closest to working" but didn't convey two things sharply enough:
-//
-//   1. Building an app is *simple* — a single prompt, a useful app.
-//   2. The app *integrates* into a client experience that already
-//      exists (vs. shipping as another standalone tool).
-//
-// To address (1): one slow, deliberate beat per app cycle, with cleaner
-// section labels ("Describe an app" / "Already part of your client
-// portal") and a connector line that traces the prompt → portal moment.
-//
-// To address (2): the portal sidebar starts populated with built-in
-// apps (Home, Messages, Files) under a faint "Built-in" group label.
-// New apps land in a separate "Your apps" group below, making it
-// obvious that what you build slots in alongside Assembly's primitives
-// rather than living off on its own URL.
+//   • Two visually separated panels with whitespace between them
+//     (the prior shared frame + eyebrow chrome read as one big card).
+//   • No "Describe an app" / "Client portal preview" labels — the
+//     panels speak for themselves.
+//   • Sidebar is just BrandMages → Home → Messages with new apps
+//     slotting in below; no Built-in / Your apps section headers, no
+//     "Add an app" placeholder row.
+//   • Slot-in is the hero moment: bigger overshoot + brighter glow so
+//     the "your app appears in the portal" beat lands hard.
+//   • Higher-contrast surfaces against the dark page so the visual
+//     stops feeling muted.
 
 import { useEffect, useState } from "react";
 
@@ -57,59 +53,52 @@ const StrokeIcon = ({ d, className = "h-3 w-3" }) => (
   </svg>
 );
 const ArrowIcon = (p) => <StrokeIcon {...p} d="M3 8h10M9 4l4 4-4 4" />;
-const PlayIcon = (p) => <StrokeIcon {...p} d="M5 3.5l7 4.5-7 4.5z" />;
-const PlusIcon = (p) => <StrokeIcon {...p} d="M8 3v10M3 8h10" />;
 
-// BrandMages mark — three stacked rounded shelves extracted from
-// /logos/brandmages.svg (the source SVG ships with its own #101010
-// background plate that swallows the glyph on dark surfaces). Rendered
-// inline so we can paint it in any currentColor, no plate, no filter
-// hacks.
+// BrandMages mark — three stacked rounded shelves taken from
+// /logos/brandmages-mark.svg. Inlined so the symbol can be painted in
+// any currentColor and never drags along a background plate.
 const BrandMagesMark = ({ className = "h-4 w-4" }) => (
   <svg
-    viewBox="0 0 24 24"
+    viewBox="0 0 15 14"
     className={className}
     fill="currentColor"
     aria-hidden="true"
   >
-    <path d="M13.69 5.067H10.31c-1.092 0-1.978.888-1.978 1.984v.007c0 1.096.886 1.984 1.978 1.984h3.38c1.092 0 1.978-.888 1.978-1.984v-.007c0-1.096-.886-1.984-1.978-1.984Z" />
-    <path d="M15.42 10.016H8.583c-1.092 0-1.978.888-1.978 1.984v.007c0 1.096.886 1.984 1.978 1.984h6.837c1.092 0 1.978-.888 1.978-1.984v-.007c0-1.096-.886-1.984-1.978-1.984Z" />
-    <path d="M17.51 14.957H6.49c-1.092 0-1.978.888-1.978 1.984v.007c0 1.096.886 1.984 1.978 1.984h11.02c1.092 0 1.978-.888 1.978-1.984v-.007c0-1.096-.886-1.984-1.978-1.984Z" />
+    <path d="M9.179 0H5.798C4.706 0 3.82.888 3.82 1.984v.007c0 1.096.886 1.984 1.978 1.984h3.381c1.092 0 1.978-.888 1.978-1.984v-.007C11.157.888 10.271 0 9.179 0Z" />
+    <path d="M10.904 4.947H4.068c-1.093 0-1.978.888-1.978 1.984v.007c0 1.096.885 1.984 1.978 1.984h6.836c1.092 0 1.978-.888 1.978-1.984v-.007c0-1.096-.886-1.984-1.978-1.984Z" />
+    <path d="M12.998 9.889H1.978C.886 9.889 0 10.777 0 11.873v.006c0 1.096.886 1.984 1.978 1.984h11.02c1.092 0 1.978-.888 1.978-1.984v-.006c0-1.096-.886-1.984-1.978-1.984Z" />
   </svg>
 );
 
-// ── App definitions (the three things that get built) ────────────
+// ── App definitions ──────────────────────────────────────────────
 
 const APPS = [
   {
     id: "time",
     label: "Time Tracker",
     iconSrc: "/Icons/clock-three.svg",
-    prompt: "Build a time tracker so the team can log hours per client.",
+    prompt:
+      "Build a time tracker where the team can log work and associate it with clients",
     main: <TimeTrackerView />,
   },
   {
     id: "helpdesk",
     label: "Helpdesk",
     iconSrc: "/Icons/helpdesk.svg",
-    prompt: "Build a helpdesk where clients can submit support tickets.",
+    prompt:
+      "Build a helpdesk where clients can submit tickets and follow along for progress",
     main: <HelpdeskView />,
   },
   {
-    id: "payments",
-    label: "Payments",
-    iconSrc: "/Icons/payments.svg",
-    prompt: "Build a payments dashboard with invoices and statuses.",
-    main: <PaymentsView />,
+    id: "community",
+    label: "Community",
+    iconSrc: "/Icons/globe.svg",
+    prompt:
+      "Build a community where clients can post and interact with each other",
+    main: <CommunityView />,
   },
 ];
 
-// Built-in apps live in the portal from day one. They render at half
-// opacity in the sidebar with a faint "Built-in" group label so the
-// viewer reads them as Assembly primitives the new app slots in next
-// to (vs. blank chrome a standalone tool would otherwise replace).
-// Two rows is plenty to convey 'already populated' without piling up
-// chrome on the right side.
 const BUILT_IN = [
   { id: "home", label: "Home", iconSrc: "/Icons/clienthome.svg" },
   { id: "messages", label: "Messages", iconSrc: "/Icons/messages.svg" },
@@ -117,22 +106,17 @@ const BUILT_IN = [
 
 // ── Timing (ms within one cycle) ─────────────────────────────────
 //
-// One cycle is intentionally slower than v3 so the moment reads
-// "prompt → built → installed" instead of a busy loop. Phases:
-//
-//   TYPE_START..TYPE_END  — prompt types out
-//   TYPE_END..SEND        — armed, hold for a beat
-//   SEND..FLY_END         — connector trail lights up, app lands
-//                            in the sidebar with a soft pulse
-//   FLY_END..HOLD_END     — settle, main panel shows the app
-//   HOLD_END..CYCLE_MS    — quiet beat before the next cycle
+// Tuned so the slot-in moment dominates the cycle: shorter typing
+// window so we get to SEND faster, then a longer FLY window for the
+// row entrance to read as the centerpiece, then a generous HOLD so
+// the resulting app stays on screen long enough to be readable.
 
-const CYCLE_MS = 11000;
+const CYCLE_MS = 10500;
 const TYPE_START = 400;
-const TYPE_END = 3300;
-const SEND = 3900;
+const TYPE_END = 3000;
+const SEND = 3500;
 const FLY_END = 5000;
-const HOLD_END = 10000;
+const HOLD_END = 9500;
 const RESET_PAUSE = 1800;
 
 // ── Hooks ────────────────────────────────────────────────────────
@@ -174,25 +158,19 @@ function PanelHeader({ title }) {
 }
 
 function HomeEmpty() {
-  // First-frame empty state: an 'Add an app' CTA so the right side
-  // reads as inviting the prompt on the left to land here, rather
-  // than a generic welcome screen.
+  // Quiet Home — no CTA, no instructional copy. Just a placeholder
+  // that occupies the canvas before the first app slots in. The
+  // sidebar appearing alongside it carries the integration story; the
+  // main view doesn't need to repeat it.
   return (
     <div className="flex h-full min-w-0 flex-col">
       <PanelHeader title="Home" />
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 text-center">
-        <span
-          aria-hidden="true"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-dashed border-white/20 text-white/55"
-        >
-          <PlusIcon className="h-4 w-4" />
-        </span>
-        <div className="text-[13px] font-medium text-white/85">
-          Add an app
+      <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
+        <div className="text-[12.5px] font-medium text-white/55">
+          BrandMages
         </div>
-        <div className="max-w-[240px] text-[11px] leading-[1.5] text-white/45">
-          Describe what you need on the left. The app lands here in your
-          client portal.
+        <div className="mt-1 text-[10.5px] text-white/30">
+          Your branded client portal
         </div>
       </div>
     </div>
@@ -204,8 +182,8 @@ function TimeTrackerView() {
     <div className="flex h-full min-w-0 flex-col">
       <PanelHeader title="Time Tracker" />
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
-        <div className="flex min-w-0 items-center gap-3 rounded-xl border border-white/[0.07] bg-white/[0.02] p-3">
-          <span className="whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-white/80">
+        <div className="flex min-w-0 items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] p-3">
+          <span className="whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-white/85">
             02:34:18
           </span>
         </div>
@@ -216,16 +194,16 @@ function TimeTrackerView() {
           ].map((row, i) => (
             <div
               key={i}
-              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-1.5"
+              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.025] px-3 py-2"
             >
-              <span className="shrink-0 text-[10.5px] font-medium text-white/75">
+              <span className="shrink-0 text-[10.5px] font-medium text-white/80">
                 {row.client}
               </span>
               <span className="shrink-0 text-[10.5px] text-white/45">·</span>
-              <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/60">
+              <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/65">
                 {row.task}
               </span>
-              <span className="shrink-0 whitespace-nowrap font-mono text-[10px] leading-none text-white/75">
+              <span className="shrink-0 whitespace-nowrap font-mono text-[10px] leading-none text-white/80">
                 {row.time}
               </span>
             </div>
@@ -247,13 +225,13 @@ function HelpdeskView() {
         ].map((row, i) => (
           <div
             key={i}
-            className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2"
+            className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.025] px-3 py-2"
           >
-            <span className="shrink-0 text-[10.5px] font-medium text-white/85">
+            <span className="shrink-0 text-[10.5px] font-medium text-white/80">
               {row.client}
             </span>
             <span className="shrink-0 text-[10.5px] text-white/45">·</span>
-            <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/70">
+            <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/65">
               {row.subject}
             </span>
           </div>
@@ -263,46 +241,46 @@ function HelpdeskView() {
   );
 }
 
-function PaymentsView() {
+function CommunityView() {
+  // Two posts. Avatars are first-letter chips so the chrome stays
+  // self-contained (no extra image requests) but the row reads as a
+  // forum/community thread rather than a generic list.
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <PanelHeader title="Payments" />
-      <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
-        <div className="grid grid-cols-2 gap-2">
-          {[
-            { label: "Outstanding", value: "$24.8k" },
-            { label: "Paid", value: "$12.1k" },
-          ].map((s, i) => (
-            <div
-              key={i}
-              className="rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2"
-            >
-              <div className="text-[9.5px] text-white/45">{s.label}</div>
-              <div className="font-mono text-[14px] text-white/80">{s.value}</div>
+      <PanelHeader title="Community" />
+      <div className="flex min-w-0 flex-1 flex-col gap-2 p-4">
+        {[
+          {
+            initial: "M",
+            name: "Maya · Acme",
+            body: "Anyone else seeing the new brand kit show up in their portal?",
+            replies: "4 replies",
+          },
+          {
+            initial: "J",
+            name: "Jordan · Lyra",
+            body: "Tip: paste your guideline section number in helpdesk for faster routing.",
+            replies: "2 replies",
+          },
+        ].map((p, i) => (
+          <div
+            key={i}
+            className="flex min-w-0 gap-2.5 rounded-lg border border-white/[0.06] bg-white/[0.025] px-3 py-2"
+          >
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-[10px] font-medium text-white/85">
+              {p.initial}
+            </span>
+            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <span className="text-[10.5px] font-medium text-white/80">
+                {p.name}
+              </span>
+              <span className="truncate text-[10.5px] leading-[1.35] text-white/65">
+                {p.body}
+              </span>
+              <span className="text-[9.5px] text-white/40">{p.replies}</span>
             </div>
-          ))}
-        </div>
-        <div className="space-y-1.5">
-          {[
-            { client: "Acme", id: "INV-204", amount: "$12,400" },
-            { client: "Lyra", id: "INV-205", amount: "$8,600" },
-          ].map((row, i) => (
-            <div
-              key={i}
-              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-1.5"
-            >
-              <span className="shrink-0 text-[10.5px] font-medium text-white/75">
-                {row.client}
-              </span>
-              <span className="shrink-0 font-mono text-[10px] text-white/45">
-                {row.id}
-              </span>
-              <span className="ml-auto shrink-0 whitespace-nowrap font-mono text-[10.5px] text-white/95">
-                {row.amount}
-              </span>
-            </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -310,56 +288,32 @@ function PaymentsView() {
 
 // ── Sidebar primitives ───────────────────────────────────────────
 
-function GroupLabel({ children }) {
-  return (
-    <div className="px-2 pb-2 pt-3 text-[10px] text-white/30">
-      {children}
-    </div>
-  );
-}
-
-// Placeholder row at the bottom of "Your apps" — telegraphs where the
-// app being typed about will land. Shimmers while the prompt is being
-// composed so the typing on the left and the destination on the right
-// read as one connected motion. Hidden once every app slot is filled.
-function AddAppRow({ shimmering }) {
-  return (
-    <div className="relative flex items-center gap-2 overflow-hidden rounded-md border border-dashed border-white/15 px-2 py-2 text-[11px] leading-none text-white/45">
-      <span className="relative z-[1] flex h-3 w-3 shrink-0 items-center justify-center">
-        <PlusIcon className="h-3 w-3" />
-      </span>
-      <span className="relative z-[1] truncate">Add an app</span>
-      {shimmering && (
-        <span aria-hidden="true" className="v5-build-shimmer" />
-      )}
-    </div>
-  );
-}
-
 function SidebarRow({ iconSrc, label, active, muted, entryT }) {
-  // entryT: 0..1 over the fly-in window (null when settled). The new
-  // row pops in with a brief overshoot + soft glow so the eye knows
-  // where to land. Built-in rows never enter — they're always there.
+  // entryT: 0..1 across the SEND → FLY_END window for the just-
+  // installed row (null otherwise). This animation is the hero of
+  // the visual — the "your app appears in the portal" moment — so
+  // the overshoot is bigger and the glow brighter than a typical
+  // list-enter. Built-in rows never receive entryT.
   let style = {};
   if (entryT !== null && entryT !== undefined) {
     let opacity = 0;
-    let scale = 0.85;
+    let scale = 0.78;
     let glow = 0;
-    if (entryT < 0.2) {
+    if (entryT < 0.18) {
       opacity = 0;
-      scale = 0.85;
-    } else if (entryT < 0.45) {
-      const p = (entryT - 0.2) / 0.25;
+      scale = 0.78;
+    } else if (entryT < 0.42) {
+      const p = (entryT - 0.18) / 0.24;
       opacity = p;
-      scale = 0.85 + p * 0.18; // → 1.03
+      scale = 0.78 + p * 0.28; // → 1.06 (overshoot)
       glow = p;
-    } else if (entryT < 0.7) {
-      const p = (entryT - 0.45) / 0.25;
+    } else if (entryT < 0.65) {
+      const p = (entryT - 0.42) / 0.23;
       opacity = 1;
-      scale = 1.03 - p * 0.03; // 1.03 → 1
+      scale = 1.06 - p * 0.06; // 1.06 → 1
       glow = 1;
     } else {
-      const p = (entryT - 0.7) / 0.3;
+      const p = (entryT - 0.65) / 0.35;
       opacity = 1;
       scale = 1;
       glow = 1 - p;
@@ -367,7 +321,8 @@ function SidebarRow({ iconSrc, label, active, muted, entryT }) {
     style = {
       opacity,
       transform: `scale(${scale})`,
-      boxShadow: `0 0 0 ${glow * 1.5}px rgba(255,255,255,${glow * 0.18}), 0 4px 14px rgba(255,255,255,${glow * 0.06})`,
+      // Brighter ring + drop so the slot-in moment carries the eye.
+      boxShadow: `0 0 0 ${glow * 2}px rgba(255,255,255,${glow * 0.32}), 0 6px 22px rgba(255,255,255,${glow * 0.10})`,
     };
   }
   return (
@@ -375,10 +330,10 @@ function SidebarRow({ iconSrc, label, active, muted, entryT }) {
       className={[
         "flex items-center gap-2 rounded-md px-2 py-2 text-[11px] leading-none transition-colors duration-300",
         active
-          ? "bg-white/[0.07] text-white/95"
+          ? "bg-white/[0.09] text-white"
           : muted
-          ? "text-white/45"
-          : "text-white/70",
+          ? "text-white/55"
+          : "text-white/75",
       ].join(" ")}
       style={style}
     >
@@ -402,12 +357,11 @@ export function HeroPromptToAppV6() {
   const cycleT = inResetPause ? CYCLE_MS : elapsed % CYCLE_MS;
   const app = APPS[cycleIndex];
 
-  const sending = cycleT >= SEND && cycleT < FLY_END;
   const sent = cycleT >= FLY_END;
   const promptText = typed(app.prompt, cycleT);
   const showCursor = cycleT >= TYPE_START && cycleT < SEND;
 
-  // Sidebar fill: how many of APPS have already been "installed".
+  // Sidebar fill: how many of APPS have been installed so far.
   let installed = cycleIndex;
   if (sent) installed = cycleIndex + 1;
   if (inResetPause) installed = APPS.length;
@@ -421,140 +375,114 @@ export function HeroPromptToAppV6() {
       : null;
 
   // Active app in main panel: the latest one that's been sent.
-  // Before the very first app sends we show the Home empty state so
-  // the right side reads as a fresh portal that hasn't grown yet.
   const showHome = !sent && cycleIndex === 0;
   const activeApp = sent ? app : cycleIndex > 0 ? APPS[cycleIndex - 1] : null;
 
   return (
     <div aria-hidden="true" className="pointer-events-none relative w-full">
+      {/* Two separate cards with whitespace between them. The page bg
+          shows in the gap so the visual reads as 'builder on the left,
+          deployed portal on the right' instead of one combined frame. */}
       <div
-        className="relative mx-auto w-full max-w-[1100px] overflow-hidden rounded-t-2xl border border-white/[0.09] bg-[#0e0e0f]"
+        className="relative mx-auto flex w-full max-w-[1100px] gap-4 md:gap-6"
         style={{ height: "min(56vh, 540px)" }}
       >
-        <div className="grid h-full grid-cols-[1fr_1.25fr] gap-0">
-          {/* Left: prompt composer. Kept slightly darker than the right
-              portal panel so the two surfaces read as distinct
-              environments (builder vs. deployed portal). */}
-          <div className="relative flex h-full min-w-0 flex-col border-r border-white/[0.09] bg-[#0f1012]">
-            <div className="flex h-9 shrink-0 items-center gap-2 border-b border-white/[0.06] px-4">
-              <span className="text-[11px] font-medium text-white/55">
-                Describe an app
-              </span>
-            </div>
-
-            <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-12">
-              <div className="w-full max-w-[360px]">
-                <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
-                  <div className="min-h-[68px] text-[13px] leading-[1.5] text-white/85">
-                    {promptText || (
-                      <span className="text-white/30">
-                        e.g. Build a time tracker for my team
-                      </span>
-                    )}
-                    {showCursor && (
-                      <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
-                    )}
-                  </div>
-                  <div className="mt-3 flex items-center justify-end">
-                    <span
-                      className={[
-                        "flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-300",
-                        cycleT >= TYPE_END
-                          ? "bg-white/25 text-white/95"
-                          : "bg-white/10 text-white/55",
-                      ].join(" ")}
-                    >
-                      <ArrowIcon className="h-3 w-3" />
+        {/* Left: prompt composer. No eyebrow header — the centered
+            composer is the whole panel, which makes the "type a
+            prompt" intent unmistakable. */}
+        <div className="relative flex h-full flex-[1] flex-col overflow-hidden rounded-2xl border border-white/[0.12] bg-[#15171a]">
+          <div className="flex min-w-0 flex-1 flex-col items-center justify-center px-6">
+            <div className="w-full max-w-[360px]">
+              <div className="rounded-2xl border border-white/[0.1] bg-white/[0.03] p-4">
+                <div className="min-h-[80px] text-[13px] leading-[1.5] text-white/90">
+                  {promptText || (
+                    <span className="text-white/30">
+                      Build a time tracker for my team…
                     </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: client portal — always populated with built-in apps.
-              Lifted bg (#17181a, matches v5) for higher contrast against
-              the darker left builder panel and the page behind it, so
-              the portal reads as a distinct, lit-up surface. */}
-          <div className="relative flex h-full min-w-0 flex-col bg-[#17181a]">
-            <div className="flex h-9 shrink-0 items-center gap-2 border-b border-white/[0.06] px-4">
-              <span className="text-[11px] font-medium text-white/55">
-                Client portal preview
-              </span>
-            </div>
-
-            <div className="grid min-h-0 flex-1 grid-cols-[170px_1fr] gap-0">
-              {/* Sidebar */}
-              <div className="flex h-full min-w-0 flex-col border-r border-white/[0.05] p-3">
-                <div className="flex items-center gap-2 px-2 py-2">
-                  {/* Inline BrandMages mark (just the three stacked
-                      shelves, no plate) tinted to match the sidebar
-                      type so the brand row reads as a quiet header
-                      instead of a stamp. */}
-                  <BrandMagesMark className="h-4 w-4 shrink-0 text-white/85" />
-                  <span className="truncate text-[11px] font-medium text-white/85">
-                    BrandMages
-                  </span>
-                </div>
-
-                <GroupLabel>Built-in</GroupLabel>
-                <div className="space-y-1">
-                  {BUILT_IN.map((b) => (
-                    <SidebarRow
-                      key={b.id}
-                      iconSrc={b.iconSrc}
-                      label={b.label}
-                      muted
-                    />
-                  ))}
-                </div>
-
-                <GroupLabel>Your apps</GroupLabel>
-                <div className="space-y-1">
-                  {APPS.slice(0, installed).map((a, i) => (
-                    <SidebarRow
-                      key={a.id}
-                      iconSrc={a.iconSrc}
-                      label={a.label}
-                      active={activeApp && a.id === activeApp.id}
-                      entryT={i === cycleIndex ? entryT : null}
-                    />
-                  ))}
-                  {installed < APPS.length && (
-                    <AddAppRow
-                      shimmering={cycleT >= TYPE_START && cycleT < FLY_END}
-                    />
+                  )}
+                  {showCursor && (
+                    <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-white/85 align-middle" />
                   )}
                 </div>
-              </div>
-
-              {/* Main */}
-              <div className="relative h-full min-w-0">
-                <div
-                  className="absolute inset-0 transition-opacity duration-500"
-                  style={{ opacity: showHome ? 1 : 0 }}
-                >
-                  <HomeEmpty />
+                <div className="mt-3 flex items-center justify-end">
+                  <span
+                    className={[
+                      "flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-300",
+                      cycleT >= TYPE_END
+                        ? "bg-white/30 text-white"
+                        : "bg-white/10 text-white/55",
+                    ].join(" ")}
+                  >
+                    <ArrowIcon className="h-3 w-3" />
+                  </span>
                 </div>
-                {APPS.map((a) => {
-                  const isActive =
-                    !showHome && activeApp && a.id === activeApp.id;
-                  return (
-                    <div
-                      key={a.id}
-                      className="absolute inset-0 transition-opacity duration-500"
-                      style={{ opacity: isActive ? 1 : 0 }}
-                    >
-                      {a.main}
-                    </div>
-                  );
-                })}
               </div>
             </div>
           </div>
         </div>
 
+        {/* Right: client portal. No eyebrow header — the BrandMages
+            row at the top of the sidebar names the surface, and each
+            app view brings its own internal title. Lifted bg
+            (#1d1f23) so the portal pops against the page. */}
+        <div className="relative flex h-full flex-[1.25] flex-col overflow-hidden rounded-2xl border border-white/[0.12] bg-[#1d1f23]">
+          <div className="grid h-full min-h-0 grid-cols-[180px_1fr] gap-0">
+            {/* Sidebar — flat list: BrandMages, Home, Messages, then
+                whatever's been installed. No section headers, no
+                placeholder rows; the slot-in motion does the work. */}
+            <div className="flex h-full min-w-0 flex-col border-r border-white/[0.05] p-3">
+              <div className="mb-3 flex items-center gap-2 px-2 py-2">
+                <BrandMagesMark className="h-4 w-4 shrink-0 text-white" />
+                <span className="truncate text-[12px] font-medium text-white">
+                  BrandMages
+                </span>
+              </div>
+
+              <div className="space-y-1">
+                {BUILT_IN.map((b) => (
+                  <SidebarRow
+                    key={b.id}
+                    iconSrc={b.iconSrc}
+                    label={b.label}
+                    muted
+                  />
+                ))}
+                {APPS.slice(0, installed).map((a, i) => (
+                  <SidebarRow
+                    key={a.id}
+                    iconSrc={a.iconSrc}
+                    label={a.label}
+                    active={activeApp && a.id === activeApp.id}
+                    entryT={i === cycleIndex ? entryT : null}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Main */}
+            <div className="relative h-full min-w-0">
+              <div
+                className="absolute inset-0 transition-opacity duration-500"
+                style={{ opacity: showHome ? 1 : 0 }}
+              >
+                <HomeEmpty />
+              </div>
+              {APPS.map((a) => {
+                const isActive =
+                  !showHome && activeApp && a.id === activeApp.id;
+                return (
+                  <div
+                    key={a.id}
+                    className="absolute inset-0 transition-opacity duration-500"
+                    style={{ opacity: isActive ? 1 : 0 }}
+                  >
+                    {a.main}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
