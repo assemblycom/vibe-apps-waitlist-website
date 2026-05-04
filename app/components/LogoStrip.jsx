@@ -63,8 +63,11 @@ function LogoMarquee({ logos, variant, ariaLabel }) {
 // off-white bg, used as the tail of the NarrativeBlock chapter. Static
 // centered wrap.
 // variant "dark": bare markup for use inside an existing dark container
-// (the Hero). Always a centered scrolling marquee with fades on both
-// ends, so the row feels alive instead of a static left-aligned list.
+// (the Hero). Notion-style staggered reveal — logos drop into place
+// one after another as the strip enters the viewport, in scroll order.
+// (Was a continuous marquee — replaced because the auto-scroll fought
+// the scroll-driven feel of the page; the stack-into-place reveal
+// reads as logos settling rather than parading by.)
 export function LogoStrip({ label, logos = [], variant = "light" }) {
   const dark = variant === "dark";
 
@@ -76,7 +79,20 @@ export function LogoStrip({ label, logos = [], variant = "light" }) {
             {label}
           </p>
         )}
-        <LogoMarquee logos={logos} variant={variant} ariaLabel="Alpha users" />
+        {/* Centered wrap. Each logo fades + slides up via Reveal with
+            a 70ms stagger, so the row "stacks" left-to-right as the
+            user scrolls into it. On narrow screens the row wraps to
+            multiple lines naturally. */}
+        <div
+          className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 md:gap-x-12"
+          aria-label="Alpha users"
+        >
+          {logos.map((logo, i) => (
+            <Reveal key={logo.name} delay={i * 70}>
+              <LogoItem name={logo.name} variant={variant} />
+            </Reveal>
+          ))}
+        </div>
       </>
     );
   }
