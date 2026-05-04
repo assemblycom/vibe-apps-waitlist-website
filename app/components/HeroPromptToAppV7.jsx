@@ -433,7 +433,7 @@ export function HeroPromptToAppV7() {
           - lg+: original 1100×min(50vh,480px) two-column card with
             composer on the left and BrandMages portal on the right. */}
       <div
-        className="relative mx-auto w-full max-w-[1100px] overflow-hidden lg:h-[min(60vh,560px)] lg:rounded-t-2xl lg:border lg:border-black/[0.08] lg:bg-white lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]"
+        className="relative mx-auto w-full max-w-[1100px] overflow-hidden lg:h-[min(78vh,720px)] lg:rounded-2xl lg:border lg:border-black/[0.08] lg:bg-white lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]"
       >
         <div className="flex h-full flex-col">
           {/* Full-width top bar: "Build an app" on the left, optional
