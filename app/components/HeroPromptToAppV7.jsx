@@ -217,7 +217,7 @@ function TimeTrackerView() {
           ].map((row, i) => (
             <div
               key={i}
-              className="flex min-w-0 items-center gap-2 rounded-lg border border-black/[0.06] bg-black/[0.025] px-3 py-2"
+              className="flex min-w-0 items-center gap-2 rounded border border-black/[0.06] bg-black/[0.025] px-3 py-2"
             >
               <span className="shrink-0 text-[10.5px] font-medium text-black/80">
                 {row.client}
@@ -248,7 +248,7 @@ function HelpdeskView() {
         ].map((row, i) => (
           <div
             key={i}
-            className="flex min-w-0 items-center gap-2 rounded-lg border border-black/[0.06] bg-black/[0.025] px-3 py-2"
+            className="flex min-w-0 items-center gap-2 rounded border border-black/[0.06] bg-black/[0.025] px-3 py-2"
           >
             <span className="shrink-0 text-[10.5px] font-medium text-black/80">
               {row.client}
@@ -289,7 +289,7 @@ function CommunityView() {
         ].map((p, i) => (
           <div
             key={i}
-            className="flex min-w-0 gap-2.5 rounded-lg border border-black/[0.06] bg-black/[0.025] px-3 py-2"
+            className="flex min-w-0 gap-2.5 rounded border border-black/[0.06] bg-black/[0.025] px-3 py-2"
           >
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black/10 text-[9.5px] font-medium tracking-tight text-black/85">
               {p.initials}
@@ -352,7 +352,7 @@ function SidebarRow({ iconSrc, iconClass, label, active, muted, entryT }) {
   return (
     <div
       className={[
-        "flex items-center gap-2 rounded-md px-2 py-2 text-[11px] leading-none transition-colors duration-300",
+        "flex items-center gap-2 rounded px-2 py-2 text-[11px] leading-none transition-colors duration-300",
         active
           ? "bg-black/[0.04] text-[#0A0A0A]"
           : muted
@@ -535,7 +535,7 @@ export function HeroPromptToAppV7() {
                     <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
                     <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
                   </div>
-                  <div className="mx-auto flex h-5 max-w-[320px] flex-1 items-center justify-center gap-1.5 rounded-md border border-black/[0.06] bg-white px-2.5 text-[11px] leading-none text-black/65">
+                  <div className="mx-auto flex h-5 max-w-[320px] flex-1 items-center justify-center gap-1.5 rounded border border-black/[0.06] bg-white px-2.5 text-[11px] leading-none text-black/65">
                     <SiteGlyph className="h-3 w-3 text-black/45" />
                     <span className="truncate">
                       brandmages.assembly.com
@@ -551,7 +551,7 @@ export function HeroPromptToAppV7() {
                   integration story; no section headers needed. */}
               <div className="flex h-full min-w-0 flex-col border-r border-black/[0.05] p-3">
                 <div className="mb-3 flex items-center gap-2 px-2 py-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-black/[0.08] text-black/85">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-black/[0.08] text-black/85">
                     <BrandMagesMark className="h-3.5 w-3.5" />
                   </span>
                   <span className="truncate text-[12px] font-medium text-black/90">
@@ -590,7 +590,7 @@ export function HeroPromptToAppV7() {
                       style={{ opacity: buildShimmerSidebar }}
                       className="px-2 py-2"
                     >
-                      <div className="hpv7-build-shimmer h-3 w-full rounded-md" />
+                      <div className="hpv7-build-shimmer h-3 w-full rounded" />
                     </div>
                   )}
                 </div>
