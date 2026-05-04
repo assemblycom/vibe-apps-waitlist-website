@@ -50,12 +50,6 @@ const StrokeIcon = ({ d, className = "h-3 w-3" }) => (
   </svg>
 );
 const ArrowIcon = (p) => <StrokeIcon {...p} d="M3 8h10M9 4l4 4-4 4" />;
-const PaperclipIcon = (p) => (
-  <StrokeIcon
-    {...p}
-    d="M11 4l-5 5a2.5 2.5 0 003.5 3.5l5-5a4 4 0 00-5.5-5.5l-5 5"
-  />
-);
 
 // BrandMages mark — three stacked rounded shelves taken from
 // /logos/brandmages-mark.svg. Inlined so the symbol can be painted in
@@ -511,64 +505,121 @@ export function HeroPromptToAppV7() {
               </div>
             </div>
 
-            {/* Right column: chat-style builder view. Shows the
-                "after-send" state of the conversation — the operator's
-                prompt sits at the top as a sent bubble, an AI response
-                line appears beneath it (with the build-target name
-                generating in), and a follow-up input pinned to the
-                bottom invites further iteration. Reads as the moment
-                right after pressing send on the left composer. */}
-            <div className="relative hidden min-h-0 min-w-0 flex-col bg-white p-6 lg:flex">
-              {/* Sent prompt bubble — uses the current cycle's prompt
-                  so it stays in sync with the left composer. */}
-              <div className="rounded-2xl bg-black/[0.05] px-4 py-3 text-[13px] leading-[1.5] text-black/85">
-                {app.prompt}
-              </div>
-
-              {/* AI response line — small mark + pulsing dots while the
-                  app is being assembled. Sits a step below the bubble
-                  to read as the response, not a continuation of the
-                  prompt. */}
-              <div className="mt-4 flex items-center gap-2 text-[12.5px] text-black/55">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-black/[0.08] text-black/85">
-                  <BrandMagesMark className="h-3 w-3" />
-                </span>
-                <span>Building your app</span>
-                <span className="flex items-center gap-0.5">
-                  <span className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55" />
-                  <span
-                    className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
-                    style={{ animationDelay: "0.15s" }}
-                  />
-                  <span
-                    className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
-                    style={{ animationDelay: "0.3s" }}
-                  />
-                </span>
-              </div>
-
-              {/* Spacer — pushes the follow-up input to the bottom of
-                  the column so the empty middle reads as the canvas
-                  the build is materializing into. */}
-              <div className="flex-1" />
-
-              {/* Follow-up input — paperclip on the left, placeholder
-                  prompt in the middle, dimmed send arrow on the right.
-                  Visual only (the card is aria-hidden). */}
-              <div className="rounded-xl border border-black/[0.10] bg-white px-3.5 py-3 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.08)]">
-                <div className="text-[13px] leading-[1.5] text-black/40">
-                  How might you improve your app?
+            {/* Right column: a "canvas" tinted slightly off-white so the
+                preview window inside it sits as a distinct surface
+                (rounded on all four corners + soft shadow). Reads as a
+                browser preview embedded *in* the build tool, not a
+                sibling pane sharing the card's edges. Desktop only. */}
+            <div className="relative hidden min-h-0 min-w-0 flex-col bg-black/[0.025] p-4 lg:flex">
+              <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-black/[0.10] bg-white shadow-[0_8px_24px_-12px_rgba(0,0,0,0.18)]">
+                {/* Browser chrome: traffic lights left, URL pill
+                    centered, right-side spacer so the URL is
+                    optically centered. */}
+                <div className="flex h-8 shrink-0 items-center gap-3 border-b border-black/[0.06] bg-black/[0.02] px-3">
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
+                  </div>
+                  <div className="mx-auto flex h-5 max-w-[320px] flex-1 items-center justify-center rounded border border-black/[0.06] bg-white px-2.5 text-[11px] leading-none text-black/65">
+                    <span className="truncate">
+                      brandmages.assembly.com
+                      {activeApp ? `/${activeApp.slug}` : ""}
+                    </span>
+                  </div>
+                  <div className="w-[42px] shrink-0" />
                 </div>
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="text-black/40">
-                    <PaperclipIcon className="h-4 w-4" />
+
+                <div className="grid min-h-0 flex-1 grid-cols-[180px_1fr] gap-0">
+              {/* Sidebar — flat list: BrandMages, Home, Messages,
+                  installed apps. The slot-in motion carries the
+                  integration story; no section headers needed. */}
+              <div className="flex h-full min-w-0 flex-col border-r border-black/[0.05] p-3">
+                <div className="mb-3 flex items-center gap-2 px-2 py-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-black/[0.08] text-black/85">
+                    <BrandMagesMark className="h-3.5 w-3.5" />
                   </span>
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/[0.04] text-black/30">
-                    <ArrowIcon className="h-3 w-3" />
+                  <span className="truncate text-[12px] font-medium text-black/90">
+                    BrandMages
                   </span>
                 </div>
+
+                <div className="space-y-1">
+                  {BUILT_IN.map((b) => (
+                    <SidebarRow
+                      key={b.id}
+                      iconSrc={b.iconSrc}
+                      iconClass={b.iconClass}
+                      label={b.label}
+                      muted
+                    />
+                  ))}
+                  {APPS.slice(0, installed).map((a, i) => (
+                    <SidebarRow
+                      key={a.id}
+                      iconSrc={a.iconSrc}
+                      iconClass={a.iconClass}
+                      label={a.label}
+                      active={activeApp && a.id === activeApp.id}
+                      entryT={i === cycleIndex ? entryT : null}
+                    />
+                  ))}
+                  {/* Building placeholder — sits in the next sidebar
+                      slot during SEND→FLY_END so the operator can see
+                      "an app is being assembled here" before the real
+                      row pops in. Fades out as the row scales up. Only
+                      rendered while there is still room (i.e. not on
+                      the last app's reset pause). */}
+                  {buildShimmerSidebar > 0 && installed < APPS.length && (
+                    <div
+                      style={{ opacity: buildShimmerSidebar }}
+                      className="px-2 py-2"
+                    >
+                      <div className="hpv7-build-shimmer h-3 w-full rounded" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Main */}
+              <div className="relative h-full min-w-0">
+                <div
+                  className="absolute inset-0 transition-opacity duration-500"
+                  style={{ opacity: showHome ? 1 : 0 }}
+                >
+                  <HomeEmpty />
+                </div>
+                {APPS.map((a) => {
+                  const isActive =
+                    !showHome && activeApp && a.id === activeApp.id;
+                  return (
+                    <div
+                      key={a.id}
+                      className="absolute inset-0 transition-opacity duration-500"
+                      style={{ opacity: isActive ? 1 : 0 }}
+                    >
+                      {a.main}
+                    </div>
+                  );
+                })}
+                {/* Building shimmer over the main canvas. Reads as
+                    "the new app is being assembled here" while the
+                    sidebar row is still flying in. Spans the full
+                    panel (inset-0, rounded-none) so the sweep reaches
+                    the outer card's right border instead of stopping
+                    12px short, which read as truncated. The card's
+                    own border carries the framing. */}
+                {buildShimmerMain > 0 && (
+                  <div
+                    aria-hidden="true"
+                    className="hpv7-build-shimmer pointer-events-none absolute inset-0"
+                    style={{ opacity: buildShimmerMain }}
+                  />
+                )}
               </div>
             </div>
+            </div>
+          </div>
         </div>
         </div>
       </div>
