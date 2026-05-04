@@ -447,7 +447,7 @@ export function HeroPromptToAppV6() {
           <div className="relative flex h-full min-w-0 flex-col bg-[#17181a]">
             <div className="flex h-9 shrink-0 items-center gap-2 border-b border-white/[0.06] px-4">
               <span className="text-[11px] font-medium text-white/55">
-                Already part of your client portal
+                Client portal preview
               </span>
             </div>
 
