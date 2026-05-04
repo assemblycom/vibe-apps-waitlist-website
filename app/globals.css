@@ -293,6 +293,49 @@ body::-webkit-scrollbar {
   pointer-events: none;
 }
 
+/* ── HeroPromptToAppV6 building shimmer ──
+   Telegraphs that an app is being assembled in the client portal.
+   Used in two slots — the next sidebar row, and a full-canvas overlay
+   on the main panel — during the SEND→FLY_END window. Soft tonal
+   glow + a slow diagonal sweep, both quiet enough to live behind the
+   real content without competing with it.
+
+   The wrapper opacity is driven from React off cycleT, so this CSS
+   only carries the looping motion (the pulse + sweep). */
+@keyframes hpv6-build-shimmer-pulse {
+  0%, 100% {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.09);
+  }
+}
+@keyframes hpv6-build-shimmer-sweep {
+  0%   { background-position: -150% 0; }
+  100% { background-position: 250% 0; }
+}
+.hpv6-build-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.05);
+  animation: hpv6-build-shimmer-pulse 1.4s ease-in-out infinite;
+}
+.hpv6-build-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    100deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 65%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: hpv6-build-shimmer-sweep 1.4s linear infinite;
+  pointer-events: none;
+}
+
 /* ── Spec-card row entrance ──
    Each row fades up into view, staggered by index via inline
    animationDelay. Rows start hidden (opacity:0) and animate in once

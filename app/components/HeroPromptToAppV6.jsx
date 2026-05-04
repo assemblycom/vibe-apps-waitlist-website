@@ -374,6 +374,19 @@ export function HeroPromptToAppV6() {
       ? 1
       : null;
 
+  // Building shimmer — kicks in the moment SEND fires and ramps out as
+  // the real row/main fades in. Sidebar shimmer ends earlier than main
+  // shimmer because the row visually "lands" first; the main view
+  // crossfade trails by ~half the FLY window.
+  let buildShimmerSidebar = 0;
+  let buildShimmerMain = 0;
+  if (cycleT >= SEND) {
+    const winSidebar = (FLY_END - SEND) * 0.7;
+    const winMain = FLY_END - SEND;
+    buildShimmerSidebar = Math.max(0, 1 - (cycleT - SEND) / winSidebar);
+    buildShimmerMain = Math.max(0, 1 - (cycleT - SEND) / winMain);
+  }
+
   // Active app in main panel: the latest one that's been sent.
   const showHome = !sent && cycleIndex === 0;
   const activeApp = sent ? app : cycleIndex > 0 ? APPS[cycleIndex - 1] : null;
@@ -390,10 +403,11 @@ export function HeroPromptToAppV6() {
         style={{ height: "min(50vh, 480px)" }}
       >
         <div className="grid h-full grid-cols-[1fr_1.25fr] gap-0">
-          {/* Left: prompt composer. No eyebrow header. Slightly darker
-              than the outer card so the two halves read as adjacent
-              surfaces (builder ↔ portal). */}
-          <div className="relative flex h-full min-w-0 flex-col border-r border-white/[0.09] bg-[#0e0f12]">
+          {/* Left: prompt composer. No eyebrow header. Same surface
+              color as the right portal — Linear-style, one unified
+              card bg with the vertical divider doing the separation
+              instead of a panel-bg shift. */}
+          <div className="relative flex h-full min-w-0 flex-col border-r border-white/[0.09] bg-[#16171a]">
             <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-14 md:pt-16">
               <div className="w-full max-w-[320px]">
                 <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-3 py-2.5">
@@ -424,9 +438,11 @@ export function HeroPromptToAppV6() {
             </div>
           </div>
 
-          {/* Right: client portal. No eyebrow header — the BrandMages
-              row at the top of the sidebar names the surface. */}
-          <div className="relative flex h-full min-w-0 flex-col bg-[#0c0c0d]">
+          {/* Right: client portal. Same surface tone as the left half
+              and the outer card — Linear-style flat dark — so the seam
+              is carried by the vertical divider, not by stacking
+              different shades of near-black against each other. */}
+          <div className="relative flex h-full min-w-0 flex-col bg-[#16171a]">
             <div className="grid h-full min-h-0 grid-cols-[180px_1fr] gap-0">
               {/* Sidebar — flat list: BrandMages, Home, Messages,
                   installed apps. The slot-in motion carries the
@@ -459,6 +475,20 @@ export function HeroPromptToAppV6() {
                       entryT={i === cycleIndex ? entryT : null}
                     />
                   ))}
+                  {/* Building placeholder — sits in the next sidebar
+                      slot during SEND→FLY_END so the operator can see
+                      "an app is being assembled here" before the real
+                      row pops in. Fades out as the row scales up. Only
+                      rendered while there is still room (i.e. not on
+                      the last app's reset pause). */}
+                  {buildShimmerSidebar > 0 && installed < APPS.length && (
+                    <div
+                      style={{ opacity: buildShimmerSidebar }}
+                      className="px-2 py-2"
+                    >
+                      <div className="hpv6-build-shimmer h-3 w-full rounded-md" />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -483,6 +513,19 @@ export function HeroPromptToAppV6() {
                     </div>
                   );
                 })}
+                {/* Building shimmer over the main canvas. Reads as
+                    "the new app is being assembled here" while the
+                    sidebar row is still flying in. Fades out as the
+                    real app view crossfades up. */}
+                {buildShimmerMain > 0 && (
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-3"
+                    style={{ opacity: buildShimmerMain }}
+                  >
+                    <div className="hpv6-build-shimmer h-full w-full rounded-lg" />
+                  </div>
+                )}
               </div>
             </div>
           </div>
