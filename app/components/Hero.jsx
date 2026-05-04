@@ -56,10 +56,8 @@ export function Hero({
             the user scrolls within the section — Notion-style. */}
       <section
         className={`relative overflow-hidden flex flex-col ${
-          version === "v7"
+          version === "v7" || version === "v8"
             ? "lg:h-[min(120vh,1320px)]"
-            : version === "v8"
-            ? "lg:h-screen"
             : "lg:h-[min(100vh,1080px)]"
         }`}
       >
