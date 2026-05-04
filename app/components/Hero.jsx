@@ -46,12 +46,20 @@ export function Hero({
 
   return (
     <>
-      {/* Section: fixed 100vh-ish height + bleed only at lg+. On
-          mobile the section grows to its content so the hero visual
-          sits inline right below the CTA instead of being pushed to
-          the bottom of an empty viewport-tall band by mt-auto. */}
+      {/* Section height:
+          - mobile: content-driven (auto)
+          - lg+ all versions: 100vh-ish, hero anchored to bottom by mt-auto
+          - lg+ v7: taller (130vh) so the hero card naturally extends past
+            the initial fold. Combined with sticky-bottom logos below
+            (rendered inside the section for v7), the bottom of the hero
+            is partially covered by logos on initial load and reveals as
+            the user scrolls within the section — Notion-style. */}
       <section
-        className="relative overflow-hidden flex flex-col lg:h-[min(100vh,1080px)]"
+        className={`relative overflow-hidden flex flex-col ${
+          version === "v7"
+            ? "lg:h-[min(120vh,1320px)]"
+            : "lg:h-[min(100vh,1080px)]"
+        }`}
       >
         <HeroVersionToggle version={version} onChange={choose} />
 
@@ -99,10 +107,48 @@ export function Hero({
             <HeroPromptToApp />
           )}
         </div>
+
+        {/* v7 only, lg+ only: sticky logo band that stays pinned to
+            the viewport bottom while the user scrolls within the
+            (taller) hero section. The hero card mounts above this
+            band and extends behind it on initial load (the bottom
+            slice is "closed off" by the logos), then scrolling moves
+            the card up while the logos stay pinned — so the covered
+            portion reveals into view. Once the section's natural
+            bottom reaches the viewport bottom (~30vh of scroll), the
+            logos un-stick and the page continues normally. */}
+        {version === "v7" && alphaLogos && alphaLogos.length > 0 && (
+          <div className="hidden lg:sticky lg:bottom-0 lg:z-20 lg:block lg:bg-[var(--color-bg)] lg:py-6">
+            <div className="mx-auto w-full max-w-[620px] px-6">
+              {alphaLabel && (
+                <p
+                  className="mb-4 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
+                  style={{
+                    fontFamily:
+                      '"ABC Diatype Mono", ui-monospace, monospace',
+                  }}
+                >
+                  {alphaLabel}
+                </p>
+              )}
+              <LogoStrip logos={alphaLogos} variant="dark" />
+            </div>
+          </div>
+        )}
       </section>
 
+      {/* After-section logo band. For non-v7 versions and for mobile
+          v7 (where the sticky pattern doesn't apply because the
+          section is content-sized rather than 130vh), this is the
+          normal fallback rendering. On v7 desktop it's hidden, since
+          the sticky band inside the section above is the canonical
+          version. */}
       {alphaLogos && alphaLogos.length > 0 && (
-        <div className="bg-[var(--color-bg)] pb-10 pt-12 md:pb-12 md:pt-14">
+        <div
+          className={`bg-[var(--color-bg)] pb-10 pt-12 md:pb-12 md:pt-14 ${
+            version === "v7" ? "lg:hidden" : ""
+          }`}
+        >
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
               <p

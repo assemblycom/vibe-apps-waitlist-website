@@ -50,15 +50,6 @@ const StrokeIcon = ({ d, className = "h-3 w-3" }) => (
   </svg>
 );
 const ArrowIcon = (p) => <StrokeIcon {...p} d="M3 8h10M9 4l4 4-4 4" />;
-// Tiny "page" / site-info glyph that sits to the left of the URL in
-// the browser-chrome address bar — matches the small mark Safari /
-// Chrome show next to the address.
-const SiteGlyph = (p) => (
-  <StrokeIcon
-    {...p}
-    d="M5 4h6a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1zM6 7h4M6 9.5h4M6 12h2"
-  />
-);
 
 // BrandMages mark — three stacked rounded shelves taken from
 // /logos/brandmages-mark.svg. Inlined so the symbol can be painted in
@@ -197,7 +188,7 @@ function TimeTrackerView() {
   return (
     <div className="flex h-full min-w-0 flex-col">
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
-        <div className="flex min-w-0 items-center gap-3 rounded-xl border border-black/[0.08] bg-black/[0.03] p-3">
+        <div className="flex min-w-0 items-center gap-3 rounded border border-black/[0.08] bg-black/[0.03] p-3">
           <span className="whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-black/85">
             02:34:18
           </span>
@@ -462,7 +453,7 @@ export function HeroPromptToAppV7() {
                     Build an app
                   </div>
 
-                  <div className="rounded-xl border border-black/[0.08] bg-black/[0.02] px-3 py-2.5">
+                  <div className="rounded border border-black/[0.08] bg-black/[0.02] px-3 py-2.5">
                     <div className="min-h-[42px] text-[13px] leading-[1.5] text-black/85">
                       {promptText || (
                         <span className="text-black/30">
@@ -482,8 +473,8 @@ export function HeroPromptToAppV7() {
                         className={[
                           "flex h-6 w-6 items-center justify-center rounded-full",
                           ready
-                            ? "bg-black/15 text-black/75"
-                            : "bg-black/[0.06] text-black/45",
+                            ? "bg-black/10 text-black/55"
+                            : "bg-black/[0.04] text-black/35",
                         ].join(" ")}
                       >
                         <ArrowIcon className="h-3 w-3" />
@@ -499,7 +490,7 @@ export function HeroPromptToAppV7() {
                       >
                         <MaskIcon
                           src={a.iconSrc}
-                          className="h-3 w-3 shrink-0"
+                          className="h-2.5 w-2.5 shrink-0"
                         />
                         {a.label}
                       </span>
@@ -525,8 +516,7 @@ export function HeroPromptToAppV7() {
                     <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
                     <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
                   </div>
-                  <div className="mx-auto flex h-5 max-w-[320px] flex-1 items-center justify-center gap-1.5 rounded border border-black/[0.06] bg-white px-2.5 text-[11px] leading-none text-black/65">
-                    <SiteGlyph className="h-3 w-3 text-black/45" />
+                  <div className="mx-auto flex h-5 max-w-[320px] flex-1 items-center justify-center rounded border border-black/[0.06] bg-white px-2.5 text-[11px] leading-none text-black/65">
                     <span className="truncate">
                       brandmages.assembly.com
                       {activeApp ? `/${activeApp.slug}` : ""}
