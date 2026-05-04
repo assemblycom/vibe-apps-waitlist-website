@@ -426,98 +426,104 @@ export function HeroPromptToAppV7() {
           - lg+: original 1100×min(50vh,480px) two-column card with
             composer on the left and BrandMages portal on the right. */}
       <div
-        className="relative mx-auto w-full max-w-[1100px] overflow-hidden lg:h-[min(56vh,520px)] lg:rounded-t-2xl lg:border lg:border-black/[0.08] lg:bg-white lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]"
+        className="relative mx-auto w-full max-w-[1100px] overflow-hidden lg:h-[min(60vh,560px)] lg:rounded-t-2xl lg:border lg:border-black/[0.08] lg:bg-white lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]"
       >
-        <div className="flex flex-col lg:grid lg:h-full lg:grid-cols-[1fr_1.25fr] lg:gap-0">
-          {/* Left column on desktop / full-width on mobile: composer. */}
-          <div className="relative flex min-w-0 flex-col lg:h-full lg:border-r lg:border-black/[0.09] lg:bg-white">
-            {/* Top bar names the column on desktop. Hidden on mobile
-                where there's no card frame. */}
-            <div className="hidden h-9 shrink-0 items-center border-b border-black/[0.06] px-4 lg:flex">
-              <span className="truncate text-[12px] font-medium text-black/85">
-                Build an app
-              </span>
-            </div>
-
-            <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-2 lg:pt-12">
-              <div className="w-full max-w-[420px] md:max-w-[520px] lg:max-w-[320px]">
-                {/* Mobile-only inline label. */}
-                <div className="mb-3 text-[12px] font-medium text-black/65 lg:hidden">
-                  Build an app
-                </div>
-
-                <div className="rounded-xl border border-black/[0.08] bg-black/[0.02] px-3 py-2.5">
-                  <div className="min-h-[42px] text-[13px] leading-[1.5] text-black/85">
-                    {promptText || (
-                      <span className="text-black/30">
-                        Build a time tracker for my team…
-                      </span>
-                    )}
-                    {showCursor && (
-                      <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-black/85 align-middle" />
-                    )}
-                  </div>
-                  <div className="mt-2 flex items-center justify-end">
-                    <span
-                      style={{
-                        transition:
-                          "background-color 220ms ease, color 220ms ease",
-                      }}
-                      className={[
-                        "flex h-6 w-6 items-center justify-center rounded-full",
-                        ready
-                          ? "bg-black/25 text-black/95"
-                          : "bg-black/10 text-black/55",
-                      ].join(" ")}
-                    >
-                      <ArrowIcon className="h-3 w-3" />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-3 flex flex-wrap items-center justify-start gap-1.5">
-                  {APPS.map((a) => (
-                    <span
-                      key={a.id}
-                      className="inline-flex items-center gap-1 rounded-full border border-black/[0.08] px-2 py-0.5 text-[10.5px] leading-none text-black/55"
-                    >
-                      <MaskIcon
-                        src={a.iconSrc}
-                        className="h-3 w-3 shrink-0"
-                      />
-                      {a.label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+        <div className="flex h-full flex-col">
+          {/* Full-width top bar: "Build an app" on the left, optional
+              actions could sit on the right. Spans the whole card so
+              the right column reads as "the canvas" the build is
+              previewed on, rather than a sibling pane with its own
+              top chrome. */}
+          <div className="hidden h-10 shrink-0 items-center border-b border-black/[0.06] px-4 lg:flex">
+            <span className="truncate text-[12px] font-medium text-black/85">
+              Build an app
+            </span>
           </div>
 
-          {/* Right column: browser-window mockup wrapping the BrandMages
-              portal. Desktop only — mobile already shows just the
-              composer with no portal preview. The browser chrome
-              (traffic lights + URL pill) replaces the previous
-              PanelHeader so the column reads as "the running site"
-              the prompt would deploy to. */}
-          <div className="relative hidden h-full min-w-0 flex-col bg-white lg:flex">
-            {/* Browser chrome: traffic lights left, URL pill centered,
-                spacer right so the pill stays optically centered. */}
-            <div className="flex h-9 shrink-0 items-center gap-3 border-b border-black/[0.06] bg-black/[0.02] px-3">
-              <div className="flex shrink-0 items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
+          {/* Body: composer left, embedded browser preview right. */}
+          <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[1fr_1.25fr] lg:gap-0">
+            {/* Composer column. */}
+            <div className="relative flex min-w-0 flex-col lg:h-full lg:border-r lg:border-black/[0.09]">
+              <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-2 lg:pt-12">
+                <div className="w-full max-w-[420px] md:max-w-[520px] lg:max-w-[320px]">
+                  {/* Mobile-only inline label. */}
+                  <div className="mb-3 text-[12px] font-medium text-black/65 lg:hidden">
+                    Build an app
+                  </div>
+
+                  <div className="rounded-xl border border-black/[0.08] bg-black/[0.02] px-3 py-2.5">
+                    <div className="min-h-[42px] text-[13px] leading-[1.5] text-black/85">
+                      {promptText || (
+                        <span className="text-black/30">
+                          Build a time tracker for my team…
+                        </span>
+                      )}
+                      {showCursor && (
+                        <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-black/85 align-middle" />
+                      )}
+                    </div>
+                    <div className="mt-2 flex items-center justify-end">
+                      <span
+                        style={{
+                          transition:
+                            "background-color 220ms ease, color 220ms ease",
+                        }}
+                        className={[
+                          "flex h-6 w-6 items-center justify-center rounded-full",
+                          ready
+                            ? "bg-black/25 text-black/95"
+                            : "bg-black/10 text-black/55",
+                        ].join(" ")}
+                      >
+                        <ArrowIcon className="h-3 w-3" />
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap items-center justify-start gap-1.5">
+                    {APPS.map((a) => (
+                      <span
+                        key={a.id}
+                        className="inline-flex items-center gap-1 rounded-full border border-black/[0.08] px-2 py-0.5 text-[10.5px] leading-none text-black/55"
+                      >
+                        <MaskIcon
+                          src={a.iconSrc}
+                          className="h-3 w-3 shrink-0"
+                        />
+                        {a.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="mx-auto flex h-5 max-w-[320px] flex-1 items-center justify-center gap-1.5 rounded-md border border-black/[0.06] bg-white px-2.5 text-[11px] leading-none text-black/65">
-                <SiteGlyph className="h-3 w-3 text-black/45" />
-                <span className="truncate">
-                  brandmages.assembly.com/store
-                </span>
-              </div>
-              <div className="w-[42px] shrink-0" />
             </div>
 
-            <div className="grid min-h-0 flex-1 grid-cols-[180px_1fr] gap-0">
+            {/* Right column: a "canvas" tinted slightly off-white so the
+                preview window inside it sits as a distinct surface
+                (rounded on all four corners + soft shadow). Reads as a
+                browser preview embedded *in* the build tool, not a
+                sibling pane sharing the card's edges. Desktop only. */}
+            <div className="relative hidden min-h-0 min-w-0 flex-col bg-black/[0.025] p-4 lg:flex">
+              <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-black/[0.10] bg-white shadow-[0_8px_24px_-12px_rgba(0,0,0,0.18)]">
+                {/* Browser chrome: traffic lights left, URL pill
+                    centered, right-side spacer so the URL is
+                    optically centered. */}
+                <div className="flex h-8 shrink-0 items-center gap-3 border-b border-black/[0.06] bg-black/[0.02] px-3">
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
+                  </div>
+                  <div className="mx-auto flex h-5 max-w-[320px] flex-1 items-center justify-center gap-1.5 rounded-md border border-black/[0.06] bg-white px-2.5 text-[11px] leading-none text-black/65">
+                    <SiteGlyph className="h-3 w-3 text-black/45" />
+                    <span className="truncate">
+                      brandmages.assembly.com/store
+                    </span>
+                  </div>
+                  <div className="w-[42px] shrink-0" />
+                </div>
+
+                <div className="grid min-h-0 flex-1 grid-cols-[180px_1fr] gap-0">
               {/* Sidebar — flat list: BrandMages, Home, Messages,
                   installed apps. The slot-in motion carries the
                   integration story; no section headers needed. */}
@@ -603,7 +609,9 @@ export function HeroPromptToAppV7() {
                 )}
               </div>
             </div>
+            </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
