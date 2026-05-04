@@ -82,6 +82,7 @@ const APPS = [
   {
     id: "time",
     label: "Time Tracker",
+    slug: "time-tracker",
     iconSrc: "/Icons/clock-three.svg",
     prompt:
       "Build a time tracker where the team can log work and associate it with clients",
@@ -90,6 +91,7 @@ const APPS = [
   {
     id: "helpdesk",
     label: "Helpdesk",
+    slug: "helpdesk",
     iconSrc: "/Icons/helpdesk.svg",
     prompt:
       "Build a helpdesk where clients can submit tickets and follow along for progress",
@@ -98,6 +100,7 @@ const APPS = [
   {
     id: "community",
     label: "Community",
+    slug: "community",
     iconSrc: "/Icons/globe.svg",
     prompt:
       "Build a community where clients can post and interact with each other",
@@ -336,7 +339,7 @@ function SidebarRow({ iconSrc, label, active, muted, entryT }) {
       className={[
         "flex items-center gap-2 rounded-md px-2 py-2 text-[11px] leading-none transition-colors duration-300",
         active
-          ? "bg-black/[0.07] text-[#0A0A0A]"
+          ? "bg-black/[0.04] text-[#0A0A0A]"
           : muted
           ? "text-black/55"
           : "text-black/75",
@@ -517,7 +520,8 @@ export function HeroPromptToAppV7() {
                   <div className="mx-auto flex h-5 max-w-[320px] flex-1 items-center justify-center gap-1.5 rounded-md border border-black/[0.06] bg-white px-2.5 text-[11px] leading-none text-black/65">
                     <SiteGlyph className="h-3 w-3 text-black/45" />
                     <span className="truncate">
-                      brandmages.assembly.com/store
+                      brandmages.assembly.com
+                      {activeApp ? `/${activeApp.slug}` : ""}
                     </span>
                   </div>
                   <div className="w-[42px] shrink-0" />
