@@ -383,13 +383,6 @@ export function HeroPromptToAppV6() {
   const showHome = !sent && cycleIndex === 0;
   const activeApp = sent ? app : cycleIndex > 0 ? APPS[cycleIndex - 1] : null;
 
-  // Connector trail — a quiet horizontal line that lights up between
-  // the prompt card and the sidebar during the send window. Reads as
-  // "the prompt becomes a row in the portal" without any extra copy.
-  const trailOpacity = sending
-    ? Math.sin(((cycleT - SEND) / (FLY_END - SEND)) * Math.PI) * 0.9
-    : 0;
-
   return (
     <div aria-hidden="true" className="pointer-events-none relative w-full">
       <div
@@ -517,22 +510,6 @@ export function HeroPromptToAppV6() {
           </div>
         </div>
 
-        {/* Connector trail — soft horizontal line that lights up during
-            the send window, visually narrating "prompt becomes a row in
-            the portal sidebar." Sits at roughly the prompt-card's
-            vertical center, only visible during the fly-in. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-0 right-0"
-          style={{
-            top: "47%",
-            height: 1,
-            background:
-              "linear-gradient(90deg, transparent 18%, rgba(255,255,255,0.55) 50%, transparent 82%)",
-            opacity: trailOpacity,
-            transition: "opacity 200ms ease-out",
-          }}
-        />
       </div>
     </div>
   );
