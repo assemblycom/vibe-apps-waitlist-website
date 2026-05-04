@@ -44,6 +44,93 @@ export function Hero({
     } catch {}
   };
 
+  // V8: Notion-style sticky logo strip.
+  //
+  // Structure:
+  //   <wrapper>                                  (relative, light bg = next section's bg)
+  //     <section h-screen>                       (full-screen dark or light hero)
+  //     <landing-zone>                           (~25vh of empty light bg below hero)
+  //     <logos sticky bottom-0>                  (last child of wrapper)
+  //   </wrapper>
+  //   <NextSection />
+  //
+  // The logo row is the LAST child of the wrapper, so its natural DOM
+  // position sits at the bottom of the wrapper — already inside the
+  // light "next section" colored band. With `position: sticky;
+  // bottom: 0`, while the wrapper has space below the viewport bottom,
+  // the logo row is pinned to viewport bottom. As the user scrolls, the
+  // wrapper's bottom edge approaches the viewport bottom; once it
+  // reaches it, the logo un-sticks and falls into its natural position
+  // at the seam between hero and the next section, visually merging
+  // with the next section's background.
+  //
+  // No JS scroll listeners — pure CSS sticky. The wrapper bg matches
+  // the next section so when the logo "lands" it reads as already part
+  // of that section.
+  if (version === "v8") {
+    return (
+      <>
+        <HeroVersionToggle version={version} onChange={choose} />
+        <div className="relative bg-[#F5F5F0]" data-nav-theme="light">
+          {/* Hero — full-screen, light surface so the white app card
+              and logo strip sit on a continuous background. */}
+          <section className="relative flex flex-col overflow-hidden lg:h-screen">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                background:
+                  "radial-gradient(40% 35% at 30% 35%, rgba(16,16,16,0.04) 0%, transparent 70%), radial-gradient(35% 30% at 75% 55%, rgba(217,237,146,0.18) 0%, transparent 75%)",
+              }}
+            />
+
+            <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 text-center md:pt-36 lg:pt-40">
+              <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-[#101010] [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
+                {heading}
+              </h1>
+              <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-[#101010]/60 [text-wrap:pretty]">
+                {subheading}
+              </p>
+              <EmailCTA />
+            </div>
+
+            <div className="relative z-10 w-full overflow-hidden px-4 pt-8 md:px-6 md:pt-12 lg:mt-auto lg:px-10 lg:pt-16">
+              <HeroPromptToAppV8 />
+            </div>
+          </section>
+
+          {/* Landing zone — ~25vh of empty light bg. This gives the
+              sticky logo row a scroll range to remain pinned, and the
+              same bg color as the next section so the eventual landing
+              feels continuous. */}
+          <div aria-hidden="true" className="hidden lg:block lg:h-[25vh]" />
+
+          {/* Sticky logo row — last child of wrapper. Pinned to the
+              viewport bottom while the wrapper still extends below;
+              un-sticks at the seam to the next section. */}
+          {alphaLogos && alphaLogos.length > 0 && (
+            <div className="lg:sticky lg:bottom-0 lg:z-20 bg-[#F5F5F0] py-6">
+              <div className="mx-auto w-full max-w-[620px] px-6">
+                {alphaLabel && (
+                  <p
+                    className="mb-4 text-center text-[10px] uppercase tracking-[0.18em] text-[#101010]/45"
+                    style={{
+                      fontFamily:
+                        '"ABC Diatype Mono", ui-monospace, monospace',
+                    }}
+                  >
+                    {alphaLabel}
+                  </p>
+                )}
+                <LogoStrip logos={alphaLogos} variant="light" />
+              </div>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       {/* Section height:
@@ -56,7 +143,7 @@ export function Hero({
             the user scrolls within the section — Notion-style. */}
       <section
         className={`relative overflow-hidden flex flex-col ${
-          version === "v7" || version === "v8"
+          version === "v7"
             ? "lg:h-[min(120vh,1320px)]"
             : "lg:h-[min(100vh,1080px)]"
         }`}
@@ -101,8 +188,6 @@ export function Hero({
             <HeroPromptToAppV5 />
           ) : version === "v7" ? (
             <HeroPromptToAppV7 />
-          ) : version === "v8" ? (
-            <HeroPromptToAppV8 />
           ) : (
             <HeroPromptToApp />
           )}
@@ -117,7 +202,7 @@ export function Hero({
             portion reveals into view. Once the section's natural
             bottom reaches the viewport bottom (~30vh of scroll), the
             logos un-stick and the page continues normally. */}
-        {(version === "v7" || version === "v8") && alphaLogos && alphaLogos.length > 0 && (
+        {version === "v7" && alphaLogos && alphaLogos.length > 0 && (
           <div className="hidden lg:sticky lg:bottom-0 lg:z-20 lg:block lg:bg-[var(--color-bg)] lg:py-6">
             <div className="mx-auto w-full max-w-[620px] px-6">
               {alphaLabel && (
@@ -146,7 +231,7 @@ export function Hero({
       {alphaLogos && alphaLogos.length > 0 && (
         <div
           className={`bg-[var(--color-bg)] pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v7" || version === "v8" ? "lg:hidden" : ""
+            version === "v7" ? "lg:hidden" : ""
           }`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">

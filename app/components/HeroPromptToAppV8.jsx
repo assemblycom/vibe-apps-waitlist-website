@@ -154,7 +154,7 @@ export function HeroPromptToAppV8() {
       className="hsv-stage pointer-events-none relative w-full"
     >
       <div
-        className="mx-auto h-[720px] w-full max-w-[1180px] overflow-hidden rounded-t-2xl border border-b-0 border-black/[0.08] bg-white"
+        className="mx-auto h-[clamp(420px,calc(100vh-360px),520px)] w-full max-w-[1180px] overflow-hidden rounded-t-2xl border border-b-0 border-black/[0.08] bg-white"
         style={{
           boxShadow:
             "0 1px 0 rgba(255,255,255,0.6) inset, 0 -16px 80px rgba(16,16,16,0.08)",
