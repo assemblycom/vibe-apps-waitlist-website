@@ -425,16 +425,13 @@ export function HeroPromptToAppV6() {
                       className={[
                         "flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-300",
                         cycleT >= TYPE_END
-                          ? "bg-white text-black"
+                          ? "bg-white/25 text-white/95"
                           : "bg-white/10 text-white/55",
                       ].join(" ")}
                     >
                       <ArrowIcon className="h-3 w-3" />
                     </span>
                   </div>
-                </div>
-                <div className="mt-3 text-center text-[10.5px] text-white/35">
-                  One prompt. A working app, deployed to your client portal.
                 </div>
               </div>
             </div>
