@@ -50,6 +50,12 @@ const StrokeIcon = ({ d, className = "h-3 w-3" }) => (
   </svg>
 );
 const ArrowIcon = (p) => <StrokeIcon {...p} d="M3 8h10M9 4l4 4-4 4" />;
+const PaperclipIcon = (p) => (
+  <StrokeIcon
+    {...p}
+    d="M11 4l-5 5a2.5 2.5 0 003.5 3.5l5-5a4 4 0 00-5.5-5.5l-5 5"
+  />
+);
 
 // BrandMages mark — three stacked rounded shelves taken from
 // /logos/brandmages-mark.svg. Inlined so the symbol can be painted in
@@ -449,57 +455,58 @@ export function HeroPromptToAppV7() {
 
           {/* Body: composer left, embedded browser preview right. */}
           <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[1fr_1.25fr] lg:gap-0">
-            {/* Composer column. */}
+            {/* Composer column — chat-style builder. Sent prompt bubble
+                at top, AI response line beneath it, follow-up input
+                pinned to the bottom. The right column shows the
+                resulting BrandMages portal preview. */}
             <div className="relative flex min-w-0 flex-col lg:h-full lg:border-r lg:border-black/[0.09]">
-              <div className="flex min-w-0 flex-1 flex-col items-center px-6 pt-2 lg:pt-12">
-                <div className="w-full max-w-[420px] md:max-w-[520px] lg:max-w-[320px]">
-                  {/* Mobile-only inline label. */}
-                  <div className="mb-3 text-[12px] font-medium text-black/65 lg:hidden">
-                    Build an app
-                  </div>
+              <div className="flex min-w-0 flex-1 flex-col px-6 pt-2 lg:px-6 lg:pt-6">
+                {/* Mobile-only inline label. */}
+                <div className="mb-3 text-[12px] font-medium text-black/65 lg:hidden">
+                  Build an app
+                </div>
 
-                  <div className="rounded border border-black/[0.08] bg-black/[0.02] px-3 py-2.5">
-                    <div className="min-h-[42px] text-[13px] leading-[1.5] text-black/85">
-                      {promptText || (
-                        <span className="text-black/30">
-                          Build a time tracker for my team…
-                        </span>
-                      )}
-                      {showCursor && (
-                        <span className="ml-[1px] inline-block h-[13px] w-[1px] -translate-y-[1px] animate-pulse bg-black/85 align-middle" />
-                      )}
-                    </div>
-                    <div className="mt-2 flex items-center justify-end">
-                      <span
-                        style={{
-                          transition:
-                            "background-color 220ms ease, color 220ms ease",
-                        }}
-                        className={[
-                          "flex h-6 w-6 items-center justify-center rounded-full",
-                          ready
-                            ? "bg-black/10 text-black/55"
-                            : "bg-black/[0.04] text-black/35",
-                        ].join(" ")}
-                      >
-                        <ArrowIcon className="h-3 w-3" />
-                      </span>
-                    </div>
-                  </div>
+                {/* Sent prompt bubble — uses the current cycle's prompt
+                    so it stays in sync with the right portal preview. */}
+                <div className="rounded-2xl bg-black/[0.05] px-4 py-3 text-[13px] leading-[1.5] text-black/85">
+                  {app.prompt}
+                </div>
 
-                  <div className="mt-3 flex flex-wrap items-center justify-start gap-1.5">
-                    {APPS.map((a) => (
-                      <span
-                        key={a.id}
-                        className="inline-flex items-center gap-1 rounded-full border border-black/[0.08] px-2 py-0.5 text-[10.5px] leading-none text-black/55"
-                      >
-                        <MaskIcon
-                          src={a.iconSrc}
-                          className="h-2.5 w-2.5 shrink-0"
-                        />
-                        {a.label}
-                      </span>
-                    ))}
+                {/* AI response line — small mark + pulsing dots. */}
+                <div className="mt-4 flex items-center gap-2 text-[12.5px] text-black/55">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-black/[0.08] text-black/85">
+                    <BrandMagesMark className="h-3 w-3" />
+                  </span>
+                  <span>Building your app</span>
+                  <span className="flex items-center gap-0.5">
+                    <span className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55" />
+                    <span
+                      className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
+                      style={{ animationDelay: "0.15s" }}
+                    />
+                    <span
+                      className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
+                      style={{ animationDelay: "0.3s" }}
+                    />
+                  </span>
+                </div>
+
+                {/* Spacer — pushes the follow-up input to the bottom. */}
+                <div className="hidden flex-1 lg:block" />
+
+                {/* Follow-up input — placeholder, paperclip on the
+                    left, dimmed send arrow on the right. */}
+                <div className="mt-6 hidden rounded-xl border border-black/[0.10] bg-white px-3.5 py-3 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.08)] lg:block">
+                  <div className="text-[13px] leading-[1.5] text-black/40">
+                    How might you improve your app?
+                  </div>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-black/40">
+                      <PaperclipIcon className="h-4 w-4" />
+                    </span>
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/[0.04] text-black/30">
+                      <ArrowIcon className="h-3 w-3" />
+                    </span>
                   </div>
                 </div>
               </div>
