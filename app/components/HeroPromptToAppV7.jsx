@@ -434,7 +434,7 @@ export function HeroPromptToAppV7() {
           - lg+: 1100×min(78vh,720px) two-column card with chat on
             the left and BrandMages portal preview on the right. */}
       <div
-        className="relative mx-auto w-full max-w-[1100px] overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-[0_16px_40px_-20px_rgba(0,0,0,0.45)] lg:h-[min(78vh,720px)] lg:rounded-3xl lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]"
+        className="relative mx-auto w-full max-w-[560px] overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-[0_16px_40px_-20px_rgba(0,0,0,0.45)] lg:h-[min(78vh,720px)] lg:max-w-[1100px] lg:rounded-3xl lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]"
       >
         <div className="flex h-full flex-col">
           {/* Body: composer left, embedded browser preview right. */}
@@ -444,12 +444,7 @@ export function HeroPromptToAppV7() {
                 pinned to the bottom. The right column shows the
                 resulting BrandMages portal preview. */}
             <div className="relative flex min-w-0 flex-col lg:h-full lg:border-r lg:border-black/[0.09]">
-              <div className="flex min-w-0 flex-1 flex-col px-6 pt-2 lg:px-6 lg:pb-6 lg:pt-6">
-                {/* Mobile-only inline label. */}
-                <div className="mb-3 text-[12px] font-medium text-black/65 lg:hidden">
-                  Build an app
-                </div>
-
+              <div className="flex min-w-0 flex-1 flex-col px-5 pb-5 pt-5 lg:px-6 lg:pb-6 lg:pt-6">
                 {/* Single prompt + status. Each cycle replaces the
                     prompt with the next app's; the status flips from
                     "Building your app…" to "Build complete" once
