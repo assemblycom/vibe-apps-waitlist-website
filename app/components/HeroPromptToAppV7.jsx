@@ -50,12 +50,7 @@ const StrokeIcon = ({ d, className = "h-3 w-3" }) => (
   </svg>
 );
 const ArrowIcon = (p) => <StrokeIcon {...p} d="M3 8h10M9 4l4 4-4 4" />;
-const PaperclipIcon = (p) => (
-  <StrokeIcon
-    {...p}
-    d="M11 4l-5 5a2.5 2.5 0 003.5 3.5l5-5a4 4 0 00-5.5-5.5l-5 5"
-  />
-);
+const CheckIcon = (p) => <StrokeIcon {...p} d="M3.5 8.5l3 3 6-6.5" />;
 
 // BrandMages mark — three stacked rounded shelves taken from
 // /logos/brandmages-mark.svg. Inlined so the symbol can be painted in
@@ -442,17 +437,6 @@ export function HeroPromptToAppV7() {
         className="relative mx-auto w-full max-w-[1100px] overflow-hidden lg:h-[min(78vh,720px)] lg:rounded-3xl lg:border lg:border-black/[0.08] lg:bg-white lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]"
       >
         <div className="flex h-full flex-col">
-          {/* Full-width top bar: "Build an app" on the left, optional
-              actions could sit on the right. Spans the whole card so
-              the right column reads as "the canvas" the build is
-              previewed on, rather than a sibling pane with its own
-              top chrome. */}
-          <div className="hidden h-10 shrink-0 items-center border-b border-black/[0.06] px-4 lg:flex">
-            <span className="truncate text-[12px] font-medium text-black/85">
-              Build an app
-            </span>
-          </div>
-
           {/* Body: composer left, embedded browser preview right. */}
           <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[1fr_1.25fr] lg:gap-0">
             {/* Composer column — chat-style builder. Sent prompt bubble
@@ -466,45 +450,68 @@ export function HeroPromptToAppV7() {
                   Build an app
                 </div>
 
-                {/* Sent prompt bubble — uses the current cycle's prompt
-                    so it stays in sync with the right portal preview. */}
-                <div className="rounded-2xl bg-black/[0.05] px-4 py-3 text-[13px] leading-[1.5] text-black/85">
-                  {app.prompt}
-                </div>
-
-                {/* AI response line — small mark + pulsing dots. */}
-                <div className="mt-4 flex items-center gap-2 text-[12.5px] text-black/55">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-black/[0.08] text-black/85">
-                    <BrandMagesMark className="h-3 w-3" />
-                  </span>
-                  <span>Building your app</span>
-                  <span className="flex items-center gap-0.5">
-                    <span className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55" />
-                    <span
-                      className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
-                      style={{ animationDelay: "0.15s" }}
-                    />
-                    <span
-                      className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
-                      style={{ animationDelay: "0.3s" }}
-                    />
-                  </span>
-                </div>
+                {/* Conversation stack — each app in turn appears as a
+                    sent prompt + status line (Building → Build
+                    complete). Once an app finishes, the next prompt
+                    lands beneath it so the column reads as a growing
+                    chat thread. After all apps are built, the next
+                    cycle resets back to a single prompt. */}
+                {APPS.slice(0, inResetPause ? APPS.length : cycleIndex + 1).map(
+                  (a, i) => {
+                    const complete =
+                      inResetPause ||
+                      i < cycleIndex ||
+                      (i === cycleIndex && cycleT >= FLY_END);
+                    return (
+                      <div key={a.id} className={i === 0 ? "" : "mt-5"}>
+                        <div className="rounded-2xl bg-black/[0.05] px-4 py-3 text-[13px] leading-[1.5] text-black/85">
+                          {a.prompt}
+                        </div>
+                        <div
+                          className={`mt-3 flex items-center gap-2 text-[12.5px] ${
+                            complete ? "text-black/70" : "text-black/55"
+                          }`}
+                        >
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-black/[0.08] text-black/85">
+                            {complete ? (
+                              <CheckIcon className="h-3 w-3" />
+                            ) : (
+                              <BrandMagesMark className="h-3 w-3" />
+                            )}
+                          </span>
+                          <span>
+                            {complete ? "Build complete" : "Building your app"}
+                          </span>
+                          {!complete && (
+                            <span className="flex items-center gap-0.5">
+                              <span className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55" />
+                              <span
+                                className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
+                                style={{ animationDelay: "0.15s" }}
+                              />
+                              <span
+                                className="studio-thinking-dot inline-block h-1 w-1 rounded-full bg-black/55"
+                                style={{ animationDelay: "0.3s" }}
+                              />
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+                )}
 
                 {/* Spacer — pushes the follow-up input to the bottom. */}
                 <div className="hidden flex-1 lg:block" />
 
-                {/* Follow-up input — placeholder, paperclip on the
-                    left, dimmed send arrow on the right. */}
+                {/* Follow-up input — placeholder + dimmed send arrow.
+                    No paperclip; this is a static visual. */}
                 <div className="mt-6 hidden rounded-xl border border-black/[0.10] bg-white px-3.5 py-3 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.08)] lg:block">
-                  <div className="text-[13px] leading-[1.5] text-black/40">
-                    How might you improve your app?
-                  </div>
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="text-black/40">
-                      <PaperclipIcon className="h-4 w-4" />
-                    </span>
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/[0.04] text-black/30">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex-1 text-[13px] leading-[1.5] text-black/40">
+                      How might you improve your app?
+                    </div>
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black/[0.04] text-black/30">
                       <ArrowIcon className="h-3 w-3" />
                     </span>
                   </div>
