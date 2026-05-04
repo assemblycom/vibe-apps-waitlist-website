@@ -429,6 +429,12 @@ export function HeroPromptToAppV7() {
                   original 320px at lg+ where it lives in the left
                   half of the 2-column card. */}
               <div className="w-full max-w-[420px] md:max-w-[520px] lg:max-w-[320px]">
+                {/* Header above the composer — names the surface so
+                    the prompt box doesn't sit alone with no framing. */}
+                <div className="mb-3 text-[12px] font-medium text-black/65 lg:mb-2.5">
+                  Build an app
+                </div>
+
                 <div className="rounded-xl border border-black/[0.08] bg-black/[0.02] px-3 py-2.5">
                   {/* min-h reserves space for the longest wrapped
                       prompt (2 lines at this font/width across all
@@ -445,13 +451,8 @@ export function HeroPromptToAppV7() {
                     )}
                   </div>
                   <div className="mt-2 flex items-center justify-end">
-                    {/* Press animation runs at SEND: smooth sin-pulse
-                        scale dip + a brighter white surface + soft
-                        white ring pulse. No brand-green flash — that
-                        read as a distracting blink. The transition
-                        line eases bg/color across state changes so
-                        typing → ready → press → ready is continuous
-                        instead of stepped. */}
+                    {/* Disabled → active transition only at TYPE_END.
+                        bg + color ease over 220ms when ready flips. */}
                     <span
                       style={{
                         transition:
@@ -466,8 +467,39 @@ export function HeroPromptToAppV7() {
                     >
                       <ArrowIcon className="h-3 w-3" />
                     </span>
-
                   </div>
+                </div>
+
+                {/* Suggestion chips — one per cycling app. The chip for
+                    the app currently being demoed in the cycle is
+                    highlighted (border + bg lift) so the row feels
+                    connected to whatever the prompt is typing right
+                    now, instead of a static decoration. */}
+                <div className="mt-3 flex flex-wrap items-center justify-start gap-2">
+                  {APPS.map((a, i) => {
+                    const isCurrent = i === cycleIndex;
+                    return (
+                      <span
+                        key={a.id}
+                        style={{
+                          transition:
+                            "background-color 220ms ease, border-color 220ms ease, color 220ms ease",
+                        }}
+                        className={[
+                          "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] leading-none",
+                          isCurrent
+                            ? "border-black/[0.18] bg-black/[0.05] text-black/85"
+                            : "border-black/[0.08] bg-transparent text-black/55",
+                        ].join(" ")}
+                      >
+                        <MaskIcon
+                          src={a.iconSrc}
+                          className="h-3 w-3 shrink-0"
+                        />
+                        {a.label}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             </div>

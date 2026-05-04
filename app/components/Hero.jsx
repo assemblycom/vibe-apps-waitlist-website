@@ -105,12 +105,24 @@ export function Hero({
         <div className="bg-[var(--color-bg)] pb-10 pt-12 md:pb-12 md:pt-14">
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
+              // v7 uses the brand body font (PP Mori) at sentence case
+              // to feel softer and pair with the light-mode card above.
+              // Other versions keep the original mono + uppercase eyebrow
+              // treatment that's been the brand cue for the dark hero.
               <p
-                className="mb-4 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
-                style={{
-                  fontFamily:
-                    '"ABC Diatype Mono", ui-monospace, monospace',
-                }}
+                className={
+                  version === "v7"
+                    ? "mb-5 text-center text-[13px] text-white/60"
+                    : "mb-4 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
+                }
+                style={
+                  version === "v7"
+                    ? undefined
+                    : {
+                        fontFamily:
+                          '"ABC Diatype Mono", ui-monospace, monospace',
+                      }
+                }
               >
                 {alphaLabel}
               </p>
