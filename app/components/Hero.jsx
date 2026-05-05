@@ -63,21 +63,21 @@ export function Hero({
               className="absolute inset-x-0 top-0 bottom-0"
               style={{
                 background:
-                  "radial-gradient(80% 65% at 50% 60%, rgba(110,150,255,0.5) 0%, rgba(110,150,255,0.18) 35%, rgba(110,150,255,0) 70%)",
+                  "radial-gradient(80% 65% at 50% 75%, rgba(110,150,255,0.32) 0%, rgba(110,150,255,0.12) 35%, rgba(110,150,255,0) 70%)",
               }}
             />
             <div
               className="absolute inset-x-0 top-0 bottom-0"
               style={{
                 background:
-                  "radial-gradient(55% 45% at 30% 65%, rgba(150,180,255,0.32) 0%, rgba(150,180,255,0) 65%)",
+                  "radial-gradient(55% 45% at 30% 80%, rgba(150,180,255,0.20) 0%, rgba(150,180,255,0) 65%)",
               }}
             />
             <div
               className="absolute inset-x-0 top-0 bottom-0"
               style={{
                 background:
-                  "radial-gradient(50% 40% at 75% 65%, rgba(180,150,255,0.22) 0%, rgba(180,150,255,0) 65%)",
+                  "radial-gradient(50% 40% at 75% 80%, rgba(180,150,255,0.14) 0%, rgba(180,150,255,0) 65%)",
               }}
             />
           </div>
