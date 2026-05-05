@@ -45,7 +45,44 @@ export function Hero({
   };
 
   return (
-    <>
+    <div className={version === "v8" ? "relative" : "contents"}>
+      {version === "v8" && (
+        <>
+          {/* v8 ambient scene — bloom layers span the entire hero
+              area (section + logo band) so the gradient flows behind
+              the logos with no hard transition. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          >
+            {/* Bloom rises from the bottom of the scene — wide, soft,
+                centered horizontally, fading upward to dark.
+                Inspired by the MagUSD hero: a luminous floor of
+                blue/indigo light. */}
+            <div
+              className="absolute inset-x-0 top-0 bottom-0"
+              style={{
+                background:
+                  "radial-gradient(80% 65% at 50% 60%, rgba(110,150,255,0.5) 0%, rgba(110,150,255,0.18) 35%, rgba(110,150,255,0) 70%)",
+              }}
+            />
+            <div
+              className="absolute inset-x-0 top-0 bottom-0"
+              style={{
+                background:
+                  "radial-gradient(55% 45% at 30% 65%, rgba(150,180,255,0.32) 0%, rgba(150,180,255,0) 65%)",
+              }}
+            />
+            <div
+              className="absolute inset-x-0 top-0 bottom-0"
+              style={{
+                background:
+                  "radial-gradient(50% 40% at 75% 65%, rgba(180,150,255,0.22) 0%, rgba(180,150,255,0) 65%)",
+              }}
+            />
+          </div>
+        </>
+      )}
       {/* Section height:
           - mobile: content-driven (auto)
           - lg+ v7: content-driven so the whole hero card is visible
@@ -57,7 +94,7 @@ export function Hero({
             hidden, unchanged. */}
       <section
         className={`relative flex flex-col ${
-          version === "v7"
+          version === "v7" || version === "v8"
             ? ""
             : "overflow-hidden lg:h-[min(100vh,1080px)]"
         }`}
@@ -109,6 +146,7 @@ export function Hero({
           )}
         </div>
 
+
         {/* v7 only, lg+ only: sticky logo band that stays pinned to
             the viewport bottom while the user scrolls within the
             (taller) hero section. The hero card mounts above this
@@ -146,9 +184,9 @@ export function Hero({
           version. */}
       {alphaLogos && alphaLogos.length > 0 && (
         <div
-          className={`bg-[var(--color-bg)] pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v7" ? "lg:hidden" : ""
-          }`}
+          className={`relative pb-10 pt-12 md:pb-12 md:pt-14 ${
+            version === "v8" ? "" : "bg-[var(--color-bg)]"
+          } ${version === "v7" ? "lg:hidden" : ""}`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
@@ -166,7 +204,7 @@ export function Hero({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

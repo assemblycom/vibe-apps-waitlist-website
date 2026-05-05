@@ -157,8 +157,8 @@ function typed(text, t) {
 function TimeTrackerView() {
   return (
     <div className="flex h-full min-w-0 flex-col gap-2.5 p-4">
-      <div className="flex items-center gap-3 rounded border border-black/[0.08] bg-black/[0.03] px-3 py-2.5">
-        <span className="whitespace-nowrap font-mono text-[16px] leading-none tracking-tight text-black/85">
+      <div className="flex items-center gap-3 rounded border border-white/10 bg-white/[0.04] px-3 py-2.5">
+        <span className="whitespace-nowrap font-mono text-[16px] leading-none tracking-tight text-white/90">
           02:34:18
         </span>
       </div>
@@ -168,16 +168,16 @@ function TimeTrackerView() {
       ].map((row, i) => (
         <div
           key={i}
-          className="flex min-w-0 items-center gap-2 rounded border border-black/[0.06] bg-black/[0.02] px-3 py-2"
+          className="flex min-w-0 items-center gap-2 rounded border border-white/[0.06] bg-white/[0.03] px-3 py-2"
         >
-          <span className="shrink-0 text-[10.5px] font-medium text-black/80">
+          <span className="shrink-0 text-[10.5px] font-medium text-white/85">
             {row.client}
           </span>
-          <span className="shrink-0 text-[10.5px] text-black/45">·</span>
-          <span className="min-w-0 flex-1 truncate text-[10.5px] text-black/65">
+          <span className="shrink-0 text-[10.5px] text-white/40">·</span>
+          <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/70">
             {row.task}
           </span>
-          <span className="shrink-0 whitespace-nowrap font-mono text-[10px] leading-none text-black/80">
+          <span className="shrink-0 whitespace-nowrap font-mono text-[10px] leading-none text-white/85">
             {row.time}
           </span>
         </div>
@@ -196,13 +196,13 @@ function HelpdeskView() {
       ].map((row, i) => (
         <div
           key={i}
-          className="flex min-w-0 items-center gap-2 rounded border border-black/[0.06] bg-black/[0.02] px-3 py-2"
+          className="flex min-w-0 items-center gap-2 rounded border border-white/[0.06] bg-white/[0.03] px-3 py-2"
         >
-          <span className="shrink-0 text-[10.5px] font-medium text-black/80">
+          <span className="shrink-0 text-[10.5px] font-medium text-white/85">
             {row.client}
           </span>
-          <span className="shrink-0 text-[10.5px] text-black/45">·</span>
-          <span className="min-w-0 flex-1 truncate text-[10.5px] text-black/65">
+          <span className="shrink-0 text-[10.5px] text-white/40">·</span>
+          <span className="min-w-0 flex-1 truncate text-[10.5px] text-white/70">
             {row.subject}
           </span>
         </div>
@@ -228,16 +228,16 @@ function CommunityView() {
       ].map((p, i) => (
         <div
           key={i}
-          className="flex min-w-0 gap-2.5 rounded border border-black/[0.06] bg-black/[0.02] px-3 py-2"
+          className="flex min-w-0 gap-2.5 rounded border border-white/[0.06] bg-white/[0.03] px-3 py-2"
         >
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black/[0.08] text-[9.5px] font-medium tracking-tight text-black/85">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[9.5px] font-medium tracking-tight text-white/85">
             {p.initials}
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="text-[10.5px] font-medium text-black/80">
+            <span className="text-[10.5px] font-medium text-white/85">
               {p.name}
             </span>
-            <span className="truncate text-[10.5px] leading-[1.35] text-black/65">
+            <span className="truncate text-[10.5px] leading-[1.35] text-white/70">
               {p.body}
             </span>
           </div>
@@ -261,10 +261,10 @@ function SidebarRow({ iconSrc, iconClass, label, active, muted }) {
       className={[
         "flex items-center gap-2 rounded px-2 py-1.5 text-[11px] leading-none transition-colors duration-300",
         active
-          ? "bg-black/[0.05] text-[#0A0A0A]"
+          ? "bg-white/[0.08] text-white"
           : muted
-          ? "text-black/55"
-          : "text-black/75",
+          ? "text-white/55"
+          : "text-white/75",
       ].join(" ")}
     >
       <MaskIcon
@@ -295,6 +295,15 @@ export function HeroPromptToAppV8() {
   const ready = cycleT >= TYPE_END;
   const sent = cycleT >= SEND;
 
+  // Shimmer sweep across the main pane right after the prompt sends —
+  // a brief diagonal highlight that signals "the app just appeared".
+  const SHIMMER_DURATION = 900;
+  const shimmerT = cycleT - SEND;
+  const shimmerActive = shimmerT >= 0 && shimmerT < SHIMMER_DURATION;
+  const shimmerProgress = shimmerActive ? shimmerT / SHIMMER_DURATION : 0;
+  // Sweep from -120% to 220% across the pane.
+  const shimmerX = -120 + shimmerProgress * 340;
+
   // The right side shows the *current* app once SEND has fired; until
   // then it shows the previous cycle's app (so the right side always
   // shows a real, finished portal — never a blank/loading state).
@@ -305,81 +314,89 @@ export function HeroPromptToAppV8() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none mx-auto flex w-full max-w-[1100px] flex-col items-stretch gap-4 lg:flex-row lg:items-center lg:gap-8"
+      className="pointer-events-none relative mx-auto w-full max-w-[1180px] px-2 pt-10 pb-32 md:px-4 md:pt-14 md:pb-44 lg:px-6 lg:pt-2 lg:pb-24"
     >
-      {/* ── Composer (left) ────────────────────────────────────── */}
-      <div className="w-full max-w-[420px] self-center rounded-2xl border border-black/[0.08] bg-white px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.45)] lg:w-[360px] lg:shrink-0">
-        <div className="mb-2.5 text-[12px] font-medium text-black/55">
-          Describe your app
-        </div>
-        <div className="min-h-[56px] text-[14px] leading-[1.5] text-black/85 lg:min-h-[72px]">
-          {promptText || (
-            <span className="text-black/30">
-              Build a time tracker for my team…
-            </span>
-          )}
-          {showCursor && (
-            <span className="ml-[1px] inline-block h-[14px] w-[1px] -translate-y-[1px] animate-pulse bg-black/85 align-middle" />
-          )}
-        </div>
-        <div className="mt-3 flex items-center justify-end">
-          <span
-            style={{
-              transition:
-                "background-color 220ms ease, color 220ms ease",
-            }}
-            className={[
-              "flex h-7 w-7 items-center justify-center rounded-full",
-              ready
-                ? "bg-[#101010] text-white"
-                : "bg-black/[0.08] text-black/35",
-            ].join(" ")}
-          >
-            <ArrowIcon className="h-3.5 w-3.5" />
-          </span>
-        </div>
-      </div>
+      {/* Bloom for v8 lives at the parent level (Hero.jsx) so the
+          gradient extends across the section AND the logo band
+          beneath it — flows behind the logos with no hard line. */}
 
-      {/* ── Flow arrow (between, lg+ only) ──────────────────────── */}
-      <div className="hidden shrink-0 items-center justify-center lg:flex">
-        <span
-          className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 text-white/45"
+<div className="relative flex w-full flex-col items-stretch gap-6 lg:block lg:gap-0">
+      {/* ── Composer (left) — overlapping the portal's left edge.
+          On mobile it stacks above the portal; at lg+ it floats
+          absolutely to overlap the portal canvas like a focal
+          overlay card on a wide deck. ──────────────────────────── */}
+      <div
+        className="relative w-full max-w-[420px] self-center lg:absolute lg:bottom-[50%] lg:left-0 lg:top-auto lg:z-10 lg:w-[330px] lg:max-w-none lg:translate-y-0"
+      >
+        <div
+          className="rounded-[20px] border px-5 py-4"
           style={{
-            transition: "color 300ms ease, border-color 300ms ease",
-            ...(sent
-              ? { color: "rgba(255,255,255,0.85)", borderColor: "rgba(255,255,255,0.25)" }
-              : null),
+            background: "rgba(48,48,48,0.7)",
+            borderColor: "rgba(255,255,255,0.12)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            boxShadow: "0 4px 16px -10px rgba(0,0,0,0.2), 0 30px 60px -20px rgba(0,0,0,0.5)",
           }}
         >
-          <ArrowIcon className="h-3 w-3" />
-        </span>
+          <div className="mb-2.5 text-[12px] font-medium text-white/55">
+            Describe your app
+          </div>
+          <div className="min-h-[40px] text-[14px] leading-[1.45] text-white/90">
+            {promptText || (
+              <span className="text-white/35">
+                Build a time tracker for my team…
+              </span>
+            )}
+            {showCursor && (
+              <span className="ml-[1px] inline-block h-[14px] w-[1px] -translate-y-[1px] animate-pulse bg-white/90 align-middle" />
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* ── Portal preview (right) ──────────────────────────────── */}
-      <div className="w-full max-w-[640px] self-center overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)] lg:flex-1">
+      {/* ── Portal preview — wide canvas that anchors the scene ─── */}
+      <div
+        className="relative w-full max-w-[640px] self-center lg:ml-auto lg:w-[78%] lg:max-w-none"
+      >
+        {/* Soft glow halo behind the portal so it lifts off the
+            scene the same way the composer does — keeps both layers
+            visually connected through the same atmospheric language. */}
+        <div
+          className="pointer-events-none absolute -inset-10 -z-10 rounded-[40px]"
+          style={{
+            background:
+              "radial-gradient(60% 60% at 50% 45%, rgba(140,170,255,0.18) 0%, rgba(140,170,255,0) 70%)",
+            filter: "blur(20px)",
+          }}
+        />
+      <div
+        className="overflow-hidden rounded-[20px] border"
+        style={{
+          background: "rgba(48,48,48,0.7)",
+          borderColor: "rgba(255,255,255,0.12)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          boxShadow:
+            "0 4px 16px -10px rgba(0,0,0,0.2), 0 40px 80px -25px rgba(0,0,0,0.6)",
+        }}
+      >
         {/* Browser chrome */}
-        <div className="flex h-8 shrink-0 items-center gap-3 border-b border-black/[0.06] bg-black/[0.02] px-3">
+        <div className="flex h-8 shrink-0 items-center gap-3 border-b border-white/10 bg-white/[0.03] px-3">
           <div className="flex shrink-0 items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-black/[0.12]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
           </div>
-          <div className="mx-auto flex h-5 max-w-[320px] flex-1 items-center justify-center rounded border border-black/[0.06] bg-white px-2.5 text-[11px] leading-none text-black/65">
-            <span className="truncate">
-              brandmages.assembly.com/{activeApp.slug}
-            </span>
-          </div>
-          <div className="w-[42px] shrink-0" />
         </div>
 
         {/* Sidebar + main */}
-        <div className="grid h-[280px] grid-cols-[140px_1fr] gap-0 lg:h-[320px]">
-          <div className="flex h-full min-w-0 flex-col border-r border-black/[0.05] p-2.5">
+        <div className="grid h-[320px] grid-cols-[140px_1fr] gap-0 lg:h-[560px]">
+          <div className="flex h-full min-w-0 flex-col border-r border-white/[0.06] p-2.5">
             <div className="mb-3 flex items-center gap-2 px-2 py-1.5">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-black/[0.08] text-black/85">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-white/[0.08] text-white/85">
                 <BrandMagesMark className="h-3.5 w-3.5" />
               </span>
-              <span className="truncate text-[12px] font-medium text-black/90">
+              <span className="truncate text-[12px] font-medium text-white/90">
                 BrandMages
               </span>
             </div>
@@ -394,17 +411,29 @@ export function HeroPromptToAppV8() {
                   muted
                 />
               ))}
-              <SidebarRow
-                key={activeApp.id}
-                iconSrc={activeApp.iconSrc}
-                iconClass={activeApp.iconClass}
-                label={activeApp.label}
-                active
-              />
+              <div className="relative overflow-hidden rounded">
+                <SidebarRow
+                  key={activeApp.id}
+                  iconSrc={activeApp.iconSrc}
+                  iconClass={activeApp.iconClass}
+                  label={activeApp.label}
+                  active
+                />
+                {shimmerActive && (
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background: `linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.10) 50%, transparent 65%)`,
+                      transform: `translateX(${shimmerX}%)`,
+                      mixBlendMode: "screen",
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="relative h-full min-w-0">
+          <div className="relative h-full min-w-0 overflow-hidden">
             {APPS.map((a) => (
               <div
                 key={a.id}
@@ -414,8 +443,20 @@ export function HeroPromptToAppV8() {
                 {VIEWS[a.id]}
               </div>
             ))}
+            {shimmerActive && (
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background: `linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.08) 50%, transparent 65%)`,
+                  transform: `translateX(${shimmerX}%)`,
+                  mixBlendMode: "screen",
+                }}
+              />
+            )}
           </div>
         </div>
+      </div>
+      </div>
       </div>
     </div>
   );
