@@ -309,7 +309,7 @@ export function HeroPromptToAppV8() {
     >
       {/* ── Composer (left) ────────────────────────────────────── */}
       <div className="w-full max-w-[420px] self-center rounded-2xl border border-black/[0.08] bg-white px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.45)] lg:w-[360px] lg:shrink-0">
-        <div className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.08em] text-black/45">
+        <div className="mb-2.5 text-[12px] font-medium text-black/55">
           Describe your app
         </div>
         <div className="min-h-[56px] text-[14px] leading-[1.5] text-black/85 lg:min-h-[72px]">
