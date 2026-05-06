@@ -10,9 +10,10 @@ import { HeroPromptToAppV4 } from "./HeroPromptToAppV4";
 import { HeroPromptToAppV5 } from "./HeroPromptToAppV5";
 import { HeroPromptToAppV7 } from "./HeroPromptToAppV7";
 import { HeroPromptToAppV8 } from "./HeroPromptToAppV8";
+import { HeroPromptToAppV9 } from "./HeroPromptToAppV9";
 import { LogoStrip } from "./LogoStrip";
 
-const VERSIONS = ["v1", "v2", "v3", "v4", "v5", "v7", "v8"];
+const VERSIONS = ["v1", "v2", "v3", "v4", "v5", "v7", "v8", "v9"];
 const isVersion = (v) => VERSIONS.includes(v);
 
 const STORAGE_KEY = "hero-version";
@@ -34,6 +35,25 @@ export function Hero({
     if (isVersion(initial)) setVersion(initial);
   }, []);
 
+  // ZoomHero scales the hero card down with `origin-top`, exposing
+  // ~10% of off-white BACKDROP at the bottom as the user scrolls.
+  // For v9 the hero itself is already a light chapter, so that
+  // off-white strip should also count as light for the nav — without
+  // it, the nav flips to dark theme over a clearly light surface.
+  // Tag the ZoomHero outer (BACKDROP) wrapper accordingly.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const inner = document.querySelector(".origin-top");
+    const outer = inner?.parentElement;
+    if (!outer) return;
+    if (version === "v9") {
+      outer.setAttribute("data-nav-theme", "light");
+    } else {
+      outer.removeAttribute("data-nav-theme");
+    }
+    return () => outer.removeAttribute("data-nav-theme");
+  }, [version]);
+
   const choose = (v) => {
     setVersion(v);
     try {
@@ -45,45 +65,21 @@ export function Hero({
   };
 
   return (
-    <div className={version === "v8" ? "relative" : "contents"}>
-      {version === "v8" && (
-        <>
-          {/* v8 ambient scene — bloom layers span the entire hero
-              area (section + logo band) so the gradient flows behind
-              the logos with no hard transition. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-          >
-            {/* Bloom rises from the bottom of the scene — wide, soft,
-                centered horizontally, fading upward to dark.
-                Inspired by the MagUSD hero: a luminous floor of
-                blue/indigo light. */}
-            <div
-              className="absolute inset-x-0 top-0 bottom-0"
-              style={{
-                background:
-                  "radial-gradient(80% 65% at 50% 75%, rgba(110,150,255,0.32) 0%, rgba(110,150,255,0.12) 35%, rgba(110,150,255,0) 70%)",
-              }}
-            />
-            <div
-              className="absolute inset-x-0 top-0 bottom-0"
-              style={{
-                background:
-                  "radial-gradient(55% 45% at 30% 80%, rgba(150,180,255,0.20) 0%, rgba(150,180,255,0) 65%)",
-              }}
-            />
-            <div
-              className="absolute inset-x-0 top-0 bottom-0"
-              style={{
-                background:
-                  "radial-gradient(50% 40% at 75% 80%, rgba(180,150,255,0.14) 0%, rgba(180,150,255,0) 65%)",
-              }}
-            />
-          </div>
-        </>
+    <div
+      className={version === "v8" || version === "v9" ? "relative" : "contents"}
+      {...(version === "v9" ? { "data-nav-theme": "light" } : {})}
+    >
+      {version === "v9" && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background:
+              "linear-gradient(180deg, #ffffff 0%, #f4f5fa 10%, rgb(170,180,215) 28%, rgb(195,215,180) 48%, rgb(217,237,146) 70%)",
+          }}
+        />
       )}
-      {/* Section height:
+{/* Section height:
           - mobile: content-driven (auto)
           - lg+ v7: content-driven so the whole hero card is visible
             without clipping. The page scrolls a little to reach the
@@ -94,7 +90,7 @@ export function Hero({
             hidden, unchanged. */}
       <section
         className={`relative flex flex-col ${
-          version === "v7" || version === "v8"
+          version === "v7" || version === "v8" || version === "v9"
             ? ""
             : "overflow-hidden lg:h-[min(100vh,1080px)]"
         }`}
@@ -111,13 +107,17 @@ export function Hero({
         />
 
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 text-center md:pt-36 lg:pt-40">
-          <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
+          <h1 className={`mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em] ${
+            version === "v9" ? "text-[#101010]" : "text-white"
+          }`}>
             {heading}
           </h1>
-          <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
+          <p className={`mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] [text-wrap:pretty] ${
+            version === "v9" ? "text-[#101010]/65" : "text-white/55"
+          }`}>
             {subheading}
           </p>
-          <EmailCTA />
+          <EmailCTA theme={version === "v9" ? "light" : "dark"} />
         </div>
 
         {/* Visual wrapper. Hard bottom edge — no gradient bleed mask
@@ -141,6 +141,8 @@ export function Hero({
             <HeroPromptToAppV7 />
           ) : version === "v8" ? (
             <HeroPromptToAppV8 />
+          ) : version === "v9" ? (
+            <HeroPromptToAppV9 />
           ) : (
             <HeroPromptToApp />
           )}
@@ -161,7 +163,9 @@ export function Hero({
             <div className="mx-auto w-full max-w-[620px] px-6">
               {alphaLabel && (
                 <p
-                  className="mb-4 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
+                  className={`mb-4 text-center text-[10px] uppercase tracking-[0.18em] ${
+                  version === "v9" ? "text-[#101010]/55" : "text-white/45"
+                }`}
                   style={{
                     fontFamily:
                       '"ABC Diatype Mono", ui-monospace, monospace',
@@ -185,13 +189,15 @@ export function Hero({
       {alphaLogos && alphaLogos.length > 0 && (
         <div
           className={`relative pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v8" ? "" : "bg-[var(--color-bg)]"
+            version === "v8" || version === "v9" ? "" : "bg-[var(--color-bg)]"
           } ${version === "v7" ? "lg:hidden" : ""}`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
               <p
-                className="mb-4 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
+                className={`mb-4 text-center text-[10px] uppercase tracking-[0.18em] ${
+                  version === "v9" ? "text-[#101010]/55" : "text-white/45"
+                }`}
                 style={{
                   fontFamily:
                     '"ABC Diatype Mono", ui-monospace, monospace',
@@ -200,7 +206,7 @@ export function Hero({
                 {alphaLabel}
               </p>
             )}
-            <LogoStrip logos={alphaLogos} variant="dark" />
+            <LogoStrip logos={alphaLogos} variant={version === "v9" ? "light-bare" : "dark"} />
           </div>
         </div>
       )}

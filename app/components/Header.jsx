@@ -124,6 +124,14 @@ export function Header() {
     const FADE_PX = 60;
     const NAV_BOTTOM_PX = 56;
     const computeChapterTint = () => {
+      // Re-query each frame: the page may hydrate a section with
+      // `data-nav-theme="light"` AFTER the Header mounts (e.g. the
+      // Hero version state flips to v9 from a URL param). A one-shot
+      // query on mount would miss that and leave the logo white on a
+      // light background.
+      lightSections = Array.from(
+        document.querySelectorAll('[data-nav-theme="light"]'),
+      );
       if (lightSections.length === 0) return 0;
       let max = 0;
       for (const s of lightSections) {
@@ -204,9 +212,22 @@ export function Header() {
     apply();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
+
+    // Watch for `data-nav-theme` attribute changes anywhere in the
+    // tree — the Hero hydrates its theme attribute AFTER mount when
+    // the version comes from a URL param, so a one-shot query on
+    // mount would miss it.
+    const observer = new MutationObserver(onScroll);
+    observer.observe(document.body, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-nav-theme"],
+    });
+
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
+      observer.disconnect();
       if (raf != null) cancelAnimationFrame(raf);
     };
   }, []);

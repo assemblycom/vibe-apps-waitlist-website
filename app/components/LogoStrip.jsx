@@ -70,26 +70,31 @@ function LogoMarquee({ logos, variant, ariaLabel }) {
 // reads as logos settling rather than parading by.)
 export function LogoStrip({ label, logos = [], variant = "light" }) {
   const dark = variant === "dark";
+  // `light-bare` — same layout as `dark` (no surrounding section /
+  // bg / radius) but with dark text. Used over the v9 green gradient
+  // where the page bg already provides the surface and a wrapping
+  // off-white card would read as a separate floating chip.
+  const lightBare = variant === "light-bare";
 
-  if (dark) {
+  if (dark || lightBare) {
+    const itemVariant = lightBare ? "light" : "dark";
+    const labelClass = lightBare
+      ? "text-[#1A1A1A]/45"
+      : "text-white/40";
     return (
       <>
         {label && (
-          <p className="mono mb-6 text-center text-[11px] uppercase tracking-[0.08em] text-white/40 md:mb-8">
+          <p className={`mono mb-6 text-center text-[11px] uppercase tracking-[0.08em] ${labelClass} md:mb-8`}>
             {label}
           </p>
         )}
-        {/* Centered wrap. Each logo fades + slides up via Reveal with
-            a 70ms stagger, so the row "stacks" left-to-right as the
-            user scrolls into it. On narrow screens the row wraps to
-            multiple lines naturally. */}
         <div
           className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 md:gap-x-12"
           aria-label="Alpha users"
         >
           {logos.map((logo, i) => (
             <Reveal key={logo.name} delay={i * 70}>
-              <LogoItem name={logo.name} variant={variant} />
+              <LogoItem name={logo.name} variant={itemVariant} />
             </Reveal>
           ))}
         </div>
