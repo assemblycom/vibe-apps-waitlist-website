@@ -18,7 +18,8 @@ import { HOME_CONTENT } from "../content/home";
 // email shape" signal without pulling in a validator library.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export function EmailCTA() {
+export function EmailCTA({ theme = "dark" }) {
+  const light = theme === "light";
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -56,9 +57,12 @@ export function EmailCTA() {
           onSubmit={onSubmit}
           noValidate
           className={[
-            "flex w-full items-center gap-1.5 rounded-full border bg-white/[0.03] p-1.5 pl-4 backdrop-blur-sm transition-colors duration-200",
+            "flex w-full items-center gap-1.5 rounded-full border p-1.5 pl-4 backdrop-blur-sm transition-colors duration-200",
+            light ? "bg-white" : "bg-white/[0.03]",
             error
               ? "border-[#E6836E]/50"
+              : light
+              ? "border-[#101010]/15 focus-within:border-[#101010]/30"
               : "border-white/10 focus-within:border-white/25",
           ].join(" ")}
         >
@@ -80,12 +84,25 @@ export function EmailCTA() {
             aria-label="Email address"
             aria-invalid={error ? "true" : "false"}
             aria-describedby={error ? "email-cta-error" : undefined}
-            className="flex-1 bg-transparent text-[14px] text-white placeholder:text-white/40 outline-none"
+            className={`flex-1 bg-transparent text-[14px] outline-none ${
+              light
+                ? "text-[#101010] placeholder:text-[#101010]/40"
+                : "text-white placeholder:text-white/40"
+            }`}
           />
           <button
             type="submit"
             aria-label="Get early access"
-            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#D9ED92] p-2.5 text-[13px] font-medium text-[#101010] transition-colors duration-200 hover:bg-[#C7DA86] sm:whitespace-nowrap sm:px-4 sm:py-2"
+            className={[
+              "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full p-2.5 text-[13px] font-medium transition-colors duration-200 sm:whitespace-nowrap sm:px-4 sm:py-2",
+              // On v9 the page gradient ends at the same lime tone as
+              // the brand button, so a lime CTA fades into the bg at
+              // the bottom of the hero. Use a dark pill on light theme
+              // so the action stays unmistakable.
+              light
+                ? "bg-[#101010] text-white hover:bg-[#2a2a2a]"
+                : "bg-[#D9ED92] text-[#101010] hover:bg-[#C7DA86]",
+            ].join(" ")}
           >
             <span className="hidden sm:inline">Get early access</span>
             <span aria-hidden="true" className="text-[14px] leading-none">→</span>
