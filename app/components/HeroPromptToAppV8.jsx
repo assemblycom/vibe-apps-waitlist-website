@@ -341,7 +341,7 @@ export function HeroPromptToAppV8() {
           <div className="mb-2.5 text-[12px] font-medium text-white/55">
             Describe your app
           </div>
-          <div className="min-h-[40px] text-[14px] leading-[1.45] text-white/90">
+          <div className="h-[42px] text-[14px] leading-[1.45] text-white/90">
             {promptText || (
               <span className="text-white/35">
                 Build a time tracker for my team…
