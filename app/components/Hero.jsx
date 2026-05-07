@@ -12,9 +12,10 @@ import { HeroPromptToAppV7 } from "./HeroPromptToAppV7";
 import { HeroPromptToAppV8 } from "./HeroPromptToAppV8";
 import { HeroPromptToAppV9 } from "./HeroPromptToAppV9";
 import { HeroPromptToAppV10 } from "./HeroPromptToAppV10";
+import { HeroPromptToAppV11 } from "./HeroPromptToAppV11";
 import { LogoStrip } from "./LogoStrip";
 
-const VERSIONS = ["v1", "v2", "v3", "v4", "v5", "v7", "v8", "v9", "v10"];
+const VERSIONS = ["v1", "v2", "v3", "v4", "v5", "v7", "v8", "v9", "v10", "v11"];
 const isVersion = (v) => VERSIONS.includes(v);
 
 const STORAGE_KEY = "hero-version";
@@ -67,7 +68,7 @@ export function Hero({
 
   return (
     <div
-      className={version === "v8" || (version === "v9" || version === "v10") ? "relative" : "contents"}
+      className={version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v11") ? "relative" : "contents"}
       {...(version === "v9" ? { "data-nav-theme": "light" } : {})}
     >
       {version === "v9" && (
@@ -93,6 +94,16 @@ export function Hero({
           }}
         />
       )}
+      {version === "v11" && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background:
+              "linear-gradient(180deg, #0b0c10 0%, #101218 60%, #14161d 100%)",
+          }}
+        />
+      )}
 {/* Section height:
           - mobile: content-driven (auto)
           - lg+ v7: content-driven so the whole hero card is visible
@@ -104,7 +115,7 @@ export function Hero({
             hidden, unchanged. */}
       <section
         className={`relative flex flex-col ${
-          version === "v7" || version === "v8" || (version === "v9" || version === "v10")
+          version === "v7" || version === "v8" || (version === "v9" || version === "v10" || version === "v11")
             ? ""
             : "overflow-hidden lg:h-[min(100vh,1080px)]"
         }`}
@@ -159,6 +170,8 @@ export function Hero({
             <HeroPromptToAppV9 />
           ) : version === "v10" ? (
             <HeroPromptToAppV10 />
+          ) : version === "v11" ? (
+            <HeroPromptToAppV11 />
           ) : (
             <HeroPromptToApp />
           )}
@@ -205,7 +218,7 @@ export function Hero({
       {alphaLogos && alphaLogos.length > 0 && (
         <div
           className={`relative pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v8" || (version === "v9" || version === "v10") ? "" : "bg-[var(--color-bg)]"
+            version === "v8" || (version === "v9" || version === "v10" || version === "v11") ? "" : "bg-[var(--color-bg)]"
           } ${version === "v7" ? "lg:hidden" : ""}`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">
