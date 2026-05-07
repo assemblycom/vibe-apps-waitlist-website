@@ -11,9 +11,10 @@ import { HeroPromptToAppV5 } from "./HeroPromptToAppV5";
 import { HeroPromptToAppV7 } from "./HeroPromptToAppV7";
 import { HeroPromptToAppV8 } from "./HeroPromptToAppV8";
 import { HeroPromptToAppV9 } from "./HeroPromptToAppV9";
+import { HeroPromptToAppV10 } from "./HeroPromptToAppV10";
 import { LogoStrip } from "./LogoStrip";
 
-const VERSIONS = ["v1", "v2", "v3", "v4", "v5", "v7", "v8", "v9"];
+const VERSIONS = ["v1", "v2", "v3", "v4", "v5", "v7", "v8", "v9", "v10"];
 const isVersion = (v) => VERSIONS.includes(v);
 
 const STORAGE_KEY = "hero-version";
@@ -46,7 +47,7 @@ export function Hero({
     const inner = document.querySelector(".origin-top");
     const outer = inner?.parentElement;
     if (!outer) return;
-    if (version === "v9") {
+    if ((version === "v9" || version === "v10")) {
       outer.setAttribute("data-nav-theme", "light");
     } else {
       outer.removeAttribute("data-nav-theme");
@@ -66,8 +67,8 @@ export function Hero({
 
   return (
     <div
-      className={version === "v8" || version === "v9" ? "relative" : "contents"}
-      {...(version === "v9" ? { "data-nav-theme": "light" } : {})}
+      className={version === "v8" || (version === "v9" || version === "v10") ? "relative" : "contents"}
+      {...((version === "v9" || version === "v10") ? { "data-nav-theme": "light" } : {})}
     >
       {version === "v9" && (
         <div
@@ -76,6 +77,21 @@ export function Hero({
           style={{
             background:
               "linear-gradient(180deg, #ffffff 0%, #f4f5fa 10%, rgb(170,180,215) 28%, rgb(195,215,180) 48%, rgb(217,237,146) 70%)",
+          }}
+        />
+      )}
+      {version === "v10" && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            // v10 uses a softer, calmer gradient than v9 — wider
+            // white runway at the top so the headline + composer have
+            // room to breathe, and the lower band sits at a muted
+            // off-cream rather than the lime accent. The whole hero
+            // reads as one continuous quiet surface.
+            background:
+              "linear-gradient(180deg, #ffffff 0%, #f7f8fb 22%, #ecedf3 55%, #e7e9ee 100%)",
           }}
         />
       )}
@@ -90,7 +106,7 @@ export function Hero({
             hidden, unchanged. */}
       <section
         className={`relative flex flex-col ${
-          version === "v7" || version === "v8" || version === "v9"
+          version === "v7" || version === "v8" || (version === "v9" || version === "v10")
             ? ""
             : "overflow-hidden lg:h-[min(100vh,1080px)]"
         }`}
@@ -108,16 +124,16 @@ export function Hero({
 
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 text-center md:pt-36 lg:pt-40">
           <h1 className={`mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em] ${
-            version === "v9" ? "text-[#101010]" : "text-white"
+            (version === "v9" || version === "v10") ? "text-[#101010]" : "text-white"
           }`}>
             {heading}
           </h1>
           <p className={`mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] [text-wrap:pretty] ${
-            version === "v9" ? "text-[#101010]/65" : "text-white/55"
+            (version === "v9" || version === "v10") ? "text-[#101010]/65" : "text-white/55"
           }`}>
             {subheading}
           </p>
-          <EmailCTA theme={version === "v9" ? "light" : "dark"} />
+          <EmailCTA theme={(version === "v9" || version === "v10") ? "light" : "dark"} />
         </div>
 
         {/* Visual wrapper. Hard bottom edge — no gradient bleed mask
@@ -143,6 +159,8 @@ export function Hero({
             <HeroPromptToAppV8 />
           ) : version === "v9" ? (
             <HeroPromptToAppV9 />
+          ) : version === "v10" ? (
+            <HeroPromptToAppV10 />
           ) : (
             <HeroPromptToApp />
           )}
@@ -164,7 +182,7 @@ export function Hero({
               {alphaLabel && (
                 <p
                   className={`mb-4 text-center text-[10px] uppercase tracking-[0.18em] ${
-                  version === "v9" ? "text-[#101010]/55" : "text-white/45"
+                  (version === "v9" || version === "v10") ? "text-[#101010]/55" : "text-white/45"
                 }`}
                   style={{
                     fontFamily:
@@ -189,14 +207,14 @@ export function Hero({
       {alphaLogos && alphaLogos.length > 0 && (
         <div
           className={`relative pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v8" || version === "v9" ? "" : "bg-[var(--color-bg)]"
+            version === "v8" || (version === "v9" || version === "v10") ? "" : "bg-[var(--color-bg)]"
           } ${version === "v7" ? "lg:hidden" : ""}`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
               <p
                 className={`mb-4 text-center text-[10px] uppercase tracking-[0.18em] ${
-                  version === "v9" ? "text-[#101010]/55" : "text-white/45"
+                  (version === "v9" || version === "v10") ? "text-[#101010]/55" : "text-white/45"
                 }`}
                 style={{
                   fontFamily:
@@ -206,7 +224,7 @@ export function Hero({
                 {alphaLabel}
               </p>
             )}
-            <LogoStrip logos={alphaLogos} variant={version === "v9" ? "light-bare" : "dark"} />
+            <LogoStrip logos={alphaLogos} variant={(version === "v9" || version === "v10") ? "light-bare" : "dark"} />
           </div>
         </div>
       )}
