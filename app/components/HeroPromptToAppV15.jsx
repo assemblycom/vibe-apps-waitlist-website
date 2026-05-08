@@ -448,10 +448,11 @@ export function HeroPromptToAppV15() {
           page background. The stage is a touch deeper than the page
           so the cards feel layered on a lit surface. */}
       <div
-        className="relative w-full overflow-hidden rounded-[24px] p-4 md:p-5 lg:p-6"
+        className="relative w-full overflow-hidden rounded-[24px] p-4 backdrop-blur-xl md:p-5 lg:p-6"
         style={{
-          backgroundColor: "#8B99C8",
-          boxShadow: "0 30px 80px -30px rgba(16,16,16,0.20)",
+          backgroundColor: "rgba(255,255,255,0.25)",
+          boxShadow:
+            "0 1px 0 rgba(255,255,255,0.5) inset, 0 0 0 1px rgba(255,255,255,0.35) inset, 0 30px 80px -30px rgba(16,16,16,0.20)",
         }}
       >
 <div className="relative flex w-full flex-col items-stretch gap-4 lg:flex-row lg:gap-5">

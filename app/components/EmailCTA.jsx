@@ -19,7 +19,8 @@ import { HOME_CONTENT } from "../content/home";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function EmailCTA({ theme = "dark" }) {
-  const light = theme === "light";
+  const light = theme === "light" || theme === "lime";
+  const lime = theme === "lime";
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -57,14 +58,29 @@ export function EmailCTA({ theme = "dark" }) {
           onSubmit={onSubmit}
           noValidate
           className={[
-            "flex w-full items-center gap-1.5 rounded-full border p-1.5 pl-4 backdrop-blur-md transition-colors duration-200",
-            light ? "bg-[#FAFAF6]" : "bg-white/[0.03]",
+            "flex w-full items-center gap-1.5 rounded-full border p-1.5 pl-4 transition-colors duration-200",
+            lime ? "backdrop-blur-xl" : "backdrop-blur-md",
+            lime
+              ? "bg-white/25"
+              : light
+              ? "bg-[#FAFAF6]"
+              : "bg-white/[0.03]",
             error
               ? "border-[#E6836E]/50"
+              : lime
+              ? "border-white/35 focus-within:border-white/60"
               : light
               ? "border-[#101010]/10 focus-within:border-[#101010]/25"
               : "border-white/10 focus-within:border-white/25",
           ].join(" ")}
+          style={
+            lime
+              ? {
+                  boxShadow:
+                    "0 1px 0 rgba(255,255,255,0.5) inset, 0 0 0 1px rgba(255,255,255,0.35) inset",
+                }
+              : undefined
+          }
         >
           <input
             // `data-waitlist-email` is the target the nav CTA scrolls to

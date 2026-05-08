@@ -184,7 +184,7 @@ export function Hero({
           }`}>
             {subheading}
           </p>
-          <EmailCTA theme={version === "v9" || version === "v13" || version === "v15" ? "light" : "dark"} />
+          <EmailCTA theme={version === "v15" ? "lime" : version === "v9" || version === "v13" ? "light" : "dark"} />
         </div>
 
         {/* Visual wrapper. Hard bottom edge — no gradient bleed mask
@@ -243,7 +243,7 @@ export function Hero({
               {alphaLabel && (
                 <p
                   className={`mb-4 text-center text-[10px] uppercase tracking-[0.18em] ${
-                  version === "v9" || version === "v13" || version === "v14" ? "text-[#101010]/55" : "text-white/45"
+                  version === "v9" || version === "v13" || version === "v14" || version === "v15" ? "text-[#101010]/55" : "text-white/45"
                 }`}
                   style={{
                     fontFamily:
@@ -253,7 +253,7 @@ export function Hero({
                   {alphaLabel}
                 </p>
               )}
-              <LogoStrip logos={alphaLogos} variant={version === "v9" || version === "v13" || version === "v14" ? "light-bare" : "dark"} />
+              <LogoStrip logos={alphaLogos} variant={version === "v9" || version === "v13" || version === "v14" || version === "v15" ? "light-bare" : "dark"} />
             </div>
           </div>
         )}
@@ -268,14 +268,14 @@ export function Hero({
       {alphaLogos && alphaLogos.length > 0 && (
         <div
           className={`relative pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13" || version === "v14") ? "" : "bg-[var(--color-bg)]"
+            version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13" || version === "v14" || version === "v15") ? "" : "bg-[var(--color-bg)]"
           } ${version === "v7" ? "lg:hidden" : ""}`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
               <p
                 className={`mb-4 text-center text-[10px] uppercase tracking-[0.18em] ${
-                  version === "v9" || version === "v13" || version === "v14" ? "text-[#101010]/55" : "text-white/45"
+                  version === "v9" || version === "v13" || version === "v14" || version === "v15" ? "text-[#101010]/55" : "text-white/45"
                 }`}
                 style={{
                   fontFamily:
@@ -285,7 +285,7 @@ export function Hero({
                 {alphaLabel}
               </p>
             )}
-            <LogoStrip logos={alphaLogos} variant={version === "v9" || version === "v13" || version === "v14" ? "light-bare" : "dark"} />
+            <LogoStrip logos={alphaLogos} variant={version === "v9" || version === "v13" || version === "v14" || version === "v15" ? "light-bare" : "dark"} />
           </div>
         </div>
       )}
