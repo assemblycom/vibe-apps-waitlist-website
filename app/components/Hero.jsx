@@ -14,9 +14,10 @@ import { HeroPromptToAppV9 } from "./HeroPromptToAppV9";
 import { HeroPromptToAppV10 } from "./HeroPromptToAppV10";
 import { HeroPromptToAppV11 } from "./HeroPromptToAppV11";
 import { HeroPromptToAppV12 } from "./HeroPromptToAppV12";
+import { HeroPromptToAppV13 } from "./HeroPromptToAppV13";
 import { LogoStrip } from "./LogoStrip";
 
-const VERSIONS = ["v7", "v8", "v9", "v10", "v11", "v12"];
+const VERSIONS = ["v7", "v8", "v9", "v10", "v11", "v12", "v13"];
 const isVersion = (v) => VERSIONS.includes(v);
 
 const STORAGE_KEY = "hero-version";
@@ -69,7 +70,7 @@ export function Hero({
 
   return (
     <div
-      className={version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v12") ? "relative" : "contents"}
+      className={version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13") ? "relative" : "contents"}
       {...(version === "v9" ? { "data-nav-theme": "light" } : {})}
     >
       {version === "v9" && (
@@ -109,6 +110,13 @@ export function Hero({
           style={{ background: "#101010" }}
         />
       )}
+      {version === "v13" && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{ background: "#101010" }}
+        />
+      )}
 {/* Section height:
           - mobile: content-driven (auto)
           - lg+ v7: content-driven so the whole hero card is visible
@@ -120,7 +128,7 @@ export function Hero({
             hidden, unchanged. */}
       <section
         className={`relative flex flex-col ${
-          version === "v7" || version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12")
+          version === "v7" || version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13")
             ? ""
             : "overflow-hidden lg:h-[min(100vh,1080px)]"
         }`}
@@ -179,6 +187,8 @@ export function Hero({
             <HeroPromptToAppV11 />
           ) : version === "v12" ? (
             <HeroPromptToAppV12 />
+          ) : version === "v13" ? (
+            <HeroPromptToAppV13 />
           ) : (
             <HeroPromptToApp />
           )}
@@ -225,7 +235,7 @@ export function Hero({
       {alphaLogos && alphaLogos.length > 0 && (
         <div
           className={`relative pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12") ? "" : "bg-[var(--color-bg)]"
+            version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13") ? "" : "bg-[var(--color-bg)]"
           } ${version === "v7" ? "lg:hidden" : ""}`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">
