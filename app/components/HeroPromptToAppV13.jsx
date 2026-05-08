@@ -132,7 +132,7 @@ function HomeView() {
         <div className="text-[13px] text-[#101010]/75">
           Good morning, Ana
         </div>
-        <div className="text-[10px] text-[#101010]/30">
+        <div className="text-[11px] text-[#101010]/30">
           Here&apos;s the latest from BrandMages
         </div>
       </div>
@@ -140,7 +140,7 @@ function HomeView() {
       <div className="h-[70px] w-full rounded-[6px] bg-[#101010]/[0.04] lg:h-[120px]" />
 
       <div className="flex flex-col gap-1.5">
-        <div className="px-1 text-[10px] text-[#101010]/30">
+        <div className="px-1 text-[11px] text-[#101010]/30">
           Latest updates
         </div>
         {updates.map((u, i) => (
@@ -149,14 +149,14 @@ function HomeView() {
             className="flex min-w-0 flex-col gap-0.5 rounded bg-[#101010]/[0.04] px-3 py-2"
           >
             <div className="flex min-w-0 items-center justify-between gap-2">
-              <span className="truncate text-[10px] text-[#101010]/75">
+              <span className="truncate text-[11px] text-[#101010]/75">
                 {u.title}
               </span>
               <span className="shrink-0 text-[9px] text-[#101010]/30">
                 {u.time}
               </span>
             </div>
-            <span className="line-clamp-2 text-[10px] leading-[1.4] text-[#101010]/55">
+            <span className="line-clamp-2 text-[11px] leading-[1.4] text-[#101010]/55">
               {u.body}
             </span>
           </div>
@@ -181,7 +181,7 @@ function TimeTrackerView() {
           <span className="text-[9px] text-[#101010]/30">
             Currently tracking
           </span>
-          <span className="truncate text-[11px] text-[#101010]/75">
+          <span className="truncate text-[12px] text-[#101010]/75">
             Acme · Brand sprint kickoff
           </span>
         </div>
@@ -191,7 +191,7 @@ function TimeTrackerView() {
       </div>
 
       <div className="px-1 pt-1">
-        <span className="text-[10px] text-[#101010]/30">Today</span>
+        <span className="text-[11px] text-[#101010]/30">Today</span>
       </div>
 
       {entries.map((row, i) => (
@@ -202,13 +202,13 @@ function TimeTrackerView() {
           <span className="flex h-5 w-5 items-center justify-center rounded bg-[#101010]/[0.08] text-[9px] font-medium leading-none text-[#101010]/75">
             {row.client.slice(0, 2).toUpperCase()}
           </span>
-          <span className="truncate text-[10px] text-[#101010]/75">
+          <span className="truncate text-[11px] text-[#101010]/75">
             {row.client}
           </span>
-          <span className="min-w-0 truncate text-[10px] text-[#101010]/55">
+          <span className="min-w-0 truncate text-[11px] text-[#101010]/55">
             {row.task}
           </span>
-          <span className="whitespace-nowrap text-[10px] leading-none text-[#101010]/55">
+          <span className="whitespace-nowrap text-[11px] leading-none text-[#101010]/55">
             {row.time}
           </span>
         </div>
@@ -233,8 +233,8 @@ function HelpdeskView() {
   return (
     <div className="flex h-full min-w-0 flex-col gap-2 p-4">
       <div className="flex items-center justify-between px-1">
-        <span className="text-[10px] text-[#101010]/30">Inbox</span>
-        <span className="text-[10px] text-[#101010]/30">5 open</span>
+        <span className="text-[11px] text-[#101010]/30">Inbox</span>
+        <span className="text-[11px] text-[#101010]/30">5 open</span>
       </div>
       {tickets.map((row, i) => (
         <div
@@ -244,10 +244,10 @@ function HelpdeskView() {
           <span className="flex h-5 w-5 items-center justify-center rounded bg-[#101010]/[0.08] text-[9px] font-medium leading-none text-[#101010]/75">
             {row.client.slice(0, 2).toUpperCase()}
           </span>
-          <span className="truncate text-[10px] text-[#101010]/75">
+          <span className="truncate text-[11px] text-[#101010]/75">
             {row.client}
           </span>
-          <span className="min-w-0 truncate text-[10px] text-[#101010]/55">
+          <span className="min-w-0 truncate text-[11px] text-[#101010]/55">
             {row.subject}
           </span>
           <span
@@ -295,21 +295,21 @@ function CommunityView() {
   return (
     <div className="flex h-full min-w-0 flex-col gap-2 p-4">
       <div className="flex items-center justify-between px-1">
-        <span className="text-[10px] text-[#101010]/30">Recent posts</span>
-        <span className="text-[10px] text-[#101010]/30">All channels</span>
+        <span className="text-[11px] text-[#101010]/30">Recent posts</span>
+        <span className="text-[11px] text-[#101010]/30">All channels</span>
       </div>
       {posts.map((p, i) => (
         <div key={i} className={`${CARD} flex min-w-0 gap-2.5 px-3 py-2.5`}>
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#101010]/[0.08] text-[10px] font-medium leading-none text-[#101010]/75">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#101010]/[0.08] text-[11px] font-medium leading-none text-[#101010]/75">
             {p.initials}
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <div className="flex min-w-0 items-center gap-1.5">
-              <span className="shrink-0 text-[10px] text-[#101010]/75">
+              <span className="shrink-0 text-[11px] text-[#101010]/75">
                 {p.name}
               </span>
             </div>
-            <span className="line-clamp-2 text-[10px] leading-[1.4] text-[#101010]/55">
+            <span className="line-clamp-2 text-[11px] leading-[1.4] text-[#101010]/55">
               {p.body}
             </span>
             <div className="mt-0.5 flex items-center gap-3 text-[9px] text-[#101010]/30">
@@ -358,7 +358,7 @@ function SidebarRow({ iconSrc, iconClass, label, active, muted, style }) {
   return (
     <div
       className={[
-        "flex items-center gap-2 rounded px-2 py-1.5 text-[11px] leading-none transition-colors duration-300",
+        "flex items-center gap-2 rounded px-2 py-1.5 text-[12px] leading-none transition-colors duration-300",
         active
           ? "bg-[#101010]/[0.08] text-[#101010]/75"
           : muted
@@ -473,7 +473,7 @@ export function HeroPromptToAppV13() {
             }}
           >
             <div className="px-5 pt-4 pb-4">
-              <div className="relative mb-2 text-[11px] text-[#101010]/30">Describe your app</div>
+              <div className="relative mb-2 text-[12px] text-[#101010]/30">Describe your app</div>
               <div className="min-h-[44px] text-[15px] leading-[1.45] text-[#101010]">
                 {thinking ? (
                   <span className="text-[#101010]/45">
@@ -507,7 +507,7 @@ export function HeroPromptToAppV13() {
                     type="button"
                     onClick={() => setManualIndex(i)}
                     className={[
-                      "flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-[10px] leading-none transition-colors duration-200",
+                      "flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-[11px] leading-none transition-colors duration-200",
                       isSelected
                         ? "bg-[#101010]/[0.08] text-[#101010]/75"
                         : "text-[#101010]/45 hover:bg-[#101010]/[0.04] hover:text-[#101010]/75",
