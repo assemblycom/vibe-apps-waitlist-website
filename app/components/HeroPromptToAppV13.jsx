@@ -450,26 +450,14 @@ export function HeroPromptToAppV13() {
       <div
         className="relative w-full overflow-hidden rounded-[24px] p-4 md:p-5 lg:p-6"
         style={{
-          backgroundColor: "#E5EFC0",
+          backgroundColor: "#8B99C8",
           backgroundImage:
             "linear-gradient(rgba(16,16,16,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(16,16,16,0.04) 1px, transparent 1px)",
           backgroundSize: "56px 56px",
-          boxShadow: "0 30px 80px -30px rgba(60,80,30,0.25)",
+          boxShadow: "0 30px 80px -30px rgba(16,16,16,0.20)",
         }}
       >
-        {/* Corner light leaks — soft white glows at all four corners
-            so the stage reads as a lit cream surface. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 rounded-[24px]"
-          style={{
-            background:
-              "radial-gradient(85% 60% at 0% 0%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.18) 35%, rgba(255,255,255,0) 70%), radial-gradient(85% 60% at 100% 0%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.14) 35%, rgba(255,255,255,0) 70%), radial-gradient(80% 55% at 0% 100%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.10) 35%, rgba(255,255,255,0) 70%), radial-gradient(80% 55% at 100% 100%, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0) 70%)",
-            boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 0 0 1px rgba(16,16,16,0.04)",
-          }}
-        />
-      <div className="relative flex w-full flex-col items-stretch gap-4 lg:flex-row lg:gap-5">
+<div className="relative flex w-full flex-col items-stretch gap-4 lg:flex-row lg:gap-5">
         {/* ── Composer ─ light card ─────────────────────────────── */}
         <div className="relative w-full lg:w-[320px] lg:shrink-0">
           <div
@@ -481,7 +469,7 @@ export function HeroPromptToAppV13() {
               transformOrigin: "center center",
               zIndex: 1,
               boxShadow:
-                "0 1px 0 rgba(255,255,255,0.8) inset, 0 8px 24px -12px rgba(60,80,30,0.18)",
+                "0 1px 0 rgba(255,255,255,0.8) inset, 0 8px 24px -12px rgba(16,16,16,0.15)",
             }}
           >
             <div className="px-5 pt-4 pb-4">
@@ -549,7 +537,7 @@ export function HeroPromptToAppV13() {
               backgroundColor: "#FFFFFF",
               borderColor: "rgba(16,16,16,0.06)",
               boxShadow:
-                "0 1px 0 rgba(255,255,255,0.8) inset, 0 8px 24px -12px rgba(60,80,30,0.18)",
+                "0 1px 0 rgba(255,255,255,0.8) inset, 0 8px 24px -12px rgba(16,16,16,0.15)",
             }}
           >
             <div className="flex h-8 shrink-0 items-center gap-3 border-b border-[#101010]/[0.06] bg-[#FAFAF6] px-3">

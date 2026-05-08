@@ -521,7 +521,7 @@ export function HeroPromptToAppV14() {
             "linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)",
           backgroundSize: "56px 56px",
           boxShadow:
-            "0 30px 80px -30px rgba(0,0,0,0.6)",
+            "0 30px 80px -30px rgba(16,16,16,0.6)",
         }}
       >
         {/* Corner light leaks — soft glows at all four corners so

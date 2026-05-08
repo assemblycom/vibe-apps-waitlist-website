@@ -56,7 +56,15 @@ export function Hero({
     } else {
       outer.removeAttribute("data-nav-theme");
     }
-    return () => outer.removeAttribute("data-nav-theme");
+    if (version === "v13") {
+      document.body.classList.add("hero-v13");
+    } else {
+      document.body.classList.remove("hero-v13");
+    }
+    return () => {
+      outer.removeAttribute("data-nav-theme");
+      document.body.classList.remove("hero-v13");
+    };
   }, [version]);
 
   const choose = (v) => {
@@ -115,7 +123,7 @@ export function Hero({
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0"
-          style={{ background: "#D9ED92" }}
+          style={{ background: "#F5F5F0" }}
         />
       )}
       {version === "v14" && (

@@ -58,11 +58,11 @@ export function EmailCTA({ theme = "dark" }) {
           noValidate
           className={[
             "flex w-full items-center gap-1.5 rounded-full border p-1.5 pl-4 backdrop-blur-md transition-colors duration-200",
-            light ? "bg-white/35" : "bg-white/[0.03]",
+            light ? "bg-[#FAFAF6]" : "bg-white/[0.03]",
             error
               ? "border-[#E6836E]/50"
               : light
-              ? "border-white/50 focus-within:border-white/70"
+              ? "border-[#101010]/10 focus-within:border-[#101010]/25"
               : "border-white/10 focus-within:border-white/25",
           ].join(" ")}
         >

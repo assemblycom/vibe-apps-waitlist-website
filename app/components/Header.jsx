@@ -136,8 +136,13 @@ export function Header() {
       let max = 0;
       for (const s of lightSections) {
         const r = s.getBoundingClientRect();
-        const fadeIn = clamp01((NAV_BOTTOM_PX - r.top) / FADE_PX);
-        const fadeOut = clamp01((r.bottom - NAV_BOTTOM_PX) / FADE_PX);
+        // Shift the fade window outward by FADE_PX on each end so two
+        // touching light sections (e.g. ZoomHero's BACKDROP and the
+        // NarrativeBlock that abuts it) both read as fully light at the
+        // shared edge, instead of both bottoming out to 0 there and
+        // letting the nav flash dark for a frame.
+        const fadeIn = clamp01((NAV_BOTTOM_PX + FADE_PX - r.top) / FADE_PX);
+        const fadeOut = clamp01((r.bottom - (NAV_BOTTOM_PX - FADE_PX)) / FADE_PX);
         const t = Math.min(fadeIn, fadeOut);
         if (t > max) max = t;
       }
