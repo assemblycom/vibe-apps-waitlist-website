@@ -63,14 +63,14 @@ export function EmailCTA({ theme = "dark" }) {
             lime
               ? "bg-white/25"
               : light
-              ? "bg-[#FAFAF6]"
+              ? "bg-white/40"
               : "bg-white/[0.03]",
             error
               ? "border-[#E6836E]/50"
               : lime
               ? "border-white/35 focus-within:border-white/60"
               : light
-              ? "border-[#101010]/10 focus-within:border-[#101010]/25"
+              ? "border-[#101010]/15 focus-within:border-[#101010]/35"
               : "border-white/10 focus-within:border-white/25",
           ].join(" ")}
           style={
