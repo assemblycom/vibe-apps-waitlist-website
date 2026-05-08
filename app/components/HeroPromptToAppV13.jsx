@@ -451,9 +451,6 @@ export function HeroPromptToAppV13() {
         className="relative w-full overflow-hidden rounded-[24px] p-4 md:p-5 lg:p-6"
         style={{
           backgroundColor: "#8B99C8",
-          backgroundImage:
-            "linear-gradient(rgba(16,16,16,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(16,16,16,0.04) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
           boxShadow: "0 30px 80px -30px rgba(16,16,16,0.20)",
         }}
       >
