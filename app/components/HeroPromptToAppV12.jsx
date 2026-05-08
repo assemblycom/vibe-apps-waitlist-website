@@ -236,8 +236,6 @@ const CARD =
 function HomeView() {
   return (
     <div className="flex h-full min-w-0 flex-col gap-3 p-4">
-      <div className="text-[10.5px] text-white/45">Home</div>
-
       <div>
         <div className="text-[13px] text-white/95">
           Good morning, Ana
@@ -665,7 +663,7 @@ export function HeroPromptToAppV12() {
         </div>
 
         {/* ── Portal preview ─────────────────────────────────────── */}
-        <div className="relative w-full lg:min-w-0 lg:flex-1">
+        <div className="relative hidden w-full lg:block lg:min-w-0 lg:flex-1">
           <div
             className="overflow-hidden rounded-[20px] border"
             style={{
