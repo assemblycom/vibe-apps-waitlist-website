@@ -137,7 +137,7 @@ function HomeView() {
   return (
     <div className="flex h-full min-w-0 flex-col gap-3 p-4">
       <div>
-        <div className="text-[13px] text-white/75">
+        <div className="text-[14px] text-white/75">
           Good morning, Ana
         </div>
         <div className="text-[11px] text-white/30">
@@ -552,7 +552,7 @@ export function HeroPromptToAppV14() {
           >
             <div className="px-5 pt-4 pb-4">
               <div className="relative mb-2 text-[12px] text-white/30">Describe your app</div>
-              <div className="min-h-[44px] text-[15px] leading-[1.45] text-white">
+              <div className="min-h-[44px] text-[14px] leading-[1.45] text-white">
                 {thinking ? (
                   <span className="text-white/45">
                     Hold on, we&apos;re generating your app…
