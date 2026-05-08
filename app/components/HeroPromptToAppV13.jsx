@@ -362,7 +362,7 @@ function SidebarRow({ iconSrc, iconClass, label, active, muted, style }) {
         active
           ? "bg-[#101010]/[0.08] text-[#101010]/75"
           : muted
-          ? "text-[#101010]/45"
+          ? "text-[#101010]/55"
           : "text-[#101010]/75",
       ].join(" ")}
       style={style}
@@ -473,7 +473,7 @@ export function HeroPromptToAppV13() {
               <div className="relative mb-2 text-[12px] text-[#101010]/30">Describe your app</div>
               <div className="min-h-[44px] text-[15px] leading-[1.45] text-[#101010]">
                 {thinking ? (
-                  <span className="text-[#101010]/45">
+                  <span className="text-[#101010]/55">
                     Hold on, we&apos;re generating your app…
                   </span>
                 ) : promptText ? (
@@ -507,13 +507,13 @@ export function HeroPromptToAppV13() {
                       "flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-[11px] leading-none transition-colors duration-200",
                       isSelected
                         ? "bg-[#101010]/[0.08] text-[#101010]/75"
-                        : "text-[#101010]/45 hover:bg-[#101010]/[0.04] hover:text-[#101010]/75",
+                        : "text-[#101010]/55 hover:bg-[#101010]/[0.04] hover:text-[#101010]/75",
                     ].join(" ")}
                   >
                     <span
                       className={[
                         "flex h-3 w-3 shrink-0 items-center justify-center",
-                        isSelected ? "text-[#101010]/75" : "text-[#101010]/45",
+                        isSelected ? "text-[#101010]/75" : "text-[#101010]/55",
                       ].join(" ")}
                     >
                       <MaskIcon src={a.iconSrc} className="h-3 w-3" />
