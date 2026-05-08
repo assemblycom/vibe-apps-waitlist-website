@@ -203,7 +203,7 @@ export const HOME_CONTENT = {
   },
 
   testimonials: {
-    heading: "What alpha testers are saying",
+    heading: "What Assembly fans are saying",
     subheading:
       "Early partners building client-ready apps on the Assembly platform, in days not months.",
     quotes: [
