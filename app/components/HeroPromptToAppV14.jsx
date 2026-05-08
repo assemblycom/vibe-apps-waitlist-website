@@ -113,46 +113,62 @@ function typed(text, t) {
 
 const CARD = "rounded bg-white/[0.04]";
 
-// Mirrors the real client home: breadcrumb → greeting → blue/purple
-// gradient banner → "Your actions" cards with icon + count.
+// Client home — content that doesn't depend on installed apps:
+// greeting, brand banner, and a "Latest updates" feed from the
+// agency. Works even when the sidebar has no apps installed yet.
 function HomeView() {
+  const updates = [
+    {
+      title: "Q3 brand refresh delivered",
+      body: "Final logo, type system, and color tokens are ready in your shared drive.",
+      time: "2h",
+    },
+    {
+      title: "New point of contact",
+      body: "Maya Patel will be your day-to-day lead going forward.",
+      time: "Yesterday",
+    },
+    {
+      title: "Studio holiday hours",
+      body: "We'll be offline Dec 24-26. Tickets answered first thing on the 27th.",
+      time: "May 5",
+    },
+  ];
   return (
     <div className="flex h-full min-w-0 flex-col gap-3 p-4">
       <div>
-        <div className="text-[13px] text-white/90">
+        <div className="text-[13px] text-white/75">
           Good morning, Ana
         </div>
-        <div className="text-[10.5px] text-white/45">
-          Here&apos;s what needs your attention today
+        <div className="text-[10px] text-white/30">
+          Here&apos;s the latest from BrandMages
         </div>
       </div>
 
       <div className="h-[70px] w-full rounded-[6px] bg-white/[0.04] lg:h-[120px]" />
 
-      <div className="rounded-[8px] bg-white/[0.04] p-2.5">
-        <div className="mb-1.5 text-[10px] text-white/45">
-          Your actions
+      <div className="flex flex-col gap-1.5">
+        <div className="px-1 text-[10px] text-white/30">
+          Latest updates
         </div>
-        <div className="grid grid-cols-4 gap-1.5">
-          {[
-            { icon: "/Icons/payments.svg", label: "Pay 2 invoices" },
-            { icon: "/Icons/contracts.svg", label: "Sign 1 contract" },
-            { icon: "/Icons/forms.svg", label: "Submit 3 forms" },
-            { icon: "/Icons/tasks.svg", label: "Complete 2 tasks" },
-          ].map((a, i) => (
-            <div
-              key={i}
-              className="flex min-w-0 items-center gap-1.5 rounded bg-white/[0.04] px-2 py-1.5"
-            >
-              <span className="flex h-3 w-3 shrink-0 items-center justify-center text-white/65">
-                <MaskIcon src={a.icon} className="h-3 w-3" />
+        {updates.map((u, i) => (
+          <div
+            key={i}
+            className="flex min-w-0 flex-col gap-0.5 rounded bg-white/[0.04] px-3 py-2"
+          >
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <span className="truncate text-[10px] text-white/75">
+                {u.title}
               </span>
-              <span className="min-w-0 flex-1 truncate text-[10px] text-white/90">
-                {a.label}
+              <span className="shrink-0 text-[9px] text-white/30">
+                {u.time}
               </span>
             </div>
-          ))}
-        </div>
+            <span className="line-clamp-2 text-[10px] leading-[1.4] text-white/45">
+              {u.body}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -170,20 +186,20 @@ function TimeTrackerView() {
     <div className="flex h-full min-w-0 flex-col gap-2.5 p-4">
       <div className={`${CARD} flex items-center justify-between gap-3 px-3 py-3`}>
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[9px] text-white/45">
+          <span className="text-[9px] text-white/30">
             Currently tracking
           </span>
-          <span className="truncate text-[11px] text-white/90">
+          <span className="truncate text-[11px] text-white/75">
             Acme · Brand sprint kickoff
           </span>
         </div>
-        <span className="shrink-0 whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-white">
+        <span className="shrink-0 whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-white/75">
           02:34:18
         </span>
       </div>
 
       <div className="px-1 pt-1">
-        <span className="text-[10px] text-white/45">Today</span>
+        <span className="text-[10px] text-white/30">Today</span>
       </div>
 
       {entries.map((row, i) => (
@@ -191,16 +207,16 @@ function TimeTrackerView() {
           key={i}
           className={`${CARD} grid min-w-0 grid-cols-[20px_auto_1fr_auto] items-center gap-x-1.5 pl-2 pr-3 py-2`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded bg-white/[0.08] text-[9px] font-medium leading-none text-white/90">
+          <span className="flex h-5 w-5 items-center justify-center rounded bg-white/[0.08] text-[9px] font-medium leading-none text-white/75">
             {row.client.slice(0, 2).toUpperCase()}
           </span>
-          <span className="truncate text-[10px] text-white/90">
+          <span className="truncate text-[10px] text-white/75">
             {row.client}
           </span>
-          <span className="min-w-0 truncate text-[10px] text-white/65">
+          <span className="min-w-0 truncate text-[10px] text-white/45">
             {row.task}
           </span>
-          <span className="whitespace-nowrap text-[10px] leading-none text-white/65">
+          <span className="whitespace-nowrap text-[10px] leading-none text-white/45">
             {row.time}
           </span>
         </div>
@@ -243,28 +259,28 @@ function HelpdeskView() {
     },
   ];
   const statusTone = {
-    Open: "bg-white/[0.08] text-white/90",
-    "In progress": "bg-white/[0.04] text-white/65",
-    Resolved: "bg-white/[0.04] text-white/45",
+    Open: "bg-white/[0.08] text-white/75",
+    "In progress": "bg-white/[0.04] text-white/45",
+    Resolved: "bg-white/[0.04] text-white/30",
   };
   return (
     <div className="flex h-full min-w-0 flex-col gap-2 p-4">
       <div className="flex items-center justify-between px-1">
-        <span className="text-[10px] text-white/45">Inbox</span>
-        <span className="text-[10px] text-white/45">5 open</span>
+        <span className="text-[10px] text-white/30">Inbox</span>
+        <span className="text-[10px] text-white/30">5 open</span>
       </div>
       {tickets.map((row, i) => (
         <div
           key={i}
           className={`${CARD} grid min-w-0 grid-cols-[20px_auto_1fr_auto] items-center gap-x-1.5 pl-2 pr-3 py-2`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded bg-white/[0.08] text-[9px] font-medium leading-none text-white/90">
+          <span className="flex h-5 w-5 items-center justify-center rounded bg-white/[0.08] text-[9px] font-medium leading-none text-white/75">
             {row.client.slice(0, 2).toUpperCase()}
           </span>
-          <span className="truncate text-[10px] text-white/90">
+          <span className="truncate text-[10px] text-white/75">
             {row.client}
           </span>
-          <span className="min-w-0 truncate text-[10px] text-white/65">
+          <span className="min-w-0 truncate text-[10px] text-white/45">
             {row.subject}
           </span>
           <span
@@ -320,27 +336,24 @@ function CommunityView() {
   return (
     <div className="flex h-full min-w-0 flex-col gap-2 p-4">
       <div className="flex items-center justify-between px-1">
-        <span className="text-[10px] text-white/45">Recent posts</span>
-        <span className="text-[10px] text-white/45">All channels</span>
+        <span className="text-[10px] text-white/30">Recent posts</span>
+        <span className="text-[10px] text-white/30">All channels</span>
       </div>
       {posts.map((p, i) => (
         <div key={i} className={`${CARD} flex min-w-0 gap-2.5 px-3 py-2.5`}>
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10px] font-medium leading-none text-white/90">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10px] font-medium leading-none text-white/75">
             {p.initials}
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <div className="flex min-w-0 items-center gap-1.5">
-              <span className="shrink-0 text-[10px] text-white/90">
+              <span className="shrink-0 text-[10px] text-white/75">
                 {p.name}
               </span>
-              <span className="shrink-0 rounded-full bg-white/[0.08] px-1.5 py-0.5 text-[9px] text-white/65">
-                {p.topic}
-              </span>
             </div>
-            <span className="line-clamp-2 text-[10px] leading-[1.4] text-white/65">
+            <span className="line-clamp-2 text-[10px] leading-[1.4] text-white/45">
               {p.body}
             </span>
-            <div className="mt-0.5 flex items-center gap-3 text-[9px] text-white/45">
+            <div className="mt-0.5 flex items-center gap-3 text-[9px] text-white/30">
               <span className="flex items-center gap-1">
                 <MaskIcon src="/Icons/heart.svg" className="h-2.5 w-2.5" />
                 {p.likes}
@@ -390,9 +403,9 @@ function SidebarRow({ iconSrc, iconClass, label, active, muted, style }) {
       className={[
         "flex items-center gap-2 rounded px-2 py-1.5 text-[11px] leading-none transition-colors duration-300",
         active
-          ? "bg-white/[0.08] text-white"
+          ? "bg-white/[0.08] text-white/75"
           : muted
-          ? "text-white/55"
+          ? "text-white/45"
           : "text-white/75",
       ].join(" ")}
       style={style}
@@ -409,6 +422,7 @@ function SidebarRow({ iconSrc, iconClass, label, active, muted, style }) {
 
 export function HeroPromptToAppV14() {
   const now = useCycleClock();
+  const [manualIndex, setManualIndex] = useState(null);
 
   const totalMs = CYCLE_MS * APPS.length + FINAL_HOLD + RESET_FADE;
   const elapsed = now % totalMs;
@@ -416,7 +430,12 @@ export function HeroPromptToAppV14() {
   let cycleIndex;
   let cycleT;
   let phase;
-  if (elapsed < CYCLE_MS * APPS.length) {
+  if (manualIndex !== null) {
+    // User picked a tab — freeze on that app, fully built.
+    cycleIndex = manualIndex;
+    cycleT = CYCLE_MS;
+    phase = "hold";
+  } else if (elapsed < CYCLE_MS * APPS.length) {
     cycleIndex = Math.floor(elapsed / CYCLE_MS);
     cycleT = elapsed - cycleIndex * CYCLE_MS;
     phase = "running";
@@ -454,7 +473,9 @@ export function HeroPromptToAppV14() {
   const shimmerX = -120 + shimmerCycle * 340;
 
   const activeAppId =
-    phase === "reset"
+    manualIndex !== null
+      ? APPS[manualIndex].id
+      : phase === "reset"
       ? "home"
       : installed === 0
       ? "home"
@@ -503,24 +524,24 @@ export function HeroPromptToAppV14() {
             "0 30px 80px -30px rgba(0,0,0,0.6)",
         }}
       >
-        {/* Corner gradient highlights — soft radial glints at the
-            top corners give the stage a glassy, lit-from-above feel
-            like the v11 card language. */}
+        {/* Corner light leaks — soft glows at all four corners so
+            the stage reads as a lit surface without feeling glossy.
+            Single broad radial wash, no punchy specular streak. */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 rounded-[24px]"
           style={{
             background:
-              "radial-gradient(80% 55% at 0% 0%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 35%, rgba(255,255,255,0) 70%), radial-gradient(80% 55% at 100% 0%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 35%, rgba(255,255,255,0) 70%), linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 25%, rgba(255,255,255,0) 75%, rgba(255,255,255,0.03) 100%)",
+              "radial-gradient(85% 60% at 0% 0%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0) 70%), radial-gradient(85% 60% at 100% 0%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 35%, rgba(255,255,255,0) 70%), radial-gradient(80% 55% at 0% 100%, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 35%, rgba(255,255,255,0) 70%), radial-gradient(80% 55% at 100% 100%, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 35%, rgba(255,255,255,0) 70%)",
             boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.10), inset 0 0 0 1px rgba(255,255,255,0.04)",
+              "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 0 0 1px rgba(255,255,255,0.04)",
           }}
         />
       <div className="relative flex w-full flex-col items-stretch gap-4 lg:flex-row lg:gap-5">
         {/* ── Composer ─ chat-style, dark mode ──────────────────── */}
         <div className="relative w-full lg:w-[320px] lg:shrink-0">
           <div
-            className="relative overflow-hidden rounded-[20px] border px-5 pt-4 pb-5 transition-transform duration-200"
+            className="relative overflow-hidden rounded-[20px] border transition-transform duration-200"
             style={{
               backgroundColor: "#1f1f1f",
               borderColor: "rgba(255,255,255,0.08)",
@@ -529,24 +550,62 @@ export function HeroPromptToAppV14() {
               zIndex: 1,
             }}
           >
-            <div className="relative mb-2 text-[11px] text-white/45">Describe your app</div>
-            <div className="min-h-[44px] text-[15px] leading-[1.45] text-white">
-              {thinking ? (
-                <span className="text-white/55">
-                  Hold on, we&apos;re generating your app…
-                </span>
-              ) : promptText ? (
-                <>
-                  {promptText}
-                  {showCursor && (
-                    <span className="ml-[1px] inline-block h-[14px] w-[1px] -translate-y-[1px] animate-pulse bg-white align-middle" />
-                  )}
-                </>
-              ) : (
-                <span className="text-white/35">
-                  Build a time tracker for my team…
-                </span>
-              )}
+            <div className="px-5 pt-4 pb-4">
+              <div className="relative mb-2 text-[11px] text-white/30">Describe your app</div>
+              <div className="min-h-[44px] text-[15px] leading-[1.45] text-white">
+                {thinking ? (
+                  <span className="text-white/45">
+                    Hold on, we&apos;re generating your app…
+                  </span>
+                ) : promptText ? (
+                  <>
+                    {promptText}
+                    {showCursor && (
+                      <span className="ml-[1px] inline-block h-[14px] w-[1px] -translate-y-[1px] animate-pulse bg-white align-middle" />
+                    )}
+                  </>
+                ) : (
+                  <span className="text-white/30">
+                    Build a time tracker for my team…
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Build tabs — sit inside the composer below the prompt,
+                separated by a hairline divider so they read as the
+                composer's footer chip-row. Clicking a tab freezes the
+                demo on that app. */}
+            <div className="pointer-events-auto flex flex-wrap items-center gap-1 border-t border-white/[0.06] px-3 py-2">
+              {APPS.map((a, i) => {
+                const isSelected =
+                  manualIndex !== null
+                    ? i === manualIndex
+                    : phase === "running" && i === cycleIndex;
+                return (
+                  <button
+                    key={a.id}
+                    type="button"
+                    onClick={() => setManualIndex(i)}
+                    className={[
+                      "flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-[10px] leading-none transition-colors duration-200",
+                      isSelected
+                        ? "bg-white/[0.08] text-white/75"
+                        : "text-white/45 hover:bg-white/[0.05] hover:text-white/80",
+                    ].join(" ")}
+                  >
+                    <span
+                      className={[
+                        "flex h-3 w-3 shrink-0 items-center justify-center",
+                        isSelected ? "text-white/75" : "text-white/45",
+                      ].join(" ")}
+                    >
+                      <MaskIcon src={a.iconSrc} className="h-3 w-3" />
+                    </span>
+                    <span>{a.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -574,10 +633,10 @@ export function HeroPromptToAppV14() {
                 style={{ background: "#1b1b1b" }}
               >
                 <div className="mb-3 flex items-center gap-2 px-2 py-1.5">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-white text-[#101010]">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-white/90 text-[#101010]">
                     <BrandMagesMark className="h-3 w-3" />
                   </span>
-                  <span className="truncate text-[12px] text-white/90">
+                  <span className="truncate text-[12px] text-white/75">
                     BrandMages
                   </span>
                 </div>
