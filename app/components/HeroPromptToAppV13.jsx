@@ -236,41 +236,12 @@ const CARD =
 function AbstractBanner() {
   return (
     <div
-      className="relative h-[100px] w-full overflow-hidden rounded-[8px] border border-[#101010]/[0.06] lg:h-[160px]"
+      className="relative h-[100px] w-full overflow-hidden rounded-[8px] border border-[#101010]/[0.05] lg:h-[160px]"
       style={{
         background:
-          "radial-gradient(120% 100% at 0% 100%, #ECF6CC 0%, #F4F7E4 45%, #FAFAF7 100%)",
+          "linear-gradient(135deg, #FAFAF6 0%, #F4F6E8 55%, #ECF2D4 100%)",
       }}
-    >
-      <svg
-        viewBox="0 0 600 200"
-        preserveAspectRatio="none"
-        className="absolute inset-0 h-full w-full"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id="v13-line" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#101010" stopOpacity="0.12" />
-            <stop offset="100%" stopColor="#101010" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M -20 150 Q 120 100 260 130 T 540 90 T 720 110"
-          stroke="url(#v13-line)"
-          strokeWidth="1"
-          fill="none"
-        />
-        <path
-          d="M -20 175 Q 140 130 280 155 T 560 120 T 720 145"
-          stroke="url(#v13-line)"
-          strokeWidth="1"
-          fill="none"
-        />
-        <circle cx="120" cy="60" r="22" fill="#101010" fillOpacity="0.05" />
-        <circle cx="430" cy="80" r="36" fill="#101010" fillOpacity="0.04" />
-        <circle cx="510" cy="40" r="14" fill="#101010" fillOpacity="0.06" />
-      </svg>
-    </div>
+    />
   );
 }
 
@@ -332,9 +303,9 @@ function TimeTrackerView() {
       {entries.map((row, i) => (
         <div
           key={i}
-          className={`${CARD} grid min-w-0 grid-cols-[20px_56px_1fr_auto] items-center gap-2 px-3 py-2`}
+          className={`${CARD} grid min-w-0 grid-cols-[20px_auto_1fr_auto] items-center gap-x-1.5 pl-2 pr-3 py-2`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded bg-[#101010]/[0.06] text-[9px] font-medium tracking-tight text-[#101010]/75">
+          <span className="flex h-5 w-5 items-center justify-center rounded bg-[#101010]/[0.06] text-[9px] font-medium leading-none text-[#101010]/75">
             {row.client.slice(0, 2).toUpperCase()}
           </span>
           <span className="truncate text-[10.5px] text-[#101010]/85">
@@ -397,7 +368,7 @@ function HelpdeskView() {
         <button
           type="button"
           tabIndex={-1}
-          className="flex shrink-0 items-center gap-1 rounded-full bg-[#101010] px-2.5 py-1 text-[10px] text-white"
+          className="flex shrink-0 items-center gap-1 rounded-full border border-[#101010]/[0.08] bg-white px-2.5 py-1 text-[10px] text-[#101010]/70"
         >
           <Stroke d="M8 3v10M3 8h10" className="h-2.5 w-2.5" />
           Submit a ticket
@@ -406,9 +377,9 @@ function HelpdeskView() {
       {tickets.map((row, i) => (
         <div
           key={i}
-          className={`${CARD} grid min-w-0 grid-cols-[20px_56px_1fr_auto_auto] items-center gap-2 px-3 py-2`}
+          className={`${CARD} grid min-w-0 grid-cols-[20px_auto_1fr_auto] items-center gap-x-1.5 pl-2 pr-3 py-2`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded bg-[#101010]/[0.06] text-[9px] font-medium tracking-tight text-[#101010]/75">
+          <span className="flex h-5 w-5 items-center justify-center rounded bg-[#101010]/[0.06] text-[9px] font-medium leading-none text-[#101010]/75">
             {row.client.slice(0, 2).toUpperCase()}
           </span>
           <span className="truncate text-[10.5px] text-[#101010]/85">
@@ -421,9 +392,6 @@ function HelpdeskView() {
             className={`whitespace-nowrap rounded-full px-1.5 py-0.5 text-[9px] ${statusTone[row.status]}`}
           >
             {row.status}
-          </span>
-          <span className="whitespace-nowrap text-[10px] text-[#101010]/45">
-            {row.time}
           </span>
         </div>
       ))}
@@ -447,7 +415,7 @@ function CommunityView() {
       name: "Jordan Brooks",
       time: "20m",
       topic: "Outbound",
-      body: "Sharing a few ideas for outbound animation we&apos;re testing across LinkedIn ads — happy to swap notes on what&apos;s converting.",
+      body: "Sharing a few ideas for outbound animation we’re testing across LinkedIn ads — happy to swap notes on what’s converting.",
       likes: 9,
       replies: 3,
     },
@@ -478,7 +446,7 @@ function CommunityView() {
       </div>
       {posts.map((p, i) => (
         <div key={i} className={`${CARD} flex min-w-0 gap-2.5 px-3 py-2.5`}>
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#101010]/[0.06] text-[10px] font-medium tracking-tight text-[#101010]/85">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#101010]/[0.06] text-[10px] font-medium leading-none text-[#101010]/85">
             {p.initials}
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -488,10 +456,6 @@ function CommunityView() {
               </span>
               <span className="shrink-0 rounded-full bg-[#101010]/[0.06] px-1.5 py-0.5 text-[9px] text-[#101010]/65">
                 {p.topic}
-              </span>
-              <span className="shrink-0 text-[10px] text-[#101010]/35">·</span>
-              <span className="shrink-0 text-[10px] text-[#101010]/45">
-                {p.time}
               </span>
             </div>
             <span className="line-clamp-2 text-[10.5px] leading-[1.4] text-[#101010]/65">
@@ -564,8 +528,13 @@ function SidebarRow({ iconSrc, iconClass, label, active, muted, style }) {
 
 function ProgressBar({ apps, cycleIndex, cycleT, phase }) {
   const total = apps.length;
+  const activeIndex = phase === "reset" ? total - 1 : cycleIndex;
+  const stepNum = activeIndex + 1;
   return (
-    <div className="mb-3 flex w-full items-center gap-2 px-1">
+    <div className="flex w-full items-center gap-3 px-1">
+      <span className="shrink-0 font-mono text-[9.5px] uppercase tracking-[0.12em] text-[#101010]/45">
+        {String(stepNum).padStart(2, "0")} / {String(total).padStart(2, "0")}
+      </span>
       <div className="flex flex-1 items-center gap-1.5">
         {apps.map((a, i) => {
           let progress = 0;
@@ -578,10 +547,10 @@ function ProgressBar({ apps, cycleIndex, cycleT, phase }) {
           return (
             <div
               key={a.id}
-              className="relative h-[3px] flex-1 overflow-hidden rounded-full bg-[#101010]/12"
+              className="relative h-[2px] flex-1 overflow-hidden rounded-full bg-[#101010]/10"
             >
               <div
-                className="absolute inset-y-0 left-0 bg-[#101010]"
+                className="absolute inset-y-0 left-0 rounded-full bg-[#101010]/75"
                 style={{
                   width: `${progress * 100}%`,
                   transition: "width 80ms linear",
@@ -591,8 +560,8 @@ function ProgressBar({ apps, cycleIndex, cycleT, phase }) {
           );
         })}
       </div>
-      <span className="shrink-0 text-[10.5px] text-[#101010]/70">
-        {phase === "reset" ? apps[total - 1].label : apps[cycleIndex].label}
+      <span className="shrink-0 text-[10.5px] tracking-tight text-[#101010]/70">
+        {apps[activeIndex].label}
       </span>
     </div>
   );
@@ -674,17 +643,8 @@ export function HeroPromptToAppV13() {
           dark composer + portal cards float on a colorful surface
           inside the otherwise-dark hero. */}
       <div
-        className="relative w-full overflow-hidden rounded-[24px] p-4 md:p-5 lg:p-6"
-        style={{
-          background: "#D9ED92",
-        }}
+        className="relative w-full rounded-[24px] border border-white/40 bg-white/30 p-4 backdrop-blur-md md:p-5 lg:p-6"
       >
-        <ProgressBar
-          apps={APPS}
-          cycleIndex={cycleIndex}
-          cycleT={cycleT}
-          phase={phase}
-        />
       <div className="relative flex w-full flex-col items-stretch gap-4 lg:flex-row lg:gap-5">
         {/* ── Composer ─ chat-style, dark mode ──────────────────── */}
         <div className="relative w-full lg:w-[320px] lg:shrink-0">
@@ -693,8 +653,6 @@ export function HeroPromptToAppV13() {
             style={{
               background: "#ffffff",
               borderColor: "rgba(16,16,16,0.06)",
-              boxShadow:
-                "0 1px 0 rgba(255,255,255,0.6) inset, 0 30px 60px -25px rgba(16,16,16,0.18)",
               transform: `scale(${pulseScale})`,
               transformOrigin: "center center",
               zIndex: 1,
@@ -729,8 +687,6 @@ export function HeroPromptToAppV13() {
             style={{
               background: "#ffffff",
               borderColor: "rgba(16,16,16,0.06)",
-              boxShadow:
-                "0 30px 60px -25px rgba(16,16,16,0.22)",
             }}
           >
             <div className="flex h-8 shrink-0 items-center gap-3 border-b border-[#101010]/[0.06] bg-[#fafaf7] px-3">

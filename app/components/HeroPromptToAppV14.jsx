@@ -1,27 +1,10 @@
 "use client";
 
-// HeroPromptToAppV12 — dark hero, ChatGPT-style composer.
-//
-// Same animation principles as the prior v12 (post-typing reveal,
-// sidebar accumulates, starts on Home, prompt → app pulse), now on
-// a dark surface with a chat-input composer that mirrors the look
-// of modern AI chat UIs:
-//
-//   ┌──────────────────────────────────────────────────┐
-//   │  Hold on, we're generating your answer…          │
-//   │                                                  │
-//   │  📎  ⊞  ▢   ┃ GPT 5.0          ┃           ◉    │
-//   └──────────────────────────────────────────────────┘
-//   🟦 Thinking…                                     ↻
-//
-// The composer sits in front of a wide, light client portal so the
-// product of the prompt is the bright thing in the frame. Composer
-// chrome (icons, model chip, mic button) is tuned to the same dark
-// pill tokens used by the site nav, so the hero reads as one piece.
+// HeroPromptToAppV14 — dark hero on a gridded surface. Composer
+// (left) types a prompt; portal preview (right) reveals the new app
+// in its sidebar and content area. Same cycle as v12.
 
 import { useEffect, useState } from "react";
-
-// ── Icons ─────────────────────────────────────────────────────────
 
 function MaskIcon({ src, className = "h-[14px] w-[14px]" }) {
   return (
@@ -41,106 +24,6 @@ function MaskIcon({ src, className = "h-[14px] w-[14px]" }) {
     />
   );
 }
-
-const Stroke = ({ d, viewBox = "0 0 16 16", className = "h-3.5 w-3.5" }) => (
-  <svg
-    viewBox={viewBox}
-    className={className}
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.4"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    {Array.isArray(d) ? d.map((p, i) => <path key={i} d={p} />) : <path d={d} />}
-  </svg>
-);
-
-// Paperclip (attach)
-const PaperclipIcon = (p) => (
-  <Stroke
-    {...p}
-    d="M9.5 3.5 4.7 8.3a2.4 2.4 0 0 0 3.4 3.4l5.4-5.4a3.6 3.6 0 0 0-5.1-5.1l-5.6 5.6a4.8 4.8 0 0 0 6.8 6.8L13 9"
-  />
-);
-// 2x2 grid (apps)
-const GridIcon = (p) => (
-  <Stroke
-    {...p}
-    d={[
-      "M3 3h4v4H3z",
-      "M9 3h4v4H9z",
-      "M3 9h4v4H3z",
-      "M9 9h4v4H9z",
-    ]}
-  />
-);
-// Dotted square + cursor (selection)
-const SelectIcon = (p) => (
-  <svg
-    viewBox="0 0 16 16"
-    className={p.className ?? "h-3.5 w-3.5"}
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.4"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeDasharray="1.4 1.6"
-  >
-    <rect x="2.5" y="2.5" width="9" height="9" rx="1.2" />
-    <path
-      d="M8.5 8.5l4.5 1.6-2.1.7-.7 2.1z"
-      strokeDasharray="0"
-      fill="currentColor"
-    />
-  </svg>
-);
-// Sparkle (model logo)
-const SparkleIcon = (p) => (
-  <svg
-    viewBox="0 0 16 16"
-    className={p.className ?? "h-3 w-3"}
-    fill="currentColor"
-    aria-hidden="true"
-  >
-    <path d="M8 1.5l1.4 3.6 3.6 1.4-3.6 1.4L8 11.5 6.6 7.9 3 6.5 6.6 5.1 8 1.5z" />
-    <path d="M13 10.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7.7-1.6z" />
-  </svg>
-);
-// Mic / waveform pill
-const WaveIcon = (p) => (
-  <svg
-    viewBox="0 0 16 16"
-    className={p.className ?? "h-3.5 w-3.5"}
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.6"
-    strokeLinecap="round"
-  >
-    <path d="M3 8v0M5.5 6v4M8 4.5v7M10.5 6v4M13 8v0" />
-  </svg>
-);
-// Spinner (Thinking…)
-const SpinnerIcon = ({ className = "h-3.5 w-3.5" }) => (
-  <svg viewBox="0 0 16 16" className={className} aria-hidden="true">
-    <circle
-      cx="8"
-      cy="8"
-      r="6"
-      fill="none"
-      stroke="currentColor"
-      strokeOpacity="0.25"
-      strokeWidth="1.6"
-    />
-    <path
-      d="M14 8a6 6 0 0 0-6-6"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-    />
-  </svg>
-);
 
 const BrandMagesMark = ({ className = "h-4 w-4" }) => (
   <svg
@@ -228,8 +111,7 @@ function typed(text, t) {
 
 // ── Portal sub-views (light mode) ─────────────────────────────────
 
-const CARD =
-  "rounded border border-white/[0.07] bg-white/[0.04]";
+const CARD = "rounded bg-white/[0.04]";
 
 // Mirrors the real client home: breadcrumb → greeting → blue/purple
 // gradient banner → "Your actions" cards with icon + count.
@@ -237,24 +119,18 @@ function HomeView() {
   return (
     <div className="flex h-full min-w-0 flex-col gap-3 p-4">
       <div>
-        <div className="text-[13px] text-white/95">
+        <div className="text-[13px] text-white/90">
           Good morning, Ana
         </div>
-        <div className="text-[10.5px] text-white/50">
+        <div className="text-[10.5px] text-white/45">
           Here&apos;s what needs your attention today
         </div>
       </div>
 
-      <div
-        className="h-[70px] w-full rounded-[6px] border border-white/[0.05] lg:h-[120px]"
-        style={{
-          background:
-            "linear-gradient(120deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 60%, rgba(255,255,255,0.05) 100%)",
-        }}
-      />
+      <div className="h-[70px] w-full rounded-[6px] bg-white/[0.04] lg:h-[120px]" />
 
-      <div className="rounded-[8px] border border-white/[0.05] bg-white/[0.03] p-2.5">
-        <div className="mb-1.5 text-[10px] text-white/60">
+      <div className="rounded-[8px] bg-white/[0.04] p-2.5">
+        <div className="mb-1.5 text-[10px] text-white/45">
           Your actions
         </div>
         <div className="grid grid-cols-4 gap-1.5">
@@ -266,12 +142,12 @@ function HomeView() {
           ].map((a, i) => (
             <div
               key={i}
-              className="flex min-w-0 items-center gap-1.5 rounded border border-white/[0.07] bg-white/[0.04] px-2 py-1.5"
+              className="flex min-w-0 items-center gap-1.5 rounded bg-white/[0.04] px-2 py-1.5"
             >
               <span className="flex h-3 w-3 shrink-0 items-center justify-center text-white/65">
                 <MaskIcon src={a.icon} className="h-3 w-3" />
               </span>
-              <span className="min-w-0 flex-1 truncate text-[10px] text-white/80">
+              <span className="min-w-0 flex-1 truncate text-[10px] text-white/90">
                 {a.label}
               </span>
             </div>
@@ -294,10 +170,10 @@ function TimeTrackerView() {
     <div className="flex h-full min-w-0 flex-col gap-2.5 p-4">
       <div className={`${CARD} flex items-center justify-between gap-3 px-3 py-3`}>
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[9.5px] text-white/45">
+          <span className="text-[9px] text-white/45">
             Currently tracking
           </span>
-          <span className="truncate text-[11px] text-white/80">
+          <span className="truncate text-[11px] text-white/90">
             Acme · Brand sprint kickoff
           </span>
         </div>
@@ -315,16 +191,16 @@ function TimeTrackerView() {
           key={i}
           className={`${CARD} grid min-w-0 grid-cols-[20px_auto_1fr_auto] items-center gap-x-1.5 pl-2 pr-3 py-2`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded bg-white/[0.06] text-[9px] font-medium leading-none text-white/75">
+          <span className="flex h-5 w-5 items-center justify-center rounded bg-white/[0.08] text-[9px] font-medium leading-none text-white/90">
             {row.client.slice(0, 2).toUpperCase()}
           </span>
-          <span className="truncate text-[10.5px] text-white/85">
+          <span className="truncate text-[10px] text-white/90">
             {row.client}
           </span>
-          <span className="min-w-0 truncate text-[10.5px] text-white/60">
+          <span className="min-w-0 truncate text-[10px] text-white/65">
             {row.task}
           </span>
-          <span className="whitespace-nowrap text-[10px] leading-none text-white/75">
+          <span className="whitespace-nowrap text-[10px] leading-none text-white/65">
             {row.time}
           </span>
         </div>
@@ -367,19 +243,14 @@ function HelpdeskView() {
     },
   ];
   const statusTone = {
-    Open: "bg-white/[0.08] text-white/80",
-    "In progress": "bg-white/[0.05] text-white/65",
-    Resolved: "bg-white/[0.03] text-white/45",
-  };
-  const priorityDot = {
-    High: "bg-white/85",
-    Med: "bg-white/55",
-    Low: "bg-white/30",
+    Open: "bg-white/[0.08] text-white/90",
+    "In progress": "bg-white/[0.04] text-white/65",
+    Resolved: "bg-white/[0.04] text-white/45",
   };
   return (
     <div className="flex h-full min-w-0 flex-col gap-2 p-4">
       <div className="flex items-center justify-between px-1">
-        <span className="text-[10px] text-white/55">Inbox</span>
+        <span className="text-[10px] text-white/45">Inbox</span>
         <span className="text-[10px] text-white/45">5 open</span>
       </div>
       {tickets.map((row, i) => (
@@ -387,13 +258,13 @@ function HelpdeskView() {
           key={i}
           className={`${CARD} grid min-w-0 grid-cols-[20px_auto_1fr_auto] items-center gap-x-1.5 pl-2 pr-3 py-2`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded bg-white/[0.06] text-[9px] font-medium leading-none text-white/75">
+          <span className="flex h-5 w-5 items-center justify-center rounded bg-white/[0.08] text-[9px] font-medium leading-none text-white/90">
             {row.client.slice(0, 2).toUpperCase()}
           </span>
-          <span className="truncate text-[10.5px] text-white/85">
+          <span className="truncate text-[10px] text-white/90">
             {row.client}
           </span>
-          <span className="min-w-0 truncate text-[10.5px] text-white/60">
+          <span className="min-w-0 truncate text-[10px] text-white/65">
             {row.subject}
           </span>
           <span
@@ -449,27 +320,27 @@ function CommunityView() {
   return (
     <div className="flex h-full min-w-0 flex-col gap-2 p-4">
       <div className="flex items-center justify-between px-1">
-        <span className="text-[10px] text-white/55">Recent posts</span>
+        <span className="text-[10px] text-white/45">Recent posts</span>
         <span className="text-[10px] text-white/45">All channels</span>
       </div>
       {posts.map((p, i) => (
         <div key={i} className={`${CARD} flex min-w-0 gap-2.5 px-3 py-2.5`}>
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10px] font-medium leading-none text-white/85">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10px] font-medium leading-none text-white/90">
             {p.initials}
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <div className="flex min-w-0 items-center gap-1.5">
-              <span className="shrink-0 text-[10.5px] text-white/90">
+              <span className="shrink-0 text-[10px] text-white/90">
                 {p.name}
               </span>
-              <span className="shrink-0 rounded-full bg-white/[0.06] px-1.5 py-0.5 text-[9px] text-white/60">
+              <span className="shrink-0 rounded-full bg-white/[0.08] px-1.5 py-0.5 text-[9px] text-white/65">
                 {p.topic}
               </span>
             </div>
-            <span className="line-clamp-2 text-[10.5px] leading-[1.4] text-white/65">
+            <span className="line-clamp-2 text-[10px] leading-[1.4] text-white/65">
               {p.body}
             </span>
-            <div className="mt-0.5 flex items-center gap-3 text-[10px] text-white/45">
+            <div className="mt-0.5 flex items-center gap-3 text-[9px] text-white/45">
               <span className="flex items-center gap-1">
                 <MaskIcon src="/Icons/heart.svg" className="h-2.5 w-2.5" />
                 {p.likes}
@@ -496,7 +367,7 @@ const VIEWS = {
 function SkeletonBlock({ height, shimmerX }) {
   return (
     <div
-      className="relative w-full overflow-hidden rounded border border-white/[0.05] bg-white/[0.03]"
+      className="relative w-full overflow-hidden rounded bg-white/[0.04]"
       style={{ height }}
     >
       <div
@@ -536,7 +407,7 @@ function SidebarRow({ iconSrc, iconClass, label, active, muted, style }) {
 
 // ── Component ─────────────────────────────────────────────────────
 
-export function HeroPromptToAppV12() {
+export function HeroPromptToAppV14() {
   const now = useCycleClock();
 
   const totalMs = CYCLE_MS * APPS.length + FINAL_HOLD + RESET_FADE;
@@ -603,6 +474,18 @@ export function HeroPromptToAppV12() {
       aria-hidden="true"
       className="pointer-events-none relative mx-auto w-full max-w-[1180px] px-2 pt-10 pb-32 md:px-4 md:pt-14 md:pb-44 lg:px-6 lg:pt-2 lg:pb-24"
     >
+      {/* Atmospheric radial glow behind the stage — gives the UI a
+          sense of "lift" off the dark page like the inspo, without
+          drawing a hard edge on the stage itself. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-x-40 -inset-y-32 -z-0"
+        style={{
+          background:
+            "radial-gradient(50% 45% at 50% 50%, rgba(217,237,146,0.55) 0%, rgba(217,237,146,0.30) 25%, rgba(180,200,140,0.12) 55%, rgba(217,237,146,0) 80%)",
+          filter: "blur(80px)",
+        }}
+      />
       {/* ── Stage ──────────────────────────────────────────────────
           A rounded "stage" wraps the composer and portal so they read
           as two cards on a shared surface (per the reference). The
@@ -610,28 +493,43 @@ export function HeroPromptToAppV12() {
           dark composer + portal cards float on a colorful surface
           inside the otherwise-dark hero. */}
       <div
-        className="relative w-full overflow-hidden rounded-[24px] border border-white/[0.06] p-4 md:p-5 lg:p-6"
+        className="relative w-full overflow-hidden rounded-[24px] p-4 md:p-5 lg:p-6"
         style={{
           backgroundColor: "#161616",
           backgroundImage:
             "linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)",
           backgroundSize: "56px 56px",
+          boxShadow:
+            "0 30px 80px -30px rgba(0,0,0,0.6)",
         }}
       >
+        {/* Corner gradient highlights — soft radial glints at the
+            top corners give the stage a glassy, lit-from-above feel
+            like the v11 card language. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-[24px]"
+          style={{
+            background:
+              "radial-gradient(80% 55% at 0% 0%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 35%, rgba(255,255,255,0) 70%), radial-gradient(80% 55% at 100% 0%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 35%, rgba(255,255,255,0) 70%), linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 25%, rgba(255,255,255,0) 75%, rgba(255,255,255,0.03) 100%)",
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,0.10), inset 0 0 0 1px rgba(255,255,255,0.04)",
+          }}
+        />
       <div className="relative flex w-full flex-col items-stretch gap-4 lg:flex-row lg:gap-5">
         {/* ── Composer ─ chat-style, dark mode ──────────────────── */}
         <div className="relative w-full lg:w-[320px] lg:shrink-0">
           <div
-            className="relative rounded-[20px] border px-5 pt-4 pb-5 transition-transform duration-200"
+            className="relative overflow-hidden rounded-[20px] border px-5 pt-4 pb-5 transition-transform duration-200"
             style={{
-              background: "#1f1f1f",
+              backgroundColor: "#1f1f1f",
               borderColor: "rgba(255,255,255,0.08)",
               transform: `scale(${pulseScale})`,
               transformOrigin: "center center",
               zIndex: 1,
             }}
           >
-            <div className="mb-2 text-[11px] text-white/45">Describe your app</div>
+            <div className="relative mb-2 text-[11px] text-white/45">Describe your app</div>
             <div className="min-h-[44px] text-[15px] leading-[1.45] text-white">
               {thinking ? (
                 <span className="text-white/55">
@@ -656,13 +554,13 @@ export function HeroPromptToAppV12() {
         {/* ── Portal preview ─────────────────────────────────────── */}
         <div className="relative hidden w-full lg:block lg:min-w-0 lg:flex-1">
           <div
-            className="overflow-hidden rounded-[20px] border"
+            className="relative overflow-hidden rounded-[20px] border"
             style={{
-              background: "#1a1a1a",
+              backgroundColor: "#1f1f1f",
               borderColor: "rgba(255,255,255,0.08)",
             }}
           >
-            <div className="flex h-8 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-[#161616] px-3">
+            <div className="flex h-8 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-[#1b1b1b] px-3">
               <div className="flex shrink-0 items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
                 <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
@@ -673,7 +571,7 @@ export function HeroPromptToAppV12() {
             <div className="grid h-[320px] grid-cols-[140px_1fr] gap-0 lg:h-[560px]">
               <div
                 className="flex h-full min-w-0 flex-col border-r border-white/[0.06] p-2.5"
-                style={{ background: "#161616" }}
+                style={{ background: "#1b1b1b" }}
               >
                 <div className="mb-3 flex items-center gap-2 px-2 py-1.5">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-white text-[#101010]">

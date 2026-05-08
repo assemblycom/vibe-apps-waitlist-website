@@ -15,9 +15,10 @@ import { HeroPromptToAppV10 } from "./HeroPromptToAppV10";
 import { HeroPromptToAppV11 } from "./HeroPromptToAppV11";
 import { HeroPromptToAppV12 } from "./HeroPromptToAppV12";
 import { HeroPromptToAppV13 } from "./HeroPromptToAppV13";
+import { HeroPromptToAppV14 } from "./HeroPromptToAppV14";
 import { LogoStrip } from "./LogoStrip";
 
-const VERSIONS = ["v7", "v8", "v9", "v10", "v11", "v12", "v13"];
+const VERSIONS = ["v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14"];
 const isVersion = (v) => VERSIONS.includes(v);
 
 const STORAGE_KEY = "hero-version";
@@ -50,7 +51,7 @@ export function Hero({
     const inner = document.querySelector(".origin-top");
     const outer = inner?.parentElement;
     if (!outer) return;
-    if (version === "v9") {
+    if (version === "v9" || version === "v13") {
       outer.setAttribute("data-nav-theme", "light");
     } else {
       outer.removeAttribute("data-nav-theme");
@@ -70,8 +71,8 @@ export function Hero({
 
   return (
     <div
-      className={version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13") ? "relative" : "contents"}
-      {...(version === "v9" ? { "data-nav-theme": "light" } : {})}
+      className={version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13" || version === "v14") ? "relative" : "contents"}
+      {...(version === "v9" || version === "v13" ? { "data-nav-theme": "light" } : {})}
     >
       {version === "v9" && (
         <div
@@ -114,8 +115,20 @@ export function Hero({
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0"
-          style={{ background: "#101010" }}
+          style={{ background: "#D9ED92" }}
         />
+      )}
+      {version === "v14" && (
+        <>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0"
+            style={{
+              background:
+                "linear-gradient(180deg, #101010 0%, #101010 35%, rgb(139,153,200) 75%, rgb(217,237,146) 100%)",
+            }}
+          />
+        </>
       )}
 {/* Section height:
           - mobile: content-driven (auto)
@@ -128,7 +141,7 @@ export function Hero({
             hidden, unchanged. */}
       <section
         className={`relative flex flex-col ${
-          version === "v7" || version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13")
+          version === "v7" || version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13" || version === "v14")
             ? ""
             : "overflow-hidden lg:h-[min(100vh,1080px)]"
         }`}
@@ -146,16 +159,16 @@ export function Hero({
 
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 text-center md:pt-36 lg:pt-40">
           <h1 className={`mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em] ${
-            version === "v9" ? "text-[#101010]" : "text-white"
+            version === "v9" || version === "v13" ? "text-[#101010]" : "text-white"
           }`}>
             {heading}
           </h1>
           <p className={`mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] [text-wrap:pretty] ${
-            version === "v9" ? "text-[#101010]/65" : "text-white/55"
+            version === "v9" || version === "v13" ? "text-[#101010]/65" : "text-white/55"
           }`}>
             {subheading}
           </p>
-          <EmailCTA theme={version === "v9" ? "light" : "dark"} />
+          <EmailCTA theme={version === "v9" || version === "v13" ? "light" : "dark"} />
         </div>
 
         {/* Visual wrapper. Hard bottom edge — no gradient bleed mask
@@ -189,6 +202,8 @@ export function Hero({
             <HeroPromptToAppV12 />
           ) : version === "v13" ? (
             <HeroPromptToAppV13 />
+          ) : version === "v14" ? (
+            <HeroPromptToAppV14 />
           ) : (
             <HeroPromptToApp />
           )}
@@ -210,7 +225,7 @@ export function Hero({
               {alphaLabel && (
                 <p
                   className={`mb-4 text-center text-[10px] uppercase tracking-[0.18em] ${
-                  version === "v9" ? "text-[#101010]/55" : "text-white/45"
+                  version === "v9" || version === "v13" || version === "v14" ? "text-[#101010]/55" : "text-white/45"
                 }`}
                   style={{
                     fontFamily:
@@ -220,7 +235,7 @@ export function Hero({
                   {alphaLabel}
                 </p>
               )}
-              <LogoStrip logos={alphaLogos} variant={version === "v9" ? "light-bare" : "dark"} />
+              <LogoStrip logos={alphaLogos} variant={version === "v9" || version === "v13" || version === "v14" ? "light-bare" : "dark"} />
             </div>
           </div>
         )}
@@ -235,14 +250,14 @@ export function Hero({
       {alphaLogos && alphaLogos.length > 0 && (
         <div
           className={`relative pb-10 pt-12 md:pb-12 md:pt-14 ${
-            version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13") ? "" : "bg-[var(--color-bg)]"
+            version === "v8" || (version === "v9" || version === "v10" || version === "v11" || version === "v12" || version === "v13" || version === "v14") ? "" : "bg-[var(--color-bg)]"
           } ${version === "v7" ? "lg:hidden" : ""}`}
         >
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
               <p
                 className={`mb-4 text-center text-[10px] uppercase tracking-[0.18em] ${
-                  version === "v9" ? "text-[#101010]/55" : "text-white/45"
+                  version === "v9" || version === "v13" || version === "v14" ? "text-[#101010]/55" : "text-white/45"
                 }`}
                 style={{
                   fontFamily:
@@ -252,7 +267,7 @@ export function Hero({
                 {alphaLabel}
               </p>
             )}
-            <LogoStrip logos={alphaLogos} variant={version === "v9" ? "light-bare" : "dark"} />
+            <LogoStrip logos={alphaLogos} variant={version === "v9" || version === "v13" || version === "v14" ? "light-bare" : "dark"} />
           </div>
         </div>
       )}
