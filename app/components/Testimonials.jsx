@@ -6,6 +6,30 @@ import clsx from "clsx";
 // Smooth, unhurried curve for the expand/collapse motion.
 const EASE = "cubic-bezier(0.22, 0.61, 0.36, 1)";
 
+// Quote body can be a plain string or an array of segments. Each segment is
+// either a string or a { link, href } object that renders as an inline anchor.
+function renderBody(body, isLight) {
+  if (typeof body === "string") return body;
+  if (!Array.isArray(body)) return null;
+  return body.map((seg, i) => {
+    if (typeof seg === "string") return seg;
+    if (seg && seg.link && seg.href) {
+      return (
+        <a
+          key={i}
+          href={seg.href}
+          target="_blank"
+          rel="noreferrer"
+          className={`underline underline-offset-2 ${isLight ? "decoration-[#1A1A1A]/40 hover:decoration-[#1A1A1A]" : "decoration-white/40 hover:decoration-white"}`}
+        >
+          {seg.link}
+        </a>
+      );
+    }
+    return null;
+  });
+}
+
 // Render the avatar: either the provided photo or a colored initial bubble.
 // If the photo fails to load (file missing, 404, etc.) we quietly fall back
 // to the initial bubble instead of showing the browser's broken-image icon.
@@ -160,7 +184,7 @@ function HorizontalAccordion({ quotes, activeIndex, onActivate, isLight = false 
                 }}
               >
                 <blockquote className={`text-[1.0625rem] leading-[1.5] md:text-[1.1875rem] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
-                  “{quote.body}”
+                  “{renderBody(quote.body, isLight)}”
                 </blockquote>
                 <div>
                   {quote.name && (
@@ -268,7 +292,7 @@ function VerticalAccordion({ quotes, activeIndex, onActivate, isLight = false })
                 }}
               >
                 <blockquote className={`text-[1rem] leading-[1.55] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
-                  “{quote.body}”
+                  “{renderBody(quote.body, isLight)}”
                 </blockquote>
                 {attribution && (
                   <div className={`mono mt-4 text-[12px] leading-[1.4] ${isLight ? "text-[#1A1A1A]/55" : "text-white/55"}`}>
