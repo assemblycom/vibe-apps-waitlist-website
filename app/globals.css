@@ -992,3 +992,7 @@ html.lenis body {
   60%  { opacity: 1; }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* Hide scrollbars on horizontal nav strips (mobile value-props tabs). */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

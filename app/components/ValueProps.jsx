@@ -162,6 +162,54 @@ function SideMenu({ items, activeIndex, allCompleted, visible, onSelect }) {
   );
 }
 
+// Mobile counterpart to SideMenu — a horizontal tab strip that pins
+// below the page nav while scrolling through the value-props block.
+function MobileNav({ items, activeIndex, onSelect }) {
+  const buttonRefs = useRef([]);
+
+  // Keep the active tab visible: scroll it into the horizontal
+  // scroller's center whenever activeIndex changes.
+  useEffect(() => {
+    const btn = buttonRefs.current[activeIndex];
+    if (btn && typeof btn.scrollIntoView === "function") {
+      btn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }, [activeIndex]);
+
+  return (
+    <div className="sticky top-[68px] z-40 -mx-6 mb-2 border-b border-white/[0.06] bg-[#101010] shadow-[0_8px_16px_-8px_rgba(0,0,0,0.5)] md:hidden">
+      <div
+        className="no-scrollbar flex gap-1 overflow-x-auto px-6 py-2"
+        role="tablist"
+        aria-label="Value props"
+      >
+        {items.map((item, i) => {
+          const isActive = i === activeIndex;
+          const label = item.menuLabel ?? item.eyebrow ?? `Step ${i + 1}`;
+          return (
+            <button
+              key={i}
+              ref={(el) => (buttonRefs.current[i] = el)}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => onSelect(i)}
+              className={clsx(
+                "whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] transition-colors",
+                isActive
+                  ? "bg-white/[0.10] text-white"
+                  : "text-white/55 hover:text-white/80",
+              )}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // Single-column panel — matches the old ValuePropsStory rendering:
 // eyebrow, heading, body, then a wide visual below. Consistent per
 // item so the rhythm doesn't break between panels.
@@ -171,7 +219,7 @@ function ValuePropPanel({ id, item, visual, sectionRef, index }) {
       id={id}
       ref={sectionRef}
       data-section-index={index}
-      className="py-20 md:py-24"
+      className="scroll-mt-[140px] py-20 md:scroll-mt-0 md:py-24"
     >
       <div className="flex flex-col gap-10">
         <div className="max-w-3xl">
@@ -267,6 +315,11 @@ export function ValueProps({ items = [] }) {
       />
 
       <div className="md:col-start-2 md:row-start-1">
+        <MobileNav
+          items={items}
+          activeIndex={activeIndex}
+          onSelect={handleSelect}
+        />
         {items.map((item, i) => {
           const visual = item.visual ?? renderVisual(item.visualKey);
           return (

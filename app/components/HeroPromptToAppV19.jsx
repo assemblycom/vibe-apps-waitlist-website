@@ -511,7 +511,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
   };
 
   return (
-    <div className="pointer-events-none relative mx-auto w-full max-w-[1180px] px-2 pt-10 pb-24 md:px-4 md:pt-14 md:pb-32 lg:px-6 lg:pt-2 lg:pb-16">
+    <div className="pointer-events-none relative mx-auto w-full max-w-[1180px] px-2 pt-2 pb-4 md:px-4 md:pt-4 md:pb-6 lg:px-6 lg:pt-2 lg:pb-16">
       {/* ── Outer frame ────────────────────────────────────────────
           Light card sitting on the dark hero — single bordered surface
           wrapping tabs + composer + portal. */}
@@ -550,7 +550,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
             </div>
           </div>
         ) : (
-        <div className="border-b border-[#101010]/[0.08] pb-0">
+        <div className="hidden border-b border-[#101010]/[0.08] pb-0 lg:block">
           <div className={`flex items-center ${borderless ? "" : "gap-1 overflow-hidden px-3"}`}>
             {APPS.map((a, i) => {
               const isActive = i === tabProgressIndex;
@@ -634,11 +634,11 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
         {/* ── Body: composer + portal ───────────────────────────── */}
         <div className="grid grid-cols-1 gap-2 px-2 pt-2 pb-2 lg:gap-3 lg:px-3 lg:pt-3 lg:pb-3 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)]">
           {/* Composer — input-style panel */}
-          <div className="relative p-3 lg:p-4">
-            <div className="mb-1.5 text-[12px] text-[#101010]/45 lg:mb-2">
+          <div className="relative px-3 pb-2 pt-3 lg:p-4">
+            <div className="mb-1 text-[12px] text-[#101010]/45 lg:mb-2">
               Describe your app
             </div>
-            <div className="relative min-h-[44px] text-[14px] leading-[1.5] text-[#101010]/85 lg:min-h-[60px]">
+            <div className="relative h-[44px] text-[14px] leading-[1.5] text-[#101010]/85 lg:h-auto lg:min-h-[60px]">
               {/* Typed prompt layer — fades out when we enter the
                   "thinking" beat so the swap to the generating message
                   reads as a single soft cross-fade. */}
@@ -735,7 +735,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
                 </span>
               </div>
 
-              <div className={`grid grid-cols-1 gap-0 lg:h-[520px] lg:grid-cols-[140px_1fr] ${borderless ? "h-[280px]" : "h-[420px]"}`}>
+              <div className={`grid grid-cols-1 gap-0 lg:h-[520px] lg:grid-cols-[140px_1fr] ${borderless ? "h-[240px]" : "h-[420px]"}`}>
                 {/* Sidebar with progressive install — desktop only.
                     On mobile the portal is a single content pane and
                     the sidebar collapses into the mobile chrome above. */}
@@ -811,7 +811,15 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
                     Bottom-fade mask on mobile so the last visible row
                     fades out instead of getting hard-cut at the portal
                     edge. Desktop is tall enough that all rows fit. */}
-                <div className="hero-portal-content relative h-full min-w-0 overflow-hidden">
+                <div
+                  className="hero-portal-content relative h-full min-w-0 overflow-hidden"
+                  style={{
+                    WebkitMaskImage:
+                      "linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%)",
+                    maskImage:
+                      "linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%)",
+                  }}
+                >
                   {Object.keys(VIEWS).map((id) => {
                     const isActive = id === activeAppId;
                     return (
