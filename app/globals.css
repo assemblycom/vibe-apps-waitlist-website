@@ -970,3 +970,25 @@ html.lenis body {
 .hero-cursor-blink {
   animation: hero-cursor-blink 1.05s steps(1) infinite;
 }
+
+/* WaitlistModal success-flash logo build — four pieces ease in
+   sequentially to compose the Assembly four-dot mark. Uses smooth
+   out-quart easing (no bounce) so the build reads as a settle, not a
+   spring; a small lift on the way in adds gentle directionality. */
+.logo-build .logo-piece {
+  opacity: 0;
+  transform: translateY(4px) scale(0.6);
+  transform-origin: center;
+  animation: logo-piece-in 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+.logo-piece-1 { animation-delay: 0ms; }
+.logo-piece-2 { animation-delay: 110ms; }
+.logo-piece-3 { animation-delay: 220ms; }
+.logo-piece-4 { animation-delay: 330ms; }
+
+@keyframes logo-piece-in {
+  0%   { opacity: 0; transform: translateY(4px) scale(0.6); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}

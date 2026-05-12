@@ -179,7 +179,7 @@ export function WaitlistModal({ open, onClose, content, email }) {
       setPhase("success");
       return;
     }
-    const t = setTimeout(() => setPhase("main"), 1200);
+    const t = setTimeout(() => setPhase("main"), 1500);
     return () => clearTimeout(t);
   }, [open]);
 
@@ -359,17 +359,14 @@ export function WaitlistModal({ open, onClose, content, email }) {
 function SuccessFlash({ returning }) {
   return (
     <div className="flex min-h-[320px] flex-col items-center justify-center px-8 py-12 text-center">
-      <div className="relative mb-5 flex h-16 w-16 items-center justify-center">
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 rounded-full bg-white/[0.12] animate-success-ring"
-        />
-        <span
-          aria-hidden="true"
-          className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#141414] animate-success-pop"
-        >
-          <CheckIcon className="h-6 w-6" />
-        </span>
+      <div
+        aria-hidden="true"
+        className="logo-build relative mb-5 h-14 w-14"
+      >
+        <span className="logo-piece logo-piece-1 absolute right-0 top-0 h-[24px] w-[24px] rounded-full bg-white" />
+        <span className="logo-piece logo-piece-2 absolute left-0 top-0 h-[24px] w-[24px] rounded-full bg-white" />
+        <span className="logo-piece logo-piece-3 absolute bottom-0 left-0 h-[24px] w-[24px] rounded-full bg-white" />
+        <span className="logo-piece logo-piece-4 absolute bottom-0 right-0 h-[24px] w-[24px] rounded-[6px] bg-white" />
       </div>
       <div
         className="animate-fade-in"
