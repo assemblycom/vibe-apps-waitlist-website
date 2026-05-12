@@ -36,6 +36,15 @@ export function EmailCTA() {
     }
     setError("");
     setModalOpen(true);
+    // Fire-and-forget Notion write. Failures are logged but don't block
+    // the user — the modal is the primary success affordance.
+    fetch("/api/waitlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: trimmed }),
+    }).catch((err) => {
+      console.error("Waitlist submit failed:", err);
+    });
   };
 
   // Intercept the browser's native validation popup so we can render our
