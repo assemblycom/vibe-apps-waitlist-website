@@ -33,20 +33,20 @@ function CheckIcon({ className }) {
 
 function ArrowOutIcon({ className }) {
   return (
-    <svg
-      viewBox="0 0 16 16"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+    <span
       aria-hidden="true"
-    >
-      <path d="M6 3h7v7" />
-      <path d="M13 3L6 10" />
-      <path d="M11 10v3H3V5h3" />
-    </svg>
+      className={`inline-block bg-current ${className}`}
+      style={{
+        WebkitMaskImage: "url(/Icons/arrow-up-right-from-square.svg)",
+        WebkitMaskSize: "contain",
+        WebkitMaskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskImage: "url(/Icons/arrow-up-right-from-square.svg)",
+        maskSize: "contain",
+        maskRepeat: "no-repeat",
+        maskPosition: "center",
+      }}
+    />
   );
 }
 
@@ -63,9 +63,9 @@ function StepRow({ id, title, effort, reward, subtitle, done, clickable, onActio
   return (
     <div
       data-step-id={id}
-      className={`rounded-xl bg-white/[0.02] px-3.5 py-3.5 transition-colors ${
-        isClickable ? "hover:bg-white/[0.05]" : ""
-      } ${done ? "opacity-85" : ""}`}
+      className={`rounded-xl bg-white/[0.04] px-3.5 py-3 transition-colors ${
+        isClickable ? "hover:bg-white/[0.07]" : ""
+      } ${done ? "opacity-70" : ""}`}
     >
       <button
         type="button"
@@ -73,50 +73,50 @@ function StepRow({ id, title, effort, reward, subtitle, done, clickable, onActio
         disabled={!isClickable}
         className="flex w-full items-center justify-between gap-3 text-left disabled:cursor-default"
       >
-        <div className="flex min-w-0 items-start gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           {/* Leading status dot — always rendered so every row's title
               aligns to the same column. */}
           <span
             aria-hidden="true"
-            className={`mt-0.5 inline-flex h-5 w-5 flex-none items-center justify-center rounded-[6px] transition-colors ${
-              done
-                ? "bg-white/90 text-[#141414]"
-                : "border-[1.5px] border-white/25 bg-transparent text-transparent"
+            className={`inline-flex h-5 w-5 flex-none items-center justify-center rounded-[6px] bg-white/[0.10] transition-colors ${
+              done ? "text-white/90" : "text-transparent"
             }`}
           >
             <CheckIcon className="h-2.5 w-2.5" />
           </span>
           <div className="min-w-0">
             <div
-              className={`text-[15px] font-medium tracking-[-0.01em] ${
-                done ? "text-white/75" : "text-white"
+              className={`text-[14px] font-medium tracking-[-0.01em] ${
+                done ? "text-white/60" : "text-white"
               }`}
             >
               {title}
             </div>
             {done ? (
-              <p className="mt-1 text-[13px] leading-[1.5] text-white/55">
+              <p className="mt-0.5 text-[12px] leading-[1.4] text-white/40">
                 {subtitle}
               </p>
             ) : (
               effort && (
-                <p className="mt-1 text-[13px] leading-[1.5] text-white/45">
+                <p className="mt-0.5 text-[12px] leading-[1.4] text-white/40">
                   {effort}
                 </p>
               )
             )}
           </div>
         </div>
-        <div className="flex flex-none items-center gap-2.5">
-          {reward && !done && (
-            <span className="inline-flex items-center rounded-full bg-white/[0.08] px-3 py-[5px] text-[12px] font-medium tracking-[-0.005em] text-white/85">
-              {reward}
-            </span>
-          )}
-          {clickable && !done && (
-            <ArrowOutIcon className="h-3.5 w-3.5 text-white/45" />
-          )}
-        </div>
+        {reward && !done && (
+          <span
+            className={`hidden flex-none items-center rounded-full bg-white/[0.10] px-2.5 py-[4px] text-[11px] font-medium tracking-[-0.005em] text-white/75 transition-colors sm:inline-flex [@media(pointer:coarse)]:hidden ${
+              clickable ? "group-hover:bg-white/[0.14]" : ""
+            }`}
+          >
+            {reward}
+            {clickable && (
+              <ArrowOutIcon className="ml-1.5 h-3 w-3 text-white/60" />
+            )}
+          </span>
+        )}
       </button>
     </div>
   );
@@ -240,7 +240,7 @@ export function WaitlistModal({ open, onClose, content, email }) {
       aria-modal="true"
       aria-labelledby="waitlist-modal-heading"
       data-lenis-prevent
-      className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-6"
+      className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-6 [@media(pointer:coarse)]:items-end [@media(pointer:coarse)]:px-0 [@media(pointer:coarse)]:py-0"
     >
       {/* Backdrop — clicking closes. */}
       <div
@@ -250,7 +250,7 @@ export function WaitlistModal({ open, onClose, content, email }) {
       />
 
       {/* Card — a single continuous surface. */}
-      <div className="relative flex max-h-[90vh] w-full max-w-[560px] flex-col overflow-hidden rounded-[24px] border border-white/[0.06] bg-[#141414] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]">
+      <div className="relative flex max-h-[90vh] w-full max-w-[560px] flex-col overflow-hidden rounded-[24px] border border-white/[0.06] bg-[#141414] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] [@media(pointer:coarse)]:max-h-[92vh] [@media(pointer:coarse)]:max-w-none [@media(pointer:coarse)]:rounded-b-none [@media(pointer:coarse)]:border-x-0 [@media(pointer:coarse)]:border-b-0 [@media(pointer:coarse)]:pb-[max(env(safe-area-inset-bottom),0.5rem)] [@media(pointer:coarse)]:shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.7)]">
         {phase === "success" ? (
           <SuccessFlash returning={isReturning} />
         ) : (
@@ -262,16 +262,25 @@ export function WaitlistModal({ open, onClose, content, email }) {
             <div className="mb-7 animate-fade-in">
               <span
                 aria-hidden="true"
-                className="relative mb-4 inline-flex h-7 w-7 items-center justify-center"
+                className="relative mb-4 inline-flex h-8 w-8 items-center justify-center rounded-[8px] bg-white/[0.08]"
               >
-                <span className="absolute inset-[-8px] rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.18),rgba(255,255,255,0)_75%)]" />
-                <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-white/[0.08] text-white/75">
-                  <CheckIcon className="h-3 w-3" />
-                </span>
+                <span
+                  className="inline-block h-4 w-4 bg-white"
+                  style={{
+                    WebkitMaskImage: "url(/logos/favicon.svg)",
+                    WebkitMaskSize: "contain",
+                    WebkitMaskRepeat: "no-repeat",
+                    WebkitMaskPosition: "center",
+                    maskImage: "url(/logos/favicon.svg)",
+                    maskSize: "contain",
+                    maskRepeat: "no-repeat",
+                    maskPosition: "center",
+                  }}
+                />
               </span>
               <h2
                 id="waitlist-modal-heading"
-                className="text-[1.5rem] font-normal leading-[1.1] tracking-[-0.025em] text-white [text-wrap:balance] md:text-[1.875rem] md:tracking-[-0.03em]"
+                className="text-[1.25rem] font-normal leading-[1.15] tracking-[-0.02em] text-white [text-wrap:balance] md:text-[1.5rem] md:tracking-[-0.025em]"
               >
                 {content.heading}
               </h2>
@@ -281,8 +290,11 @@ export function WaitlistModal({ open, onClose, content, email }) {
             </div>
 
             {/* Progress meter. */}
-            <div className="mb-5 flex items-center gap-4">
-              <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-white/[0.06]">
+            <div className="mb-5">
+              <div className="mb-2 text-[12px] text-white/45">
+                {stepsDone} of {totalSteps} complete
+              </div>
+              <div className="relative h-2 overflow-hidden rounded-full bg-white/[0.06]">
                 <div
                   key={stepsDone}
                   data-pulse="true"
@@ -290,13 +302,10 @@ export function WaitlistModal({ open, onClose, content, email }) {
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
-              <div className="flex-none text-[13px] text-white/50">
-                {stepsDone} of {totalSteps} complete
-              </div>
             </div>
 
             {/* Email-submitted (auto-complete) + follow-up rows. */}
-            <div className="-mx-3.5 flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5">
               <StepRow
                 title={content.emailStep.title}
                 subtitle={content.emailStep.subtitle}

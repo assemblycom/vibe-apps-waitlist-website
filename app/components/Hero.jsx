@@ -1,5 +1,6 @@
 import { EmailCTA } from "./EmailCTA";
 import { LogoStrip } from "./LogoStrip";
+import { HeroPromptToAppV19 } from "./HeroPromptToAppV19";
 
 export function Hero({
   eyebrow,
@@ -9,18 +10,12 @@ export function Hero({
   alphaLogos,
 }) {
   return (
-    // Two-column hero: text/CTA on the left, layered square-card
-    // visual on the right. Logo strip pinned to the bottom across
-    // the full width. min-height clamped so very tall viewports
-    // don't dump slack into one big gap.
-    <section
-      className="relative overflow-hidden flex flex-col"
-      style={{
-        height: "min(100vh, 1080px)",
-      }}
-    >
-      {/* Soft halo behind the headline area so the text has somewhere
-          to sit visually against the dark field. */}
+    <section className="relative flex flex-col">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{ background: "#101010" }}
+      />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0"
@@ -30,10 +25,6 @@ export function Hero({
         }}
       />
 
-      {/* Centered text + CTA — the readable column. Logos no longer
-          live here; they're pinned to the bottom of the section over
-          the portal so they read as a credibility strip on the
-          showcase rather than a stack right under the CTA. */}
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 text-center md:pt-36 lg:pt-40">
         <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
           {heading}
@@ -44,31 +35,25 @@ export function Hero({
         <EmailCTA />
       </div>
 
-      {/* Alpha-user credential strip — pinned to the bottom of the
-          hero section. Eyebrow label sits directly above the marquee
-          so the credibility line ("Already used by early teams in
-          alpha") frames the logos rather than letting them float
-          unanchored. The hero visual that previously sat between
-          the CTA and the logos has been removed; the readable
-          column above stays anchored to the top via pt-* padding,
-          and this strip stays anchored to the bottom. */}
+      <div className="relative z-10 w-full overflow-hidden px-4 pt-8 md:px-6 md:pt-12 lg:px-10 lg:pt-16">
+        <HeroPromptToAppV19 borderless />
+      </div>
+
       {alphaLogos && alphaLogos.length > 0 && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
-          <div className="pb-2 pt-4 md:pb-3">
-            <div className="mx-auto w-full max-w-[620px] px-6">
-              {alphaLabel && (
-                <p
-                  className="mb-3 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
-                  style={{
-                    fontFamily:
-                      '"ABC Diatype Mono", ui-monospace, monospace',
-                  }}
-                >
-                  {alphaLabel}
-                </p>
-              )}
-              <LogoStrip logos={alphaLogos} variant="dark" />
-            </div>
+        <div className="relative z-10 pb-8 pt-2 md:pb-10">
+          <div className="mx-auto w-full max-w-[620px] px-6">
+            {alphaLabel && (
+              <p
+                className="mb-3 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
+                style={{
+                  fontFamily:
+                    '"ABC Diatype Mono", ui-monospace, monospace',
+                }}
+              >
+                {alphaLabel}
+              </p>
+            )}
+            <LogoStrip logos={alphaLogos} variant="dark" />
           </div>
         </div>
       )}
