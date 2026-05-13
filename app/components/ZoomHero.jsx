@@ -80,9 +80,19 @@ export function ZoomHero({ children }) {
     // color — avoids the "two overlapping rectangles" look a partial
     // backdrop creates. The Header pill has its own solid dark bg +
     // backdrop-blur so it stays legible on top of the off-white.
-    <div style={{ backgroundColor: BACKDROP }}>
+    //
+    // The outer carries `data-nav-theme="light"` so the cream backdrop
+    // claims the nav as soon as the dark hero card has scrolled past
+    // the pill — without this, the nav stayed dark over visible cream
+    // until NarrativeBlock's own bounding rect reached the strip,
+    // which read as the nav lagging the visible chapter change. The
+    // inner card is tagged `dark` so it cancels the light claim while
+    // the hero is still behind the pill (Header subtracts dark
+    // presence from light presence).
+    <div style={{ backgroundColor: BACKDROP }} data-nav-theme="light">
       <div
         ref={innerRef}
+        data-nav-theme="dark"
         // `origin-top` keeps the hero anchored at its top edge while it
         // shrinks, so it reads as "pulling away from the page" rather
         // than floating down. `overflow-hidden` lets the border-radius

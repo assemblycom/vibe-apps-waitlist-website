@@ -90,8 +90,15 @@ export function Header() {
     // Light-chapter sentinels (same selector ScrollTintedChapter watches).
     // Re-queried on each resize via the resize handler so dynamically
     // injected sections still register if they ever appear later.
+    // Dark sentinels (currently just the hero card inside ZoomHero) are
+    // used to suppress the light claim while the dark surface is still
+    // behind the pill — without this the cream ZoomHero backdrop would
+    // turn the nav light over a hero that's only just begun to scroll.
     let lightSections = Array.from(
       document.querySelectorAll('[data-nav-theme="light"]'),
+    );
+    let darkSections = Array.from(
+      document.querySelectorAll('[data-nav-theme="dark"]'),
     );
 
     // Dark / light pill+border tokens — the same values used in the
@@ -123,17 +130,24 @@ export function Header() {
     // on screen below the fold.
     const FADE_PX = 60;
     const NAV_BOTTOM_PX = 56;
+    const presenceFor = (r) => {
+      const fadeIn = clamp01((NAV_BOTTOM_PX - r.top) / FADE_PX);
+      const fadeOut = clamp01((r.bottom - NAV_BOTTOM_PX) / FADE_PX);
+      return Math.min(fadeIn, fadeOut);
+    };
     const computeChapterTint = () => {
       if (lightSections.length === 0) return 0;
-      let max = 0;
+      let lightMax = 0;
       for (const s of lightSections) {
-        const r = s.getBoundingClientRect();
-        const fadeIn = clamp01((NAV_BOTTOM_PX - r.top) / FADE_PX);
-        const fadeOut = clamp01((r.bottom - NAV_BOTTOM_PX) / FADE_PX);
-        const t = Math.min(fadeIn, fadeOut);
-        if (t > max) max = t;
+        const t = presenceFor(s.getBoundingClientRect());
+        if (t > lightMax) lightMax = t;
       }
-      return ease(max);
+      let darkMax = 0;
+      for (const s of darkSections) {
+        const t = presenceFor(s.getBoundingClientRect());
+        if (t > darkMax) darkMax = t;
+      }
+      return ease(clamp01(lightMax - darkMax));
     };
 
     let raf = null;
@@ -197,6 +211,9 @@ export function Header() {
       // Re-collect sentinels on resize in case the layout shifted.
       lightSections = Array.from(
         document.querySelectorAll('[data-nav-theme="light"]'),
+      );
+      darkSections = Array.from(
+        document.querySelectorAll('[data-nav-theme="dark"]'),
       );
       onScroll();
     };
