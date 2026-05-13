@@ -1321,27 +1321,20 @@ export function ClientPortalVisual() {
   const [inView, setInView] = useState(false);
   const [paused, setPaused] = useState(false);
   const ref = useRef(null);
-  const [fit, setFit] = useState({ scale: 1, tx: 0, ty: 0 });
+  const [scale, setScale] = useState(1);
 
-  // Measure the outer card and compute the design-to-rendered transform.
-  // Anchors the scaled design space to the outer card's center (rather
-  // than top-left) so any zoom expands outward symmetrically — the
-  // input/thinking phase's centered slot stays centered on mobile.
+  // Measure the outer card and scale the design space to match. Anchored
+  // to top-left so the sidebar's left padding stays at the same on-screen
+  // position regardless of zoom — the mobile zoom expands toward the
+  // right/bottom (into the existing peek crop).
   useEffect(() => {
     if (!ref.current) return;
     const el = ref.current;
     const update = () => {
-      const rect = el.getBoundingClientRect();
-      const w = rect.width;
-      const h = rect.height;
-      if (w <= 0 || h <= 0) return;
+      const w = el.getBoundingClientRect().width;
+      if (w <= 0) return;
       const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
-      const s = (w / DESIGN_W) * zoom;
-      setFit({
-        scale: s,
-        tx: (w - DESIGN_W * s) / 2,
-        ty: (h - DESIGN_H * s) / 2,
-      });
+      setScale((w / DESIGN_W) * zoom);
     };
     update();
     const ro = new ResizeObserver(update);
@@ -1392,7 +1385,7 @@ export function ClientPortalVisual() {
         style={{
           width: `${DESIGN_W}px`,
           height: `${DESIGN_H}px`,
-          transform: `translate(${fit.tx}px, ${fit.ty}px) scale(${fit.scale})`,
+          transform: `scale(${scale})`,
           transformOrigin: "top left",
         }}
       >

@@ -701,24 +701,29 @@ export function ThreeStepsVisual() {
   const [inView, setInView] = useState(false);
   const [paused, setPaused] = useState(false);
   const ref = useRef(null);
-  const [fit, setFit] = useState({ scale: 1, tx: 0, ty: 0 });
+  // `scale` drives the design→outer scale; `slotCx/Cy` are the
+  // visible-center coords in design space, used to position the
+  // Input/Thinking centered slot. Anchoring the surface to top-left
+  // keeps the Result phase's sidebar at consistent left padding; the
+  // slot's center is recomputed against the *visible* center so the
+  // text box doesn't drift right when the mobile zoom kicks in.
+  const [fit, setFit] = useState({
+    scale: 1,
+    slotCx: DESIGN_W / 2,
+    slotCy: DESIGN_H / 2,
+  });
 
-  // Center-anchored scale so mobile zoom expands symmetrically — keeps
-  // the Input/Thinking phase's centered slot at the card's center.
   useEffect(() => {
     if (!ref.current) return;
     const el = ref.current;
     const update = () => {
-      const rect = el.getBoundingClientRect();
-      const w = rect.width;
-      const h = rect.height;
-      if (w <= 0 || h <= 0) return;
+      const w = el.getBoundingClientRect().width;
+      if (w <= 0) return;
       const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
-      const s = (w / DESIGN_W) * zoom;
       setFit({
-        scale: s,
-        tx: (w - DESIGN_W * s) / 2,
-        ty: (h - DESIGN_H * s) / 2,
+        scale: (w / DESIGN_W) * zoom,
+        slotCx: DESIGN_W / (2 * zoom),
+        slotCy: DESIGN_H / (2 * zoom),
       });
     };
     update();
@@ -769,13 +774,18 @@ export function ThreeStepsVisual() {
         style={{
           width: `${DESIGN_W}px`,
           height: `${DESIGN_H}px`,
-          transform: `translate(${fit.tx}px, ${fit.ty}px) scale(${fit.scale})`,
+          transform: `scale(${fit.scale})`,
           transformOrigin: "top left",
         }}
       >
-        {/* Input + Thinking share a centered slot; the Result phase
-            renders at card scale so it can spill past the edges. */}
-        <div className="absolute left-1/2 top-1/2 w-[82%] max-w-[460px] -translate-x-1/2 -translate-y-1/2">
+        {/* Input + Thinking share a centered slot; positioned at the
+            outer card's *visible* center (in design coords) rather than
+            the raw design center so it stays centered when mobile zoom
+            shifts the visible window. */}
+        <div
+          className="absolute w-[82%] max-w-[460px] -translate-x-1/2 -translate-y-1/2"
+          style={{ left: `${fit.slotCx}px`, top: `${fit.slotCy}px` }}
+        >
           <div className="grid items-center [&>*]:col-start-1 [&>*]:row-start-1">
             <Phase visible={phase === 0}>
               <InputPhase active={inView && phase === 0} paused={paused} />

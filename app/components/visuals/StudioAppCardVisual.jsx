@@ -955,24 +955,18 @@ export function StudioAppCardVisual() {
   // "entering" → "hovering" → "clicking" as the phase unfolds.
   const [cursorPhase, setCursorPhase] = useState("hidden");
   const ref = useRef(null);
-  const [fit, setFit] = useState({ scale: 1, tx: 0, ty: 0 });
+  const [scale, setScale] = useState(1);
 
-  // Center-anchored scale so mobile zoom expands symmetrically.
+  // Top-left anchored scale — sidebar's left padding stays put across
+  // zoom levels; the mobile zoom expands toward the right/bottom peek.
   useEffect(() => {
     if (!ref.current) return;
     const el = ref.current;
     const update = () => {
-      const rect = el.getBoundingClientRect();
-      const w = rect.width;
-      const h = rect.height;
-      if (w <= 0 || h <= 0) return;
+      const w = el.getBoundingClientRect().width;
+      if (w <= 0) return;
       const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
-      const s = (w / DESIGN_W) * zoom;
-      setFit({
-        scale: s,
-        tx: (w - DESIGN_W * s) / 2,
-        ty: (h - DESIGN_H * s) / 2,
-      });
+      setScale((w / DESIGN_W) * zoom);
     };
     update();
     const ro = new ResizeObserver(update);
@@ -1050,7 +1044,7 @@ export function StudioAppCardVisual() {
         style={{
           width: `${DESIGN_W}px`,
           height: `${DESIGN_H}px`,
-          transform: `translate(${fit.tx}px, ${fit.ty}px) scale(${fit.scale})`,
+          transform: `scale(${scale})`,
           transformOrigin: "top left",
         }}
       >
