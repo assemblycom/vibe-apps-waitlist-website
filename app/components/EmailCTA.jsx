@@ -108,7 +108,7 @@ export function EmailCTA() {
           <p
             id="email-cta-error"
             role="alert"
-            className="mt-2 pl-4 text-[13px] text-[#E6836E]/90"
+            className="mt-2 pl-4 text-left text-[13px] text-[#E6836E]/90"
           >
             {error}
           </p>
