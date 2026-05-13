@@ -998,10 +998,12 @@ html.lenis body {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
 /* Fade the hero portal card's bottom into the dark hero background on
-   mobile so there's no harsh white→black line above the logo strip. */
+   mobile so there's no harsh white→black line above the logo strip.
+   Long, soft gradient so the rounded bottom corners aren't visible
+   and the dissolve reads as gradual. */
 @media (max-width: 1023px) {
   .hero-card-fade-mobile {
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
   }
 }
