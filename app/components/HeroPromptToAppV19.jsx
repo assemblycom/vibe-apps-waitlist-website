@@ -684,7 +684,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
           {/* Portal preview */}
           <div className="relative">
             <div
-              className={`overflow-hidden rounded-t-[10px] border border-b-0 shadow-[0_10px_28px_-8px_rgba(16,16,16,0.18)] lg:rounded-[10px] lg:border-b${borderless ? " border-[#101010]/[0.10]" : " border-[#101010]/[0.10]"}`}
+              className={`overflow-hidden rounded-t-[10px] border border-b-0 lg:rounded-[10px] lg:border-b lg:shadow-[0_10px_28px_-8px_rgba(16,16,16,0.18)]${borderless ? " border-[#101010]/[0.10]" : " border-[#101010]/[0.10]"}`}
               style={{
                 background: borderless ? "#FFFFFF" : "#FFFFFF",
                 ...(borderless ? { borderColor: "rgba(16,16,16,0.10)" } : {}),
