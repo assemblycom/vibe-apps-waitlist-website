@@ -163,12 +163,12 @@ function SideMenu({ items, activeIndex, allCompleted, visible, onSelect }) {
   );
 }
 
-// Horizontal tab strip pinned to the BOTTOM of the viewport — used on
-// every viewport now (was mobile-only). Only visible while the
-// value-props section is in view; fades out when the section scrolls
-// past. Rendered through a portal to escape any transformed ancestor
-// (GradientReveal) so `position: fixed` actually anchors to the
-// viewport.
+// Mobile counterpart to SideMenu — a horizontal tab strip pinned to the
+// BOTTOM of the viewport (like a native bottom tab bar). Only visible
+// while the value-props section is in view; fades out when the section
+// scrolls past. Rendered through a portal to escape any transformed
+// ancestor (GradientReveal) so `position: fixed` actually anchors to
+// the viewport.
 function MobileNav({ items, activeIndex, visible, onSelect }) {
   const buttonRefs = useRef([]);
   const [portalTarget, setPortalTarget] = useState(null);
@@ -190,14 +190,14 @@ function MobileNav({ items, activeIndex, visible, onSelect }) {
   return createPortal(
     <div
       className={clsx(
-        "pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.06] bg-[#101010] pb-[max(env(safe-area-inset-bottom),0.5rem)] shadow-[0_-8px_16px_-8px_rgba(0,0,0,0.5)] transition-opacity duration-300",
+        "pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.06] bg-[#101010] pb-[max(env(safe-area-inset-bottom),0.5rem)] shadow-[0_-8px_16px_-8px_rgba(0,0,0,0.5)] transition-opacity duration-300 md:hidden",
         visible ? "opacity-100" : "opacity-0",
       )}
       aria-hidden={!visible}
     >
       <div
         className={clsx(
-          "no-scrollbar mx-auto flex max-w-3xl items-center justify-center gap-1 overflow-x-auto px-4 pt-2",
+          "no-scrollbar flex gap-1 overflow-x-auto px-4 pt-2",
           visible ? "pointer-events-auto" : "",
         )}
         role="tablist"
@@ -335,7 +335,15 @@ export function ValueProps({ items = [] }) {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-6">
+    <div className="mx-auto max-w-6xl px-6 md:grid md:grid-cols-[180px_1fr] md:gap-16">
+      <SideMenu
+        items={items}
+        activeIndex={activeIndex}
+        allCompleted={allCompleted}
+        visible={menuVisible}
+        onSelect={handleSelect}
+      />
+
       <MobileNav
         items={items}
         activeIndex={activeIndex}
@@ -343,19 +351,21 @@ export function ValueProps({ items = [] }) {
         onSelect={handleSelect}
       />
 
-      {items.map((item, i) => {
-        const visual = item.visual ?? renderVisual(item.visualKey);
-        return (
-          <ValuePropPanel
-            key={i}
-            id={sectionId(i)}
-            index={i}
-            sectionRef={(el) => (sectionRefs.current[i] = el)}
-            item={item}
-            visual={visual}
-          />
-        );
-      })}
+      <div className="md:col-start-2 md:row-start-1">
+        {items.map((item, i) => {
+          const visual = item.visual ?? renderVisual(item.visualKey);
+          return (
+            <ValuePropPanel
+              key={i}
+              id={sectionId(i)}
+              index={i}
+              sectionRef={(el) => (sectionRefs.current[i] = el)}
+              item={item}
+              visual={visual}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
