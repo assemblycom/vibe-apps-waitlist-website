@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import clsx from "clsx";
 import { PromptCardVisual } from "./visuals/PromptCardVisual";
 import { StudioAppCardVisual } from "./visuals/StudioAppCardVisual";
@@ -162,10 +163,19 @@ function SideMenu({ items, activeIndex, allCompleted, visible, onSelect }) {
   );
 }
 
-// Mobile counterpart to SideMenu — a horizontal tab strip that pins
-// below the page nav while scrolling through the value-props block.
-function MobileNav({ items, activeIndex, onSelect }) {
+// Mobile counterpart to SideMenu — a horizontal tab strip pinned to the
+// BOTTOM of the viewport (like a native bottom tab bar). Only visible
+// while the value-props section is in view; fades out when the section
+// scrolls past. Rendered through a portal to escape any transformed
+// ancestor (GradientReveal) so `position: fixed` actually anchors to
+// the viewport.
+function MobileNav({ items, activeIndex, visible, onSelect }) {
   const buttonRefs = useRef([]);
+  const [portalTarget, setPortalTarget] = useState(null);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") setPortalTarget(document.body);
+  }, []);
 
   // Keep the active tab visible: scroll it into the horizontal
   // scroller's center whenever activeIndex changes.
@@ -176,10 +186,20 @@ function MobileNav({ items, activeIndex, onSelect }) {
     }
   }, [activeIndex]);
 
-  return (
-    <div className="sticky top-0 z-40 -mx-6 mb-2 border-b border-white/[0.06] bg-[#101010] pt-[68px] shadow-[0_8px_16px_-8px_rgba(0,0,0,0.5)] md:hidden">
+  if (!portalTarget) return null;
+  return createPortal(
+    <div
+      className={clsx(
+        "pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.06] bg-[#101010] pb-[max(env(safe-area-inset-bottom),0.5rem)] shadow-[0_-8px_16px_-8px_rgba(0,0,0,0.5)] transition-opacity duration-300 md:hidden",
+        visible ? "opacity-100" : "opacity-0",
+      )}
+      aria-hidden={!visible}
+    >
       <div
-        className="no-scrollbar flex gap-1 overflow-x-auto px-6 py-2"
+        className={clsx(
+          "no-scrollbar flex gap-1 overflow-x-auto px-4 pt-2",
+          visible ? "pointer-events-auto" : "",
+        )}
         role="tablist"
         aria-label="Value props"
       >
@@ -206,7 +226,8 @@ function MobileNav({ items, activeIndex, onSelect }) {
           );
         })}
       </div>
-    </div>
+    </div>,
+    portalTarget,
   );
 }
 
@@ -219,7 +240,7 @@ function ValuePropPanel({ id, item, visual, sectionRef, index }) {
       id={id}
       ref={sectionRef}
       data-section-index={index}
-      className="scroll-mt-[140px] py-20 md:scroll-mt-0 md:py-24"
+      className="py-20 md:py-24"
     >
       <div className="flex flex-col gap-10">
         <div className="max-w-3xl">
@@ -271,23 +292,30 @@ export function ValueProps({ items = [] }) {
   }, [items.length]);
 
   // Watch the last section: flip `allCompleted` when user has read
-  // through it (for the final check mark), and hide the menu once
-  // the section has scrolled fully above the viewport so it doesn't
-  // linger into the Comparison section.
+  // through it (for the final check mark), and hide the desktop side
+  // menu once the section has scrolled fully above the viewport so it
+  // doesn't linger into the Comparison section. The mobile nav uses a
+  // separate `mobileNavVisible` flag that's true only while the
+  // value-props block is actively in view (entry-through-exit).
   const [menuVisible, setMenuVisible] = useState(true);
+  const [mobileNavVisible, setMobileNavVisible] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
     const last = sectionRefs.current[items.length - 1];
-    if (!last) return;
+    const first = sectionRefs.current[0];
+    if (!last || !first) return;
     const check = () => {
-      const rect = last.getBoundingClientRect();
-      setAllCompleted(rect.bottom < window.innerHeight * 0.35);
-      // Menu stays visible while the last section's bottom is still
-      // below the upper third of the viewport — user is reading the
-      // body copy. Once the bottom rises past that line (most of the
-      // section has scrolled off the top), hide the menu so it
-      // doesn't linger into the next section.
-      setMenuVisible(rect.bottom > window.innerHeight * 0.85);
+      const lastRect = last.getBoundingClientRect();
+      const firstRect = first.getBoundingClientRect();
+      setAllCompleted(lastRect.bottom < window.innerHeight * 0.35);
+      setMenuVisible(lastRect.bottom > window.innerHeight * 0.85);
+      // Mobile nav visible while the block is in view: first section's
+      // top has entered the bottom 80% of viewport AND last section's
+      // bottom hasn't fully scrolled past the top 15% yet.
+      setMobileNavVisible(
+        firstRect.top < window.innerHeight * 0.8 &&
+          lastRect.bottom > window.innerHeight * 0.15,
+      );
     };
     check();
     window.addEventListener("scroll", check, { passive: true });
@@ -314,12 +342,14 @@ export function ValueProps({ items = [] }) {
         onSelect={handleSelect}
       />
 
+      <MobileNav
+        items={items}
+        activeIndex={activeIndex}
+        visible={mobileNavVisible}
+        onSelect={handleSelect}
+      />
+
       <div className="md:col-start-2 md:row-start-1">
-        <MobileNav
-          items={items}
-          activeIndex={activeIndex}
-          onSelect={handleSelect}
-        />
         {items.map((item, i) => {
           const visual = item.visual ?? renderVisual(item.visualKey);
           return (
