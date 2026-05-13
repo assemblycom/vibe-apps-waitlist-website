@@ -484,13 +484,12 @@ function ResultPhase({ active, paused }) {
         "absolute left-[5%] top-[8%] h-[130%] w-[120%] overflow-hidden rounded-tl-[14px] rounded-tr-[14px] rounded-br-0 rounded-bl-0 bg-white shadow-[0_20px_50px_-25px_rgba(16,16,16,0.35)]",
       )}
     >
-      {/* Loading overlay — skeleton blocks sized and positioned to mirror
-          the real sidebar rows + wizard form below, so the transition
-          into content reads as the same screen "filling in" rather than
-          two unrelated states. Every shimmer is a slight-corner
-          rectangle (rounded-sm = 2px), no pills, no random widths —
-          each block stands in for a specific element of the resolved
-          UI. */}
+      {/* Loading overlay — matches the hero (HeroPromptToAppV19) shimmer
+          treatment: each sidebar nav row is a single full-width
+          rectangle (no separate icon block), and the wizard body is a
+          stack of rectangles standing in for the resolved fields.
+          rounded (4px) corners and the diagonal sweep keep it visually
+          aligned with the hero's loading state. */}
       <div
         aria-hidden="true"
         className={clsx(
@@ -498,48 +497,31 @@ function ResultPhase({ active, paused }) {
           ready ? "opacity-0" : "opacity-100",
         )}
       >
-        {/* Sidebar skeleton — 18px icon block + label bar per row, same
-            geometry the real sidebar uses (px-2 py-1, gap-2). Label
-            widths match the actual nav labels' approximate run length. */}
+        {/* Sidebar skeleton — one rectangle per real nav row, same
+            geometry and spacing the resolved sidebar uses. */}
         <div
           className="flex w-[200px] flex-shrink-0 flex-col gap-[6px] px-2 pt-2.5"
           style={{ backgroundColor: SIDEBAR_BG }}
         >
-          {/* Brand row */}
-          <div className="flex items-center gap-2 px-2 py-1.5">
-            <div className="studio-shimmer h-[18px] w-[18px] flex-shrink-0 rounded-sm" />
-            <div className="studio-shimmer h-[10px] w-[78px] rounded-sm" />
-          </div>
-          {/* Nav rows — widths track STUDIO_NAV label lengths. */}
-          {[36, 60, 70, 60, 42, 42].map((labelW, i) => (
-            <div key={i} className="flex items-center gap-2 px-2 py-1">
-              <div className="studio-shimmer h-[18px] w-[18px] flex-shrink-0 rounded-sm" />
-              <div
-                className="studio-shimmer h-[10px] rounded-sm"
-                style={{ width: labelW }}
-              />
-            </div>
+          <div className="studio-shimmer mx-2 h-[26px] rounded" />
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="studio-shimmer mx-2 h-[26px] rounded" />
           ))}
         </div>
-        {/* Main canvas skeleton — page header + step meta + progress +
-            heading + two field rows (label + input), matching the
-            wizard layout that resolves underneath. */}
+        {/* Main canvas skeleton — single uniform bar height across the
+            body so the rhythm matches the sidebar instead of mixing
+            thin labels with taller inputs. Width varies (heading
+            narrower than form rows) to keep the hierarchy without
+            breaking height cohesion. */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-4">
-            <div className="studio-shimmer h-[10px] w-[68px] rounded-sm" />
+          <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-6">
+            <div className="studio-shimmer h-[14px] w-[88px] rounded" />
           </div>
-          <div className="flex-1 px-6 py-5">
-            <div className="studio-shimmer mb-2 h-[10px] w-[58px] rounded-sm" />
-            <div className="mb-4 h-[2px] w-full rounded-full bg-[#101010]/[0.08]" />
-            <div className="studio-shimmer mb-5 h-[12px] w-[58%] rounded-sm" />
-            <div className="space-y-3.5">
-              {[0, 1].map((i) => (
-                <div key={i}>
-                  <div className="studio-shimmer mb-1.5 h-[9px] w-[72px] rounded-sm" />
-                  <div className="studio-shimmer h-[30px] w-full rounded-sm" />
-                </div>
-              ))}
-            </div>
+          <div className="flex-1 space-y-3 px-6 py-5">
+            <div className="studio-shimmer h-[24px] w-[60%] rounded" />
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="studio-shimmer h-[24px] w-full rounded" />
+            ))}
           </div>
         </div>
       </div>
@@ -640,7 +622,7 @@ function ResultPhase({ active, paused }) {
         {/* Main canvas — onboarding wizard view. */}
         <div className="flex min-w-0 flex-1 flex-col bg-white">
           {/* Page header strip */}
-          <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-4">
+          <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-6">
             <span
               className="text-[11px] font-medium text-[#212b36] transition-opacity duration-[400ms]"
               style={{ opacity: wizardHeader ? 1 : 0 }}
