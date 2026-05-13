@@ -296,7 +296,10 @@ export function ValueProps({ items = [] }) {
   // menu once the section has scrolled fully above the viewport so it
   // doesn't linger into the Comparison section. The mobile nav uses a
   // separate `mobileNavVisible` flag that's true only while the
-  // value-props block is actively in view (entry-through-exit).
+  // value-props block is actively in view (entry-through-exit). We use
+  // requestAnimationFrame polling because Lenis smooth-scrolls via
+  // transform — native `scroll` events don't always fire on every
+  // frame, which made the threshold-based hide feel sticky.
   const [menuVisible, setMenuVisible] = useState(true);
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   useEffect(() => {
@@ -304,28 +307,30 @@ export function ValueProps({ items = [] }) {
     const last = sectionRefs.current[items.length - 1];
     const first = sectionRefs.current[0];
     if (!last || !first) return;
-    const check = () => {
+
+    let raf = 0;
+    let prevAllCompleted = null;
+    let prevMenuVisible = null;
+    let prevMobileNavVisible = null;
+    const loop = () => {
       const lastRect = last.getBoundingClientRect();
       const firstRect = first.getBoundingClientRect();
-      setAllCompleted(lastRect.bottom < window.innerHeight * 0.35);
-      setMenuVisible(lastRect.bottom > window.innerHeight * 0.85);
-      // Mobile nav visible while the block is in view: first section's
-      // top has entered the bottom 80% of viewport AND the last
-      // section's bottom hasn't yet scrolled above the midpoint of the
-      // viewport (i.e., user is still reading value-props, not into the
-      // next section).
-      setMobileNavVisible(
-        firstRect.top < window.innerHeight * 0.8 &&
-          lastRect.bottom > window.innerHeight * 0.55,
-      );
+      const vh = window.innerHeight;
+
+      const ac = lastRect.bottom < vh * 0.35;
+      const mv = lastRect.bottom > vh * 0.85;
+      // Hide as soon as the last value-prop's bottom rises into the top
+      // 30% of viewport — by then the next section's heading is in
+      // play and the tab bar would just hover over it.
+      const mnv = firstRect.top < vh * 0.85 && lastRect.bottom > vh * 0.3;
+
+      if (ac !== prevAllCompleted) { setAllCompleted(ac); prevAllCompleted = ac; }
+      if (mv !== prevMenuVisible) { setMenuVisible(mv); prevMenuVisible = mv; }
+      if (mnv !== prevMobileNavVisible) { setMobileNavVisible(mnv); prevMobileNavVisible = mnv; }
+      raf = requestAnimationFrame(loop);
     };
-    check();
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check);
-    return () => {
-      window.removeEventListener("scroll", check);
-      window.removeEventListener("resize", check);
-    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
   }, [items.length]);
 
   const handleSelect = (i) => {
