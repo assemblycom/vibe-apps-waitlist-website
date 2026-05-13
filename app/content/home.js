@@ -5,7 +5,7 @@ export const HOME_CONTENT = {
   hero: {
     heading: "The AI app builder for client-facing experiences",
     subheading:
-      "Build apps in minutes, or pick from a library of pre-built ones. Each one deploys to your client portal and inherits your contacts, permissions, and preferences.",
+      "Assembly lets you build apps that ship directly to your client portal, work with your existing contacts, and honor your team's permissions and brand",
   },
 
   whyAssemblyStudio: {
