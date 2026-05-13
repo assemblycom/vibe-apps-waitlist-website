@@ -116,7 +116,7 @@ function SideMenu({ items, activeIndex, allCompleted, visible, onSelect }) {
           : "pointer-events-none opacity-0",
       )}
     >
-      <div className="sticky top-24">
+      <div className="sticky top-[72px]">
         <div className="w-full">
           {/* Items — text-only menu, selected row carries a soft pill
               background. No header, no checkmarks, no counter. */}
