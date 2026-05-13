@@ -717,13 +717,20 @@ export function ThreeStepsVisual() {
     if (!ref.current) return;
     const el = ref.current;
     const update = () => {
-      const w = el.getBoundingClientRect().width;
+      const rect = el.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
       if (w <= 0) return;
       const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
+      const scale = (w / DESIGN_W) * zoom;
+      // Visible center in design coords — divide container px by scale so
+      // the slot lands at the true center of the *visible* window (matters
+      // when the container's aspect ratio differs from the design's, e.g.
+      // 4:3 on mobile vs 3:2 design).
       setFit({
-        scale: (w / DESIGN_W) * zoom,
-        slotCx: DESIGN_W / (2 * zoom),
-        slotCy: DESIGN_H / (2 * zoom),
+        scale,
+        slotCx: w / (2 * scale),
+        slotCy: h / (2 * scale),
       });
     };
     update();
