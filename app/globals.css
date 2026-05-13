@@ -1003,7 +1003,7 @@ html.lenis body {
    and the dissolve reads as gradual. */
 @media (max-width: 1023px) {
   .hero-card-fade-mobile {
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
   }
 }
