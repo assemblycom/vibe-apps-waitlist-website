@@ -230,13 +230,22 @@ function HomePanel() {
             >
               <div className="flex min-w-0 items-center gap-1">
                 {a.iconSrc ? (
-                  <img
-                    src={a.iconSrc}
-                    alt=""
+                  // Render the SVG via mask so the glyph picks up the
+                  // label's color (#6b6f76) instead of the asset's native
+                  // near-black fill — keeps icon + label as one visual unit.
+                  <span
                     aria-hidden="true"
-                    width={10}
-                    height={10}
-                    className="flex-shrink-0"
+                    className="block h-[10px] w-[10px] flex-shrink-0 bg-[#6b6f76]"
+                    style={{
+                      WebkitMaskImage: `url(${a.iconSrc})`,
+                      maskImage: `url(${a.iconSrc})`,
+                      WebkitMaskSize: "contain",
+                      maskSize: "contain",
+                      WebkitMaskRepeat: "no-repeat",
+                      maskRepeat: "no-repeat",
+                      WebkitMaskPosition: "center",
+                      maskPosition: "center",
+                    }}
                   />
                 ) : (
                   a.iconNode
@@ -324,16 +333,20 @@ function DateChip({ label }) {
 // like it runs off the right edge (matches Figma reference where a
 // real thread extends past the visible width).
 function MessageRow({ initials, avatarBg, avatarFg, name, time, children }) {
+  // Cap the content column so body text wraps within the visible card
+  // area. The inner portal surface is wider than the outer card's
+  // overflow-clip, so without a max-width the message text wraps offscreen
+  // and the visible portion reads as broken mid-sentence lines.
   return (
     <div className="px-4 py-1.5">
       <div className="flex items-start gap-2">
         <Avatar initials={initials} bg={avatarBg} fg={avatarFg} />
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 max-w-[520px] flex-1">
           <div className="mb-0.5 flex items-center gap-1.5 text-[11px] leading-[1.4]">
             <span className="font-medium text-[#212b36]">{name}</span>
             <span className="text-[#6b6f76]">{time}</span>
           </div>
-          <div className="text-[11px] leading-[1.5] text-[#212b36]">
+          <div className="text-[11px] leading-[1.55] text-[#212b36]">
             {children}
           </div>
         </div>
@@ -609,17 +622,7 @@ function PaymentsPanel() {
                 key={row.inv}
                 className="grid grid-cols-[80px_80px_1fr] items-center gap-2 border-b border-[#f4f5f7] px-2 py-1.5 text-[10px] text-[#212b36] last:border-b-0"
               >
-                <span className="flex items-center gap-1">
-                  <span>{row.price}</span>
-                  <img
-                    src="/Icons/return.svg"
-                    alt=""
-                    aria-hidden="true"
-                    width={10}
-                    height={10}
-                    className="flex-shrink-0"
-                  />
-                </span>
+                <span>{row.price}</span>
                 <span>
                   <StatusChip label={row.status} variant={row.variant} />
                 </span>
@@ -713,11 +716,11 @@ function ScheduleCallPanel() {
               src="/Icons/video.svg"
               alt=""
               aria-hidden="true"
-              width={13}
+              width={12}
               height={12}
               className="mt-[2px] flex-shrink-0"
             />
-            <span>Web conferencing details provided upon confirmation.</span>
+            <span>Video link sent on confirmation.</span>
           </div>
         </div>
 
