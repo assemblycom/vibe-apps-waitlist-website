@@ -310,11 +310,13 @@ export function ValueProps({ items = [] }) {
       setAllCompleted(lastRect.bottom < window.innerHeight * 0.35);
       setMenuVisible(lastRect.bottom > window.innerHeight * 0.85);
       // Mobile nav visible while the block is in view: first section's
-      // top has entered the bottom 80% of viewport AND last section's
-      // bottom hasn't fully scrolled past the top 15% yet.
+      // top has entered the bottom 80% of viewport AND the last
+      // section's bottom hasn't yet scrolled above the midpoint of the
+      // viewport (i.e., user is still reading value-props, not into the
+      // next section).
       setMobileNavVisible(
         firstRect.top < window.innerHeight * 0.8 &&
-          lastRect.bottom > window.innerHeight * 0.15,
+          lastRect.bottom > window.innerHeight * 0.55,
       );
     };
     check();
