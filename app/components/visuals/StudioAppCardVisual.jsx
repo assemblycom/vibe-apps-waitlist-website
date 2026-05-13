@@ -935,6 +935,17 @@ function StudioSurface({ phaseIndex, cursorPhase }) {
   );
 }
 
+// Design-space dimensions. The Studio surface is laid out at a fixed
+// pixel size and uniformly scaled to match the actual container width,
+// so the Dashboard's 3-column stat block and the CRM grid keep their
+// designed proportions on narrow viewports instead of compressing.
+const DESIGN_W = 832;
+const DESIGN_H = (DESIGN_W * 2) / 3;
+// Phone zoom — same nudge as ClientPortalVisual so the family reads as
+// one product. Right/bottom peek absorbs the extra crop.
+const MOBILE_BREAK = 540;
+const MOBILE_ZOOM = 1.1;
+
 // ── Top-level: drive phase loop, gate on in-view ────────────────────────
 export function StudioAppCardVisual() {
   const [phase, setPhase] = useState(0);
@@ -944,6 +955,22 @@ export function StudioAppCardVisual() {
   // "entering" → "hovering" → "clicking" as the phase unfolds.
   const [cursorPhase, setCursorPhase] = useState("hidden");
   const ref = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+    const update = () => {
+      const w = el.getBoundingClientRect().width;
+      if (w <= 0) return;
+      const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
+      setScale((w / DESIGN_W) * zoom);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // In-view detection — scroll-listener fallback to work inside the
   // sticky ValuePropsStory layout (IntersectionObserver fights sticky).
@@ -1010,7 +1037,17 @@ export function StudioAppCardVisual() {
       className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[16px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:rounded-[28px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
-      <StudioSurface phaseIndex={phase} cursorPhase={cursorPhase} />
+      <div
+        className="absolute left-0 top-0"
+        style={{
+          width: `${DESIGN_W}px`,
+          height: `${DESIGN_H}px`,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+        }}
+      >
+        <StudioSurface phaseIndex={phase} cursorPhase={cursorPhase} />
+      </div>
       <PlayPauseToggle
         paused={paused}
         durationMs={loopMs}

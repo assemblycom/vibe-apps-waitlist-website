@@ -686,12 +686,37 @@ function ResultPhase({ active, paused }) {
   );
 }
 
+// Design-space dimensions. Inner layout is rendered at a fixed pixel
+// size and uniformly scaled, so the Result phase's sidebar + wizard
+// columns keep their designed proportions on narrow viewports.
+const DESIGN_W = 832;
+const DESIGN_H = (DESIGN_W * 2) / 3;
+// Phone zoom — match the other story visuals so the trio scales as one.
+const MOBILE_BREAK = 540;
+const MOBILE_ZOOM = 1.1;
+
 // ── Top-level: drive phase progression, gate on in-view ──────────────
 export function ThreeStepsVisual() {
   const [phase, setPhase] = useState(0);
   const [inView, setInView] = useState(false);
   const [paused, setPaused] = useState(false);
   const ref = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+    const update = () => {
+      const w = el.getBoundingClientRect().width;
+      if (w <= 0) return;
+      const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
+      setScale((w / DESIGN_W) * zoom);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // In-view detection — scroll-listener fallback matches the rest of
   // the story visuals so it works inside the sticky story layout.
@@ -730,32 +755,42 @@ export function ThreeStepsVisual() {
       className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[16px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:rounded-[28px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
-      {/* Input + Thinking share a centered slot; the Result phase
-          renders at card scale so it can spill past the edges. */}
-      <div className="absolute left-1/2 top-1/2 w-[82%] max-w-[460px] -translate-x-1/2 -translate-y-1/2">
-        <div className="grid items-center [&>*]:col-start-1 [&>*]:row-start-1">
-          <Phase visible={phase === 0}>
-            <InputPhase active={inView && phase === 0} paused={paused} />
-          </Phase>
-          <Phase visible={phase === 1}>
-            <ThinkingPhase active={inView && phase === 1} paused={paused} />
-          </Phase>
-        </div>
-      </div>
-
-      {/* Result phase sits on top of the whole card so it can
-          anchor to the card's corner and overflow the right/bottom
-          edges — the card's `overflow-hidden` crops the excess. */}
       <div
-        aria-hidden={phase !== 2}
-        className={clsx(
-          "absolute inset-0 transition-[opacity,transform] duration-[600ms] ease-out",
-          phase === 2
-            ? "opacity-100 scale-100"
-            : "pointer-events-none invisible scale-[0.985] opacity-0",
-        )}
+        className="absolute left-0 top-0"
+        style={{
+          width: `${DESIGN_W}px`,
+          height: `${DESIGN_H}px`,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+        }}
       >
-        <ResultPhase active={inView && phase === 2} paused={paused} />
+        {/* Input + Thinking share a centered slot; the Result phase
+            renders at card scale so it can spill past the edges. */}
+        <div className="absolute left-1/2 top-1/2 w-[82%] max-w-[460px] -translate-x-1/2 -translate-y-1/2">
+          <div className="grid items-center [&>*]:col-start-1 [&>*]:row-start-1">
+            <Phase visible={phase === 0}>
+              <InputPhase active={inView && phase === 0} paused={paused} />
+            </Phase>
+            <Phase visible={phase === 1}>
+              <ThinkingPhase active={inView && phase === 1} paused={paused} />
+            </Phase>
+          </div>
+        </div>
+
+        {/* Result phase sits on top of the whole card so it can
+            anchor to the card's corner and overflow the right/bottom
+            edges — the card's `overflow-hidden` crops the excess. */}
+        <div
+          aria-hidden={phase !== 2}
+          className={clsx(
+            "absolute inset-0 transition-[opacity,transform] duration-[600ms] ease-out",
+            phase === 2
+              ? "opacity-100 scale-100"
+              : "pointer-events-none invisible scale-[0.985] opacity-0",
+          )}
+        >
+          <ResultPhase active={inView && phase === 2} paused={paused} />
+        </div>
       </div>
       <PlayPauseToggle
         paused={paused}

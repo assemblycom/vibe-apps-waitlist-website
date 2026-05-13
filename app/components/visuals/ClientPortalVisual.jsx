@@ -1302,12 +1302,43 @@ function PortalSurface({ phaseIndex, active, paused }) {
   );
 }
 
+// Design-space dimensions. The inner workspace is laid out as if the
+// outer card were always this size; a CSS transform scales it down to
+// match the actual container. This keeps the multi-column panels
+// (Schedule, Tasks, etc.) from compressing past their designed widths
+// on narrower viewports — they just render proportionally smaller.
+const DESIGN_W = 832;
+const DESIGN_H = (DESIGN_W * 2) / 3;
+// On phones the fit-scaled visual reads small; nudge it ~15% larger so
+// text and chrome breathe. Crop grows on the right/bottom peek (which is
+// already off-canvas by design), so primary content stays visible.
+const MOBILE_BREAK = 540;
+const MOBILE_ZOOM = 1.1;
+
 // ── Top-level: drive phase loop, gate on in-view ────────────────────────
 export function ClientPortalVisual() {
   const [phase, setPhase] = useState(0);
   const [inView, setInView] = useState(false);
   const [paused, setPaused] = useState(false);
   const ref = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  // Measure the outer card and compute the design-to-rendered scale.
+  // ResizeObserver fires on viewport changes and any layout shifts.
+  useEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+    const update = () => {
+      const w = el.getBoundingClientRect().width;
+      if (w <= 0) return;
+      const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
+      setScale((w / DESIGN_W) * zoom);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // In-view detection — scroll-listener fallback so it works inside the
   // sticky ValuePropsStory layout (IntersectionObserver fights the
@@ -1347,7 +1378,17 @@ export function ClientPortalVisual() {
       className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[16px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:rounded-[28px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
-      <PortalSurface phaseIndex={phase} active={inView} paused={paused} />
+      <div
+        className="absolute left-0 top-0"
+        style={{
+          width: `${DESIGN_W}px`,
+          height: `${DESIGN_H}px`,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+        }}
+      >
+        <PortalSurface phaseIndex={phase} active={inView} paused={paused} />
+      </div>
       <PlayPauseToggle
         paused={paused}
         durationMs={loopMs}
