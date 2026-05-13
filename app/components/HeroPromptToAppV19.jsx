@@ -511,7 +511,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
   };
 
   return (
-    <div className="pointer-events-none relative mx-auto w-full max-w-[1180px] px-2 pt-2 pb-0 md:px-4 md:pt-4 md:pb-6 lg:px-6 lg:pt-2 lg:pb-16">
+    <div className="pointer-events-none relative mx-auto w-full max-w-[1180px] px-2 pt-2 pb-24 md:px-4 md:pt-4 md:pb-6 lg:px-6 lg:pt-2 lg:pb-16">
       {/* ── Outer frame ────────────────────────────────────────────
           Light card sitting on the dark hero — single bordered surface
           wrapping tabs + composer + portal. */}
