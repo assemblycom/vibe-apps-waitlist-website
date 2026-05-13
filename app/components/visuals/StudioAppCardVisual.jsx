@@ -1018,6 +1018,10 @@ export function StudioAppCardVisual() {
       setCursorPhase("hidden");
       return;
     }
+    // Freeze cursor choreography at its current state while paused — the
+    // phase timer is also paused, so a moving cursor would otherwise act
+    // out a click that never triggers a phase transition.
+    if (paused) return;
     const timers = [];
     setCursorPhase("entering");
     if (activeId === "crm") {
@@ -1031,7 +1035,7 @@ export function StudioAppCardVisual() {
       timers.push(setTimeout(() => setCursorPhase("clicking"), 3600));
     }
     return () => timers.forEach((t) => clearTimeout(t));
-  }, [phase, inView]);
+  }, [phase, inView, paused]);
 
   return (
     <div
