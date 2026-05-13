@@ -516,7 +516,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
           Light card sitting on the dark hero — single bordered surface
           wrapping tabs + composer + portal. */}
       <div
-        className={`relative w-full${borderless ? " overflow-hidden rounded-[20px] px-2.5 pt-2.5 pb-0 lg:overflow-visible lg:pb-2.5" : " overflow-hidden rounded-[16px] border"}`}
+        className={`relative w-full hero-card-fade-mobile${borderless ? " overflow-hidden rounded-[20px] px-2.5 pt-2.5 pb-0 lg:overflow-visible lg:pb-2.5" : " overflow-hidden rounded-[16px] border"}`}
         style={{
           backgroundColor: borderless ? "#FFFFFF" : "#FFFFFF",
           ...(borderless ? {} : { borderColor: "rgba(16,16,16,0.10)" }),
