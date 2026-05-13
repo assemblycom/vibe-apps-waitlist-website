@@ -279,8 +279,8 @@ export const HOME_CONTENT = {
         a: [
           "For questions about Assembly Studio, email us at ",
           {
-            link: "assemblystudio@assembly.com",
-            href: "mailto:assemblystudio@assembly.com",
+            link: "studio@assembly.com",
+            href: "mailto:studio@assembly.com",
           },
           ".",
         ],
