@@ -731,7 +731,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
                 </span>
               </div>
 
-              <div className={`grid grid-cols-1 gap-0 lg:h-[520px] lg:grid-cols-[140px_1fr] ${borderless ? "h-[240px]" : "h-[420px]"}`}>
+              <div className={`grid grid-cols-1 gap-0 lg:h-[520px] lg:grid-cols-[140px_1fr] ${borderless ? "h-[170px]" : "h-[420px]"}`}>
                 {/* Sidebar with progressive install — desktop only.
                     On mobile the portal is a single content pane and
                     the sidebar collapses into the mobile chrome above. */}
