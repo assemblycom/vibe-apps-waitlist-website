@@ -89,7 +89,11 @@ export function EmailCTA() {
             aria-label="Email address"
             aria-invalid={error ? "true" : "false"}
             aria-describedby={error ? "email-cta-error" : undefined}
-            className="flex-1 bg-transparent text-[14px] text-white placeholder:text-white/40 outline-none"
+            // 16px on mobile prevents iOS Safari's auto-zoom on focus
+            // (any input with computed font-size < 16px triggers the
+            // page-zoom, which then stays zoomed after submit). Tightens
+            // back to 14px on sm+ so desktop sizing is unchanged.
+            className="flex-1 bg-transparent text-[16px] text-white placeholder:text-white/40 outline-none sm:text-[14px]"
           />
           <button
             type="submit"

@@ -55,9 +55,18 @@ function renderAnswer(a) {
 }
 
 function FaqItem({ q, a, open, onActivate, onToggle }) {
+  // Hover-to-activate only on devices with real hover. On touch the
+  // synthetic mouseenter that fires alongside a tap was pre-activating
+  // the item, so the click that followed immediately *toggled* it back
+  // closed — forcing a second tap to actually open it. Gating the
+  // activate side-effect to hover-capable pointers keeps the desktop
+  // accordion feel intact while making touch a clean single-tap toggle.
+  const handlePointerEnter = (e) => {
+    if (e.pointerType === "mouse" || e.pointerType === "pen") onActivate();
+  };
   return (
     <div
-      onMouseEnter={onActivate}
+      onPointerEnter={handlePointerEnter}
       className={clsx(
         "group overflow-hidden rounded-2xl border bg-white/[0.02] transition-colors duration-300",
         open ? "border-white/25" : "border-white/10 hover:border-white/20",
