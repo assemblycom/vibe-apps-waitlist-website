@@ -210,10 +210,10 @@ function TimeTrackerView() {
   }, []);
   return (
     <div className="flex h-full min-w-0 flex-col gap-2.5 p-4">
-      <div className={`${CARD} flex items-center justify-between gap-3 px-3 py-3`}>
+      <div className={`${CARD} flex items-end justify-between gap-3 px-3 py-3`}>
         <div className="flex min-w-0 flex-col gap-0.5">
           <span className="text-[9px] text-[#101010]/30">Currently tracking</span>
-          <span className="truncate text-[12px] text-[#101010]/75">
+          <span className="truncate text-[12px] leading-none text-[#101010]/75">
             Acme · Brand sprint kickoff
           </span>
         </div>
