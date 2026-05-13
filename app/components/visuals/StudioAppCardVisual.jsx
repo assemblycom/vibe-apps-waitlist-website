@@ -944,7 +944,7 @@ const DESIGN_H = (DESIGN_W * 2) / 3;
 // Phone zoom — same nudge as ClientPortalVisual so the family reads as
 // one product. Right/bottom peek absorbs the extra crop.
 const MOBILE_BREAK = 540;
-const MOBILE_ZOOM = 1.1;
+const MOBILE_ZOOM = 1.18;
 
 // ── Top-level: drive phase loop, gate on in-view ────────────────────────
 export function StudioAppCardVisual() {
@@ -955,16 +955,24 @@ export function StudioAppCardVisual() {
   // "entering" → "hovering" → "clicking" as the phase unfolds.
   const [cursorPhase, setCursorPhase] = useState("hidden");
   const ref = useRef(null);
-  const [scale, setScale] = useState(1);
+  const [fit, setFit] = useState({ scale: 1, tx: 0, ty: 0 });
 
+  // Center-anchored scale so mobile zoom expands symmetrically.
   useEffect(() => {
     if (!ref.current) return;
     const el = ref.current;
     const update = () => {
-      const w = el.getBoundingClientRect().width;
-      if (w <= 0) return;
+      const rect = el.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      if (w <= 0 || h <= 0) return;
       const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
-      setScale((w / DESIGN_W) * zoom);
+      const s = (w / DESIGN_W) * zoom;
+      setFit({
+        scale: s,
+        tx: (w - DESIGN_W * s) / 2,
+        ty: (h - DESIGN_H * s) / 2,
+      });
     };
     update();
     const ro = new ResizeObserver(update);
@@ -1042,7 +1050,7 @@ export function StudioAppCardVisual() {
         style={{
           width: `${DESIGN_W}px`,
           height: `${DESIGN_H}px`,
-          transform: `scale(${scale})`,
+          transform: `translate(${fit.tx}px, ${fit.ty}px) scale(${fit.scale})`,
           transformOrigin: "top left",
         }}
       >

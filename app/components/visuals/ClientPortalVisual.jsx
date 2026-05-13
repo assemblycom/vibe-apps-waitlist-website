@@ -903,21 +903,21 @@ function TasksPanel() {
               className="rounded-[6px] border border-[#eef0f2] bg-white px-3 py-2"
             >
               <div className="flex items-center gap-2">
-                <TaskStatusDot status="todo" size={13} />
+                <TaskStatusDot status="todo" size={16} />
                 <span className="text-[12px] text-[#212b36]">{task.title}</span>
               </div>
-              <div className="mt-0.5 pl-[22px] text-[11px] text-[#6b6f76]">
+              <div className="mt-0.5 pl-[24px] text-[11px] text-[#6b6f76]">
                 Due: {task.due}
               </div>
 
               {task.subtasks && (
-                <div className="mt-2 space-y-1 pl-[22px]">
+                <div className="mt-2 space-y-1 pl-[24px]">
                   {task.subtasks.map((st, j) => (
                     <div
                       key={j}
                       className="flex items-center gap-2 text-[11px] text-[#212b36]"
                     >
-                      <TaskStatusDot status={st.status} size={12} />
+                      <TaskStatusDot status={st.status} size={14} />
                       <span className="truncate">{st.label}</span>
                     </div>
                   ))}
@@ -1313,7 +1313,7 @@ const DESIGN_H = (DESIGN_W * 2) / 3;
 // text and chrome breathe. Crop grows on the right/bottom peek (which is
 // already off-canvas by design), so primary content stays visible.
 const MOBILE_BREAK = 540;
-const MOBILE_ZOOM = 1.1;
+const MOBILE_ZOOM = 1.18;
 
 // ── Top-level: drive phase loop, gate on in-view ────────────────────────
 export function ClientPortalVisual() {
@@ -1321,18 +1321,27 @@ export function ClientPortalVisual() {
   const [inView, setInView] = useState(false);
   const [paused, setPaused] = useState(false);
   const ref = useRef(null);
-  const [scale, setScale] = useState(1);
+  const [fit, setFit] = useState({ scale: 1, tx: 0, ty: 0 });
 
-  // Measure the outer card and compute the design-to-rendered scale.
-  // ResizeObserver fires on viewport changes and any layout shifts.
+  // Measure the outer card and compute the design-to-rendered transform.
+  // Anchors the scaled design space to the outer card's center (rather
+  // than top-left) so any zoom expands outward symmetrically — the
+  // input/thinking phase's centered slot stays centered on mobile.
   useEffect(() => {
     if (!ref.current) return;
     const el = ref.current;
     const update = () => {
-      const w = el.getBoundingClientRect().width;
-      if (w <= 0) return;
+      const rect = el.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      if (w <= 0 || h <= 0) return;
       const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
-      setScale((w / DESIGN_W) * zoom);
+      const s = (w / DESIGN_W) * zoom;
+      setFit({
+        scale: s,
+        tx: (w - DESIGN_W * s) / 2,
+        ty: (h - DESIGN_H * s) / 2,
+      });
     };
     update();
     const ro = new ResizeObserver(update);
@@ -1383,7 +1392,7 @@ export function ClientPortalVisual() {
         style={{
           width: `${DESIGN_W}px`,
           height: `${DESIGN_H}px`,
-          transform: `scale(${scale})`,
+          transform: `translate(${fit.tx}px, ${fit.ty}px) scale(${fit.scale})`,
           transformOrigin: "top left",
         }}
       >
