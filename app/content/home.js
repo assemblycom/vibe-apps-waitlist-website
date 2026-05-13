@@ -52,7 +52,7 @@ export const HOME_CONTENT = {
         " client experience.",
       ],
       [
-        "Describe what you want — a client onboarding wizard, a approvals workflow, a client community space. From there, Assembly Studio generates an app that works with your ",
+        "Describe what you want — a client onboarding wizard, an approvals workflow, a client community space. From there, Assembly Studio generates an app that works with your ",
         {
           u: "existing contacts and team",
           preview: {
@@ -167,12 +167,6 @@ export const HOME_CONTENT = {
         "You build the stack",
         "CRM, portal, 30+ primitives, 20+ apps",
         "CRM, portal, 30+ primitives, and 20+ apps included",
-      ],
-      [
-        "What if one app fails?",
-        "The core client experience goes down",
-        "The core client experience remains active",
-        "Core client experience stays up if one app fails",
       ],
       [
         "Best fit when",
