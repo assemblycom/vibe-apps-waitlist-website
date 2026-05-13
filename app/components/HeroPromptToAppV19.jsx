@@ -559,6 +559,10 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
               // non-interactive, mirroring the sidebar's progressive
               // install reveal.
               const isEnabled = phase !== "running" || i <= cycleIndex;
+              // Once built, a tab stays at full prominence (text + icon
+              // remain dark) so completed tabs don't fade back to a
+              // dimmed/disabled-looking state when the cycle moves on.
+              const isBuilt = isActive || isEnabled;
               return (
                 <button
                   key={a.id}
@@ -582,11 +586,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
                     <span
                       className={[
                         "flex h-5 w-5 shrink-0 items-center justify-center transition-colors duration-300",
-                        isActive
-                          ? "text-[#101010]/85"
-                          : isEnabled
-                          ? "text-[#101010]/40"
-                          : "text-[#101010]/20",
+                        isBuilt ? "text-[#101010]/85" : "text-[#101010]/20",
                       ].join(" ")}
                     >
                       <MaskIcon
@@ -598,11 +598,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
                   <span
                     className={[
                       "transition-colors duration-300",
-                      isActive
-                        ? "text-[#101010]/85"
-                        : isEnabled
-                        ? "text-[#101010]/45"
-                        : "text-[#101010]/20",
+                      isBuilt ? "text-[#101010]/85" : "text-[#101010]/20",
                     ].join(" ")}
                   >
                     {a.label}
