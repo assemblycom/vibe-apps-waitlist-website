@@ -55,11 +55,11 @@ export function ComparisonSpec({
     : {
         heading: "text-white",
         headingMuted: "text-white/50",
-        cardBorder: "border-white/10",
+        cardBorder: "border-white/[0.06]",
         cardBg: "bg-white/[0.02]",
-        rule: "bg-white/10",
-        ruleBorder: "divide-white/8",
-        cellBorder: "border-white/8",
+        rule: "bg-white/[0.05]",
+        ruleBorder: "divide-white/[0.05]",
+        cellBorder: "border-white/[0.05]",
         rowHover: "hover:bg-white/[0.03]",
         rowLabel: "text-white/50",
         rowLabelStrong: "text-white/80",
@@ -147,7 +147,7 @@ export function ComparisonSpec({
           <div className={`grid ${gridCols} -mb-px`}>
             <div />
             <div />
-            <div className={`rounded-t-2xl border border-b-0 ${t.cardBorder} ${t.tabBg} px-6 md:px-8 py-2.5`}>
+            <div className={`rounded-t-2xl border border-b-0 ${t.cardBorder} ${t.tabBg} px-6 md:px-8 py-2.5 text-center`}>
               <span className={`mono text-[10px] uppercase tracking-[0.14em] ${t.tabLabel}`}>
                 Built for client work
               </span>
@@ -170,15 +170,19 @@ export function ComparisonSpec({
               <div className={t.tabBg} />
             </div>
 
-            {/* Header row. */}
+            {/* Header row. flex items-center on every cell so the
+                "Comparison" label baselines with the brand-mark labels
+                — without this, the text cell sits at the top of the
+                row while the brand cells anchor vertically around the
+                32px logo square, leaving the label visibly higher. */}
             <div className={`relative grid ${gridCols}`}>
-              <div className={`px-6 md:px-8 py-5 text-[14px] leading-[1.5] ${t.brandMuted}`}>
+              <div className={`flex items-center px-6 md:px-8 py-5 text-[14px] leading-[1.5] ${t.brandMuted}`}>
                 Comparison
               </div>
-              <div className={`px-6 md:px-8 py-5 border-l ${t.cellBorder}`}>
+              <div className={`flex items-center px-6 md:px-8 py-5 border-l ${t.cellBorder}`}>
                 <BrandSlot variant="competitor" label={leftLabel} t={t} />
               </div>
-              <div className={`px-6 md:px-8 py-5 border-l ${t.cellBorder}`}>
+              <div className={`flex items-center px-6 md:px-8 py-5 border-l ${t.cellBorder}`}>
                 <BrandSlot variant="assembly" label={rightLabel} t={t} accent />
               </div>
             </div>

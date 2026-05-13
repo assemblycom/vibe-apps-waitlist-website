@@ -166,7 +166,7 @@ function HorizontalAccordion({ quotes, activeIndex, onActivate, isLight = false 
                   transition: `justify-content 300ms ${EASE}`,
                 }}
               >
-                <Avatar quote={quote} size={isActive ? 56 : 68} isLight={isLight} />
+                <Avatar quote={quote} size={isActive ? 88 : 68} isLight={isLight} />
               </div>
 
               {/* Active-only: big quote + attribution. Collapsed cards hide
@@ -175,7 +175,7 @@ function HorizontalAccordion({ quotes, activeIndex, onActivate, isLight = false 
                   doesn't appear before there's room for it. */}
               <div
                 aria-hidden={!isActive}
-                className="pointer-events-none absolute inset-x-6 top-24 bottom-6 flex flex-col justify-between md:inset-x-7 md:top-28 md:bottom-7"
+                className="pointer-events-none absolute inset-x-6 top-36 bottom-6 flex flex-col justify-between md:inset-x-7 md:top-40 md:bottom-7"
                 style={{
                   opacity: isActive ? 1 : 0,
                   transition: `opacity 400ms ${EASE} ${
