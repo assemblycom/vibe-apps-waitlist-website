@@ -177,7 +177,7 @@ function MobileNav({ items, activeIndex, onSelect }) {
   }, [activeIndex]);
 
   return (
-    <div className="sticky top-[68px] z-40 -mx-6 mb-2 border-b border-white/[0.06] bg-[#101010] shadow-[0_8px_16px_-8px_rgba(0,0,0,0.5)] md:hidden">
+    <div className="sticky top-0 z-40 -mx-6 mb-2 border-b border-white/[0.06] bg-[#101010] pt-[68px] shadow-[0_8px_16px_-8px_rgba(0,0,0,0.5)] md:hidden">
       <div
         className="no-scrollbar flex gap-1 overflow-x-auto px-6 py-2"
         role="tablist"
