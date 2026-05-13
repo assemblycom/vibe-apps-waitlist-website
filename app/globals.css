@@ -997,34 +997,7 @@ html.lenis body {
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
-/* Fade the hero portal card's bottom into the dark hero background on
-   mobile so there's no harsh white→black line above the logo strip.
-   Long, soft gradient so the rounded bottom corners aren't visible
-   and the dissolve reads as gradual. */
-@media (max-width: 1023px) {
-  .hero-card-fade-mobile {
-    /* Localized fade over just the bottom 22% of the card. Multi-stop
-       ease-out approximation so the dissolve reads as soft but
-       intentional — the card visibly dissolves at its tail, the dark
-       hero bg shows underneath, and a slim dark band sits between the
-       card and the logo strip below. */
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      rgba(0,0,0,1) 78%,
-      rgba(0,0,0,0.92) 84%,
-      rgba(0,0,0,0.72) 89%,
-      rgba(0,0,0,0.45) 94%,
-      rgba(0,0,0,0.18) 98%,
-      rgba(0,0,0,0) 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      rgba(0,0,0,1) 78%,
-      rgba(0,0,0,0.92) 84%,
-      rgba(0,0,0,0.72) 89%,
-      rgba(0,0,0,0.45) 94%,
-      rgba(0,0,0,0.18) 98%,
-      rgba(0,0,0,0) 100%
-    );
-  }
-}
+/* On mobile the card has no fade — the alpha logo strip below uses a
+   solid dark background + negative margin to overlap and cleanly cut
+   off the card's bottom. The strip's border-top is the only visible
+   horizon line; the card content appears to peek out from under it. */
