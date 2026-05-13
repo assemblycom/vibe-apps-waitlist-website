@@ -511,19 +511,22 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
   };
 
   return (
-    <div className="pointer-events-none relative mx-auto w-full max-w-[1180px] px-2 pt-2 pb-4 md:px-4 md:pt-4 md:pb-6 lg:px-6 lg:pt-2 lg:pb-16">
+    <div className="pointer-events-none relative mx-auto w-full max-w-[1180px] px-0 pt-2 pb-4 md:px-0 md:pt-4 md:pb-6 lg:px-6 lg:pt-2 lg:pb-16">
       {/* ── Outer frame ────────────────────────────────────────────
           Light card sitting on the dark hero — single bordered surface
-          wrapping tabs + composer + portal. */}
+          wrapping tabs + composer + portal. On mobile/tablet, this
+          frame goes full-bleed (no rounded corners, no inset padding)
+          so the visual reads as a native app surface. At lg+ the
+          original framed-card treatment returns. */}
       <div
-        className={`relative w-full${borderless ? " rounded-[20px] p-2.5" : " overflow-hidden rounded-[16px] border"}`}
+        className={`relative w-full${borderless ? " lg:rounded-[20px] lg:p-2.5" : " overflow-hidden rounded-[16px] border"}`}
         style={{
           backgroundColor: borderless ? "#FFFFFF" : "#FFFFFF",
           ...(borderless ? {} : { borderColor: "rgba(16,16,16,0.10)" }),
         }}
       >
       <div
-        className={borderless ? "relative w-full overflow-hidden rounded-[14px] border" : "contents"}
+        className={borderless ? "relative w-full overflow-hidden lg:rounded-[14px] lg:border" : "contents"}
         style={borderless ? { backgroundColor: "#FFFFFF", borderColor: "rgba(16,16,16,0.10)" } : undefined}
       >
         {/* ── Top chrome ────────────────────────────────────────────
@@ -628,7 +631,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
         )}
 
         {/* ── Body: composer + portal ───────────────────────────── */}
-        <div className="grid grid-cols-1 gap-2 px-2 pt-2 pb-2 lg:gap-3 lg:px-3 lg:pt-3 lg:pb-3 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)]">
+        <div className="grid grid-cols-1 gap-0 px-0 pt-0 pb-0 lg:gap-3 lg:px-3 lg:pt-3 lg:pb-3 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)]">
           {/* Composer — input-style panel */}
           <div className="relative px-3 pb-2 pt-3 lg:p-4">
             <div className="mb-1 text-[12px] text-[#101010]/45 lg:mb-2">
@@ -684,7 +687,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
           {/* Portal preview */}
           <div className="relative">
             <div
-              className={`overflow-hidden rounded-[10px] border shadow-[0_10px_28px_-8px_rgba(16,16,16,0.18)]${borderless ? "" : " border-[#101010]/[0.10]"}`}
+              className={`overflow-hidden lg:rounded-[10px] lg:border lg:shadow-[0_10px_28px_-8px_rgba(16,16,16,0.18)]${borderless ? "" : " border-[#101010]/[0.10]"}`}
               style={{
                 background: borderless ? "#FFFFFF" : "#FFFFFF",
                 ...(borderless ? { borderColor: "rgba(16,16,16,0.10)" } : {}),
