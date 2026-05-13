@@ -122,32 +122,42 @@ export function Header() {
 
     // Tint formula tied to the NAV's own y-position, not the viewport
     // bottom. The nav should read whatever section sits directly behind
-    // the pill — so we measure each light section's edges relative to
-    // the pill's bottom (NAV_BOTTOM_PX). Fades complete just as the
-    // section enters/exits the nav strip, which keeps the pill in light
-    // mode for the entire time cream content is visibly below it,
-    // instead of flipping back to dark while the cream section is still
-    // on screen below the fold.
+    // the pill — so we measure each section's edges relative to the
+    // pill's bottom (NAV_BOTTOM_PX).
+    //
+    // Presence is defined as `inProg - outProg`, NOT `min(fadeIn,
+    // fadeOut)`. The min() formulation collapsed to 0 at a section's
+    // seam (where the previous section's `fadeOut` was already 0 and
+    // the next section's `fadeIn` hadn't started yet), causing the nav
+    // to briefly flash back to dark across two adjacent light sections
+    // — e.g. ZoomHero's cream backdrop → NarrativeBlock's cream. With
+    // `inProg - outProg`, a section stays at full presence the entire
+    // time it covers the nav strip, and adjacent sections' presences
+    // sum to 1 across their shared edge (one is ramping down at the
+    // exact rate the other is ramping up). Combined with the per-color
+    // *sum* below (rather than max), the cream-to-cream handoff stays
+    // pinned at 1 instead of dipping through 0.
     const FADE_PX = 60;
     const NAV_BOTTOM_PX = 56;
     const presenceFor = (r) => {
-      const fadeIn = clamp01((NAV_BOTTOM_PX - r.top) / FADE_PX);
-      const fadeOut = clamp01((r.bottom - NAV_BOTTOM_PX) / FADE_PX);
-      return Math.min(fadeIn, fadeOut);
+      // inProg: 0 → 1 as the section's TOP crosses up through the nav line
+      // outProg: 0 → 1 as the section's BOTTOM crosses up through the nav line
+      const inProg = clamp01((NAV_BOTTOM_PX - r.top) / FADE_PX);
+      const outProg = clamp01((NAV_BOTTOM_PX - r.bottom) / FADE_PX);
+      return clamp01(inProg - outProg);
+    };
+    const sumPresence = (sections) => {
+      let total = 0;
+      for (const s of sections) {
+        total += presenceFor(s.getBoundingClientRect());
+      }
+      return clamp01(total);
     };
     const computeChapterTint = () => {
       if (lightSections.length === 0) return 0;
-      let lightMax = 0;
-      for (const s of lightSections) {
-        const t = presenceFor(s.getBoundingClientRect());
-        if (t > lightMax) lightMax = t;
-      }
-      let darkMax = 0;
-      for (const s of darkSections) {
-        const t = presenceFor(s.getBoundingClientRect());
-        if (t > darkMax) darkMax = t;
-      }
-      return ease(clamp01(lightMax - darkMax));
+      const lightP = sumPresence(lightSections);
+      const darkP = sumPresence(darkSections);
+      return ease(clamp01(lightP - darkP));
     };
 
     let raf = null;
