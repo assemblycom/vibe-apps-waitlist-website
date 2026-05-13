@@ -484,8 +484,13 @@ function ResultPhase({ active, paused }) {
         "absolute left-[5%] top-[8%] h-[130%] w-[120%] overflow-hidden rounded-tl-[14px] rounded-tr-[14px] rounded-br-0 rounded-bl-0 bg-white shadow-[0_20px_50px_-25px_rgba(16,16,16,0.35)]",
       )}
     >
-      {/* Loading overlay — minimal skeleton shimmer blocks that hint at
-          the sidebar + wizard layout before real content cascades in. */}
+      {/* Loading overlay — skeleton blocks sized and positioned to mirror
+          the real sidebar rows + wizard form below, so the transition
+          into content reads as the same screen "filling in" rather than
+          two unrelated states. Every shimmer is a slight-corner
+          rectangle (rounded-sm = 2px), no pills, no random widths —
+          each block stands in for a specific element of the resolved
+          UI. */}
       <div
         aria-hidden="true"
         className={clsx(
@@ -493,23 +498,48 @@ function ResultPhase({ active, paused }) {
           ready ? "opacity-0" : "opacity-100",
         )}
       >
-        {/* Sidebar skeleton — lime background matches the real chrome. */}
+        {/* Sidebar skeleton — 18px icon block + label bar per row, same
+            geometry the real sidebar uses (px-2 py-1, gap-2). Label
+            widths match the actual nav labels' approximate run length. */}
         <div
-          className="flex w-[200px] flex-shrink-0 flex-col gap-3 px-3 pt-5"
+          className="flex w-[200px] flex-shrink-0 flex-col gap-[6px] px-2 pt-2.5"
           style={{ backgroundColor: SIDEBAR_BG }}
         >
-          <div className="studio-shimmer h-3 w-[60%] rounded-[4px]" />
-          <div className="studio-shimmer h-2.5 w-[50%] rounded-[4px]" />
-          <div className="studio-shimmer h-2.5 w-[45%] rounded-[4px]" />
+          {/* Brand row */}
+          <div className="flex items-center gap-2 px-2 py-1.5">
+            <div className="studio-shimmer h-[18px] w-[18px] flex-shrink-0 rounded-sm" />
+            <div className="studio-shimmer h-[10px] w-[78px] rounded-sm" />
+          </div>
+          {/* Nav rows — widths track STUDIO_NAV label lengths. */}
+          {[36, 60, 70, 60, 42, 42].map((labelW, i) => (
+            <div key={i} className="flex items-center gap-2 px-2 py-1">
+              <div className="studio-shimmer h-[18px] w-[18px] flex-shrink-0 rounded-sm" />
+              <div
+                className="studio-shimmer h-[10px] rounded-sm"
+                style={{ width: labelW }}
+              />
+            </div>
+          ))}
         </div>
-        {/* Main canvas skeleton — one header block + two content blocks. */}
+        {/* Main canvas skeleton — page header + step meta + progress +
+            heading + two field rows (label + input), matching the
+            wizard layout that resolves underneath. */}
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-4">
-            <div className="studio-shimmer h-2.5 w-16 rounded-[4px]" />
+            <div className="studio-shimmer h-[10px] w-[68px] rounded-sm" />
           </div>
-          <div className="flex-1 space-y-3 px-6 py-6">
-            <div className="studio-shimmer h-3 w-[50%] rounded-[4px]" />
-            <div className="studio-shimmer h-[30px] w-full rounded-[4px]" />
+          <div className="flex-1 px-6 py-5">
+            <div className="studio-shimmer mb-2 h-[10px] w-[58px] rounded-sm" />
+            <div className="mb-4 h-[2px] w-full rounded-full bg-[#101010]/[0.08]" />
+            <div className="studio-shimmer mb-5 h-[12px] w-[58%] rounded-sm" />
+            <div className="space-y-3.5">
+              {[0, 1].map((i) => (
+                <div key={i}>
+                  <div className="studio-shimmer mb-1.5 h-[9px] w-[72px] rounded-sm" />
+                  <div className="studio-shimmer h-[30px] w-full rounded-sm" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
