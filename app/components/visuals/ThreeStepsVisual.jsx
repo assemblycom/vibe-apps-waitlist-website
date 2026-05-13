@@ -766,7 +766,7 @@ export function ThreeStepsVisual() {
   return (
     <div
       ref={ref}
-      className="font-inter relative aspect-[3/2] w-full overflow-hidden rounded-[16px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:rounded-[28px]"
+      className="font-inter relative aspect-[4/3] w-full overflow-hidden rounded-[16px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:aspect-[3/2] sm:rounded-[28px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <div
