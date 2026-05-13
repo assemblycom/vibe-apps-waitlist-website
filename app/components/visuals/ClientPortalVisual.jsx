@@ -429,10 +429,10 @@ function MessagesPanel() {
         </MessageRow>
 
         <MessageRow
-          initials="A"
+          initials="AM"
           avatarBg="#fde2e4"
           avatarFg="#c56277"
-          name="Ana"
+          name="Ana Mitchell"
           time="10:18 AM"
         >
           <p>Sounds good, thanks!</p>
