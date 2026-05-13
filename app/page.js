@@ -75,19 +75,19 @@ export default function Home() {
         <ValueProps items={c.valueProps} />
       </Reveal>
 
-      {/* Cream chapter — ComparisonSpec + Testimonials read as a single
-          light-mode interlude between dark ValueProps and dark FAQ.
-          Same pattern as NarrativeBlock: explicit cream bg with generous
-          bottom padding so its content ends well above the seam, then a
-          short dark spacer gives the eye a beat before FAQ's white text.
-          data-nav-theme="light" drives the nav pill's continuous tint. */}
-      <div
-        data-nav-theme="light"
-        data-tinted-section="light"
-        className="bg-[#F5F5F0] pb-20 md:pb-40"
-      >
+      {/* Dark chapter — ComparisonSpec + Testimonials read as a single
+          dark-mode interlude continuing the dark thread from ValueProps
+          into FAQ. The wrapper carries an explicit #101010 bg so the
+          chapter declares itself rather than relying on body bg, and
+          generous bottom padding gives breathing room before FAQ.
+          data-nav-theme="dark" actively asserts dark presence to the
+          Header so the nav pill stays dark across the whole chapter —
+          no flicker toward the light tint at the seams above (Reveal
+          fades, ValueProps end) or below (FAQ start). */}
+      <div data-nav-theme="dark" className="bg-[#101010] pb-20 md:pb-40">
         <Reveal>
           <ComparisonSpec
+            theme="dark"
             heading={c.comparison.heading}
             headingCallout={c.comparison.headingCallout}
             leftLabel={c.comparison.leftLabel}
@@ -98,7 +98,7 @@ export default function Home() {
 
         <Reveal>
           <Testimonials
-            theme="light"
+            theme="dark"
             heading={c.testimonials.heading}
             subheading={c.testimonials.subheading}
             stat={c.testimonials.stat}
@@ -107,12 +107,6 @@ export default function Home() {
           />
         </Reveal>
       </div>
-
-      {/* Dark spacer — same pattern as the NarrativeBlock → ValueProps
-          seam. Hard color flip at the wrapper edge with this strip of
-          empty dark giving the eye a beat to register the change before
-          FAQ content arrives. */}
-      <div aria-hidden="true" className="h-12 bg-[#101010] md:h-16" />
 
       <Reveal>
         <FAQ

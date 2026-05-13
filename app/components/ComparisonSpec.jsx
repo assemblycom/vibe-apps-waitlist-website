@@ -46,6 +46,11 @@ export function ComparisonSpec({
         mobileBg: "bg-[#1A1A1A]/[0.03]",
         mobileCheckBg: "bg-[#1A1A1A]/[0.06] text-[#1A1A1A]/55",
         mobileCheckText: "text-[#1A1A1A]/85",
+        tabBg: "bg-[#1A1A1A]/[0.06]",
+        tabLabel: "text-[#1A1A1A]/60",
+        sparklesText: "text-[#1A1A1A]/45",
+        assemblyTileBg: "bg-[#101010]",
+        assemblyMarkText: "text-white",
       }
     : {
         heading: "text-white",
@@ -68,6 +73,11 @@ export function ComparisonSpec({
         mobileBg: "bg-white/[0.02]",
         mobileCheckBg: "bg-white/10 text-white",
         mobileCheckText: "text-white",
+        tabBg: "bg-white/[0.06]",
+        tabLabel: "text-white/60",
+        sparklesText: "text-white/45",
+        assemblyTileBg: "bg-white",
+        assemblyMarkText: "text-[#101010]",
       };
 
   useEffect(() => {
@@ -137,8 +147,8 @@ export function ComparisonSpec({
           <div className={`grid ${gridCols} -mb-px`}>
             <div />
             <div />
-            <div className={`rounded-t-2xl border border-b-0 ${t.cardBorder} bg-[#1A1A1A]/[0.06] px-6 md:px-8 py-2.5`}>
-              <span className="mono text-[10px] uppercase tracking-[0.14em] text-[#1A1A1A]/60">
+            <div className={`rounded-t-2xl border border-b-0 ${t.cardBorder} ${t.tabBg} px-6 md:px-8 py-2.5`}>
+              <span className={`mono text-[10px] uppercase tracking-[0.14em] ${t.tabLabel}`}>
                 Built for client work
               </span>
             </div>
@@ -157,7 +167,7 @@ export function ComparisonSpec({
             >
               <div />
               <div />
-              <div className="bg-[#1A1A1A]/[0.06]" />
+              <div className={t.tabBg} />
             </div>
 
             {/* Header row. */}
@@ -275,11 +285,11 @@ function BrandSlot({ variant, label, t, accent = false }) {
         aria-hidden="true"
         className={
           isAssembly
-            ? `flex h-8 w-8 flex-none items-center justify-center rounded-md bg-[#101010] ring-1 ${t.brandRing}`
+            ? `flex h-8 w-8 flex-none items-center justify-center rounded-md ${t.assemblyTileBg} ring-1 ${t.brandRing}`
             : `flex h-8 w-8 flex-none items-center justify-center rounded-md ring-1 ${t.brandSurface} ${t.brandRing}`
         }
       >
-        {isAssembly ? <AssemblyMark /> : <SparklesMark />}
+        {isAssembly ? <AssemblyMark className={t.assemblyMarkText} /> : <SparklesMark className={t.sparklesText} />}
       </span>
       <span
         className={`text-[14px] leading-[1.5] ${
@@ -311,7 +321,7 @@ function CheckIcon({ className }) {
 // Sparkles glyph — inlined from public/Icons/sparklesolid.svg. Uses
 // currentColor so the outer span's text-color sets the tone —
 // muted, never full black.
-function SparklesMark() {
+function SparklesMark({ className = "text-[#1A1A1A]/45" }) {
   return (
     <svg
       width="14"
@@ -319,21 +329,21 @@ function SparklesMark() {
       viewBox="0 0 12 12"
       fill="currentColor"
       aria-hidden="true"
-      className="text-[#1A1A1A]/45"
+      className={className}
     >
       <path d="M6.52734 0.365625C6.44531 0.145313 6.23438 0 6 0C5.76562 0 5.55469 0.145313 5.47266 0.365625L4.08281 4.08281L0.365625 5.47266C0.145313 5.55469 0 5.76562 0 6C0 6.23438 0.145313 6.44531 0.365625 6.52734L4.08281 7.91953L5.475 11.6367C5.55469 11.8547 5.76562 12 6 12C6.23438 12 6.44531 11.8547 6.52734 11.6344L7.91953 7.91719L11.6367 6.525C11.8547 6.44531 12 6.23438 12 6C12 5.76562 11.8547 5.55469 11.6344 5.47266L7.91719 4.08281L6.52734 0.365625Z" />
     </svg>
   );
 }
 
-function AssemblyMark() {
+function AssemblyMark({ className = "text-white" }) {
   return (
     <svg
       width="14"
       height="14"
       viewBox="0 0 73 73"
       fill="currentColor"
-      className="text-white"
+      className={className}
       aria-hidden="true"
     >
       <path d="M47.3157 72.1924H66.7338C70.0489 72.1924 72.7363 69.505 72.7363 66.1899V46.7717C72.7363 43.4567 70.0489 40.7692 66.7338 40.7692H47.3157C44.0006 40.7692 41.3132 43.4567 41.3132 46.7717V66.1899C41.3132 69.505 44.0006 72.1924 47.3157 72.1924Z" />
