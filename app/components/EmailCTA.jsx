@@ -68,7 +68,7 @@ export function EmailCTA() {
             "flex w-full items-center gap-1.5 rounded-full border bg-white/[0.03] p-1.5 pl-4 backdrop-blur-sm transition-colors duration-200",
             error
               ? "border-[#E6836E]/50"
-              : "border-white/10 focus-within:border-white/25",
+              : "border-white/[0.12] focus-within:border-white/25",
           ].join(" ")}
         >
           <input
