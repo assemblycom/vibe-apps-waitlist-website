@@ -40,7 +40,7 @@ export function Hero({
       </div>
 
       {alphaLogos && alphaLogos.length > 0 && (
-        <div className="relative z-10 border-t border-white/[0.08] pb-8 pt-6 md:border-t-0 md:pb-10 md:pt-2">
+        <div className="relative z-10 border-t border-white/[0.08] pb-8 pt-5 md:border-t-0 md:pb-10 md:pt-2">
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
               <p
