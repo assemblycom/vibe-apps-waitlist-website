@@ -289,8 +289,8 @@ function BrandSlot({ variant, label, t, accent = false }) {
         aria-hidden="true"
         className={
           isAssembly
-            ? `flex h-8 w-8 flex-none items-center justify-center rounded-md ${t.assemblyTileBg} ring-1 ${t.brandRing}`
-            : `flex h-8 w-8 flex-none items-center justify-center rounded-md ring-1 ${t.brandSurface} ${t.brandRing}`
+            ? `flex h-7 w-7 flex-none items-center justify-center rounded-md ${t.assemblyTileBg} ring-1 ${t.brandRing}`
+            : `flex h-7 w-7 flex-none items-center justify-center rounded-md ring-1 ${t.brandSurface} ${t.brandRing}`
         }
       >
         {isAssembly ? <AssemblyMark className={t.assemblyMarkText} /> : <SparklesMark className={t.sparklesText} />}
