@@ -302,36 +302,49 @@ export function ValueProps({ items = [] }) {
   // frame, which made the threshold-based hide feel sticky.
   const [menuVisible, setMenuVisible] = useState(true);
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
+  // Track visibility of each section via IntersectionObserver.
+  // `firstInView` = first value-prop's top has entered viewport.
+  // `lastFullyAbove` = last value-prop's bottom has risen above the
+  // bottom 5% of viewport (i.e., next section is starting to show).
+  const [firstInView, setFirstInView] = useState(false);
+  const [lastFullyAbove, setLastFullyAbove] = useState(false);
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const last = sectionRefs.current[items.length - 1];
+    if (typeof window === "undefined" || !window.IntersectionObserver) return;
     const first = sectionRefs.current[0];
-    if (!last || !first) return;
-
-    let raf = 0;
-    let prevAllCompleted = null;
-    let prevMenuVisible = null;
-    let prevMobileNavVisible = null;
-    const loop = () => {
-      const lastRect = last.getBoundingClientRect();
-      const firstRect = first.getBoundingClientRect();
-      const vh = window.innerHeight;
-
-      const ac = lastRect.bottom < vh * 0.35;
-      const mv = lastRect.bottom > vh * 0.85;
-      // Hide as soon as the last value-prop's bottom rises into the top
-      // 30% of viewport — by then the next section's heading is in
-      // play and the tab bar would just hover over it.
-      const mnv = firstRect.top < vh * 0.85 && lastRect.bottom > vh * 0.3;
-
-      if (ac !== prevAllCompleted) { setAllCompleted(ac); prevAllCompleted = ac; }
-      if (mv !== prevMenuVisible) { setMenuVisible(mv); prevMenuVisible = mv; }
-      if (mnv !== prevMobileNavVisible) { setMobileNavVisible(mnv); prevMobileNavVisible = mnv; }
-      raf = requestAnimationFrame(loop);
+    const last = sectionRefs.current[items.length - 1];
+    if (!first || !last) return;
+    // First section: trigger when its top crosses the bottom 15% of
+    // viewport on the way up.
+    const obsFirst = new IntersectionObserver(
+      ([e]) => setFirstInView(e.boundingClientRect.top < window.innerHeight * 0.85),
+      { threshold: [0, 0.01], rootMargin: "0px 0px -15% 0px" },
+    );
+    // Last section: track when its bottom crosses thresholds for
+    // allCompleted, menu hide, and mobile nav hide.
+    const obsLast = new IntersectionObserver(
+      ([e]) => {
+        const vh = window.innerHeight;
+        const bottom = e.boundingClientRect.bottom;
+        setAllCompleted(bottom < vh * 0.35);
+        setMenuVisible(bottom > vh * 0.85);
+        setLastFullyAbove(bottom <= vh * 0.95);
+      },
+      { threshold: Array.from({ length: 21 }, (_, i) => i / 20) },
+    );
+    obsFirst.observe(first);
+    obsLast.observe(last);
+    return () => {
+      obsFirst.disconnect();
+      obsLast.disconnect();
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
   }, [items.length]);
+
+  // Mobile nav visible while in the value-props block: first section's
+  // top has entered viewport AND the last section's bottom hasn't yet
+  // risen above the bottom of viewport.
+  useEffect(() => {
+    setMobileNavVisible(firstInView && !lastFullyAbove);
+  }, [firstInView, lastFullyAbove]);
 
   const handleSelect = (i) => {
     const el = document.getElementById(sectionId(i));
