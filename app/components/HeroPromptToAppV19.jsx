@@ -182,6 +182,19 @@ function HomeView() {
   );
 }
 
+// Starting display for the "currently tracking" timer in TimeTrackerView.
+// Ticks up by one second while the time-tracker view is mounted so the
+// hero demo reads as a real running stopwatch.
+const TIMER_START_SECONDS = 2 * 3600 + 34 * 60 + 18;
+
+function formatTimer(totalSeconds) {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
 function TimeTrackerView() {
   const entries = [
     { client: "Acme", task: "Brand sprint kickoff", time: "1h 20m" },
@@ -190,6 +203,11 @@ function TimeTrackerView() {
     { client: "Acme", task: "Stakeholder feedback sync", time: "0h 35m" },
     { client: "Orbit", task: "Style guide cleanup", time: "1h 05m" },
   ];
+  const [elapsed, setElapsed] = useState(TIMER_START_SECONDS);
+  useEffect(() => {
+    const id = setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
   return (
     <div className="flex h-full min-w-0 flex-col gap-2.5 p-4">
       <div className={`${CARD} flex items-center justify-between gap-3 px-3 py-3`}>
@@ -199,8 +217,11 @@ function TimeTrackerView() {
             Acme · Brand sprint kickoff
           </span>
         </div>
-        <span className="shrink-0 whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-[#101010]/75">
-          02:34:18
+        <span
+          className="shrink-0 whitespace-nowrap font-mono text-[18px] leading-none tracking-tight text-[#101010]/75 tabular-nums"
+          aria-live="off"
+        >
+          {formatTimer(elapsed)}
         </span>
       </div>
 
@@ -237,7 +258,7 @@ function HelpdeskView() {
     { client: "Lyra", subject: "Question about brand guideline section 3", status: "In progress", time: "May 8" },
     { client: "Pine", subject: "Need export in CMYK for the print run", status: "Open", time: "May 7" },
     { client: "Orbit", subject: "Typography spec mismatch on landing page", status: "In progress", time: "May 7" },
-    { client: "Acme", subject: "Approval flow stuck on review step", status: "Resolved", time: "May 6" },
+    { client: "Acme", subject: "Wordmark SVG missing from the asset pack", status: "Resolved", time: "May 6" },
   ];
   const statusTone = {
     Open: "bg-[#101010]/[0.08] text-[#101010]/75",
@@ -282,21 +303,21 @@ function CommunityView() {
     {
       initials: "JB",
       name: "Jordan Brooks",
-      body: "Tip: paste your guideline section number in the helpdesk subject for faster routing.",
+      body: "Any tips for getting sales and support teams to actually follow the brand voice? Half our outbound still feels off.",
       likes: 7,
       replies: 2,
     },
     {
       initials: "AC",
       name: "Aisha Cole",
-      body: "Loving the new dashboard layout. The sidebar accent makes it much easier to scan between projects.",
+      body: "Our refresh ships next month — what's the one thing you wish you'd done differently on rollout?",
       likes: 21,
       replies: 6,
     },
     {
       initials: "RT",
       name: "Ravi Thomas",
-      body: "Anyone running A/B tests on portal onboarding? Would love to compare drop-off numbers.",
+      body: "Anyone been through a naming exercise recently? Curious how long the full thing actually took end-to-end.",
       likes: 4,
       replies: 1,
     },
