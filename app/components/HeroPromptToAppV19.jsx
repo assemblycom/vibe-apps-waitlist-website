@@ -233,7 +233,7 @@ function TimeTrackerView() {
 
 function HelpdeskView() {
   const tickets = [
-    { client: "Acme", subject: "Logo file missing from latest delivery", status: "Open", time: "May 8" },
+    { client: "Acme", subject: "Missing print-ready files in the May delivery", status: "Open", time: "May 8" },
     { client: "Lyra", subject: "Question about brand guideline section 3", status: "In progress", time: "May 8" },
     { client: "Pine", subject: "Need export in CMYK for the print run", status: "Open", time: "May 7" },
     { client: "Orbit", subject: "Typography spec mismatch on landing page", status: "In progress", time: "May 7" },
@@ -275,7 +275,7 @@ function CommunityView() {
     {
       initials: "MP",
       name: "Maya Patel",
-      body: "Anyone else seeing the new brand kit show up in their portal? Curious how the typography stack is rendering on your end.",
+      body: "Rolling out our refreshed brand internally next week — anyone have a launch checklist that actually got sales-team buy-in?",
       likes: 12,
       replies: 4,
     },
