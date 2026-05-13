@@ -105,7 +105,7 @@ export function ComparisonSpec({
   const gridCols = "grid-cols-[minmax(180px,220px)_1fr_1fr]";
 
   return (
-    <section className="gradient-divider py-20 md:py-28">
+    <section className="gradient-divider py-16 md:py-28">
       <div className="mx-auto max-w-5xl px-6">
         <div className="mb-7 text-center">
           {heading && (

@@ -87,7 +87,7 @@ export function FinalCTA({ heading, subheading }) {
   }, []);
 
   return (
-    <section ref={sectionRef} className="gradient-divider py-24 md:py-32">
+    <section ref={sectionRef} className="gradient-divider py-20 md:py-32">
       <div
         ref={contentRef}
         style={{

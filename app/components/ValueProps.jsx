@@ -240,7 +240,7 @@ function ValuePropPanel({ id, item, visual, sectionRef, index }) {
       id={id}
       ref={sectionRef}
       data-section-index={index}
-      className="py-20 md:py-24"
+      className="py-12 md:py-24"
     >
       <div className="flex flex-col gap-10">
         <div className="max-w-3xl">

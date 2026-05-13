@@ -84,7 +84,7 @@ export default function Home() {
       <div
         data-nav-theme="light"
         data-tinted-section="light"
-        className="bg-[#F5F5F0] pb-32 md:pb-40"
+        className="bg-[#F5F5F0] pb-20 md:pb-40"
       >
         <Reveal>
           <ComparisonSpec

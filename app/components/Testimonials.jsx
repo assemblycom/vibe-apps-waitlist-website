@@ -313,7 +313,7 @@ export function Testimonials({ eyebrow, heading, subheading, quotes = [], theme 
   const isLight = theme === "light";
 
   return (
-    <section className="gradient-divider py-20 md:py-24">
+    <section className="gradient-divider py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         {/* Header */}
         <div className="mb-12 max-w-2xl">

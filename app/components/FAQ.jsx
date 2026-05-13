@@ -105,7 +105,7 @@ export function FAQ({ eyebrow, heading, items = [] }) {
   const [activeIndex, setActiveIndex] = useState(null);
 
   return (
-    <section className="gradient-divider py-20 md:py-28">
+    <section className="gradient-divider py-16 md:py-28">
       <div className="mx-auto max-w-3xl px-6">
         <div className="mb-12 text-center">
           {eyebrow && (
