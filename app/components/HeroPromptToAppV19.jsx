@@ -634,7 +634,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
             <div className="mb-1 text-[12px] text-[#101010]/45 lg:mb-2">
               Describe your app
             </div>
-            <div className="relative h-[44px] text-[14px] leading-[1.5] text-[#101010]/85 lg:h-auto lg:min-h-[60px]">
+            <div className="relative h-[44px] text-[14px] leading-[1.5] text-[#101010]/85 md:h-[28px] lg:h-auto lg:min-h-[60px]">
               {/* Typed prompt layer — fades out when we enter the
                   "thinking" beat so the swap to the generating message
                   reads as a single soft cross-fade. */}

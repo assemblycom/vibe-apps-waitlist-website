@@ -97,7 +97,7 @@ export const HOME_CONTENT = {
   },
 
   logoStrip: {
-    label: "Already used by early teams in alpha",
+    label: "Used by early teams in alpha",
     logos: [
       { name: "Capital One" },
       { name: "Collective" },
@@ -295,9 +295,9 @@ export const HOME_CONTENT = {
   },
 
   finalCta: {
-    heading: "Reserve your seat",
+    heading: "Reserve your spot",
     subheading:
-      "Reserve your seat to become a founding member — with an exclusive plan, personalized onboarding, and direct access to our team.",
+      "Become a founding member for personalized onboarding, an exclusive plan, and direct access to our team.",
   },
 
   // Post-submit modal that appears after the user enters an email in
