@@ -364,7 +364,7 @@ function TierPill({ label = "Active" }) {
   );
 }
 
-function CompaniesPanel({ cursorPhase }) {
+function CompaniesPanel({ cursorPhase, active }) {
   // 10 rows so the list reads as a real client roster; overflow below
   // the panel clips naturally (mirrors the reference screenshot).
   // Company avatars reuse the updated palette for visual cohesion with
@@ -494,8 +494,23 @@ function CompaniesPanel({ cursorPhase }) {
           })}
         </div>
 
-        {/* Cursor — anchored to the target row's center (company name). */}
-        <AnimatedCursor phase={cursorPhase} x={70} y={58} />
+        {/* Cursor — anchored to the target row's center (company name).
+            Only mounted when the CRM phase is actually on-screen.
+            Otherwise the panel stays mounted (for crossfade) but its
+            cursor would silently animate alongside the dashboard cursor
+            and then jump back into the entering offset when CRM
+            became active — producing visible back-and-forth jitter.
+            Enters from the right with no vertical offset so the slide
+            is purely horizontal (no "down then up" pump). */}
+        {active && (
+          <AnimatedCursor
+            phase={cursorPhase}
+            x={70}
+            y={58}
+            enterOffsetX={80}
+            enterOffsetY={0}
+          />
+        )}
       </div>
     </div>
   );
@@ -821,11 +836,6 @@ function CompanyOnboardingBody() {
 
 // ── Main canvas switcher ────────────────────────────────────────────────
 function MainCanvas({ phaseId, cursorPhase }) {
-  // Dashboard and CRM swap the whole body; the two company phases
-  // share the company header but swap the body area.
-  if (phaseId === "dashboard") return <DashboardPanel />;
-  if (phaseId === "crm") return <CompaniesPanel cursorPhase={cursorPhase} />;
-
   // Company detail — Messages tab by default, Onboarding once the
   // cursor commits its click. The underline slides as soon as the
   // press fires (well before the phase transition lands ~600ms later),
@@ -834,27 +844,65 @@ function MainCanvas({ phaseId, cursorPhase }) {
   const bodyTab = phaseId === "onboarding" ? "onboarding" : "messages";
   const activeTab = clickCommit ? "onboarding" : bodyTab;
   const pressingTab = clickCommit ? "onboarding" : null;
+  const showDashboard = phaseId === "dashboard";
+  const showCRM = phaseId === "crm";
+  const showDetail = phaseId === "messages" || phaseId === "onboarding";
+  // All three top-level panels stay mounted (React keeps them in the
+  // tree, no unmount/mount), but only the active one is rendered.
+  // Hard cut — real app navigation replaces the screen instantly,
+  // it doesn't crossfade. display:none is used instead of visibility
+  // so a nested visible/invisible class can't override it.
+  const panelClasses = (active) =>
+    clsx("absolute inset-0", active ? "" : "hidden");
   return (
-    <div className="relative flex h-full flex-col">
-      <CompanyHeader
-        activeTab={activeTab}
-        textActiveTab={bodyTab}
-        pressingTab={pressingTab}
-      />
-      {bodyTab === "messages" ? (
-        <CompanyMessagesBody />
-      ) : (
-        <CompanyOnboardingBody />
-      )}
-      {/* Messages-phase cursor — aimed at the Onboarding tab label in
-          the CompanyHeader tab row. Tab row sits below the 40px crumb,
-          py-2 adds ~8px of top padding → tab text center ~y 52.
-          Horizontally: px-4 (16) + "Messages" label (~56) + gap-4 (16)
-          puts the Onboarding tab start around x 88. Cursor tip sits
-          slightly inside the label. */}
-      {phaseId === "messages" && (
-        <AnimatedCursor phase={cursorPhase} x={100} y={48} />
-      )}
+    <div className="relative h-full">
+      <div className={panelClasses(showDashboard)}>
+        <DashboardPanel />
+      </div>
+      <div className={panelClasses(showCRM)}>
+        <CompaniesPanel cursorPhase={cursorPhase} active={showCRM} />
+      </div>
+      <div className={panelClasses(showDetail)}>
+        <div className="relative flex h-full flex-col">
+          <CompanyHeader
+            activeTab={activeTab}
+            textActiveTab={bodyTab}
+            pressingTab={pressingTab}
+          />
+          {/* Messages/Onboarding bodies stay mounted but hard-cut on
+              tab change — matches real tab-switch behaviour (instant)
+              and keeps panels pre-laid-out so the swap doesn't reflow.
+              display:none on the inactive body — no fade, and no
+              visibility-cascade override of the parent's hidden state. */}
+          <div className="relative flex-1">
+            <div
+              className={clsx(
+                "absolute inset-0 flex flex-col",
+                bodyTab === "messages" ? "" : "hidden",
+              )}
+            >
+              <CompanyMessagesBody />
+            </div>
+            <div
+              className={clsx(
+                "absolute inset-0 flex flex-col",
+                bodyTab === "onboarding" ? "" : "hidden",
+              )}
+            >
+              <CompanyOnboardingBody />
+            </div>
+          </div>
+          {/* Messages-phase cursor — aimed at the Onboarding tab label
+              in the CompanyHeader tab row. Tab row sits below the 40px
+              crumb, py-2 adds ~8px of top padding → tab text center ~y
+              52. Horizontally: px-4 (16) + "Messages" label (~56) +
+              gap-4 (16) puts the Onboarding tab start around x 88.
+              Cursor tip sits slightly inside the label. */}
+          {phaseId === "messages" && (
+            <AnimatedCursor phase={cursorPhase} x={100} y={48} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
