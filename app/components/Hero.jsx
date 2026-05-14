@@ -3,20 +3,37 @@ import { LogoStrip } from "./LogoStrip";
 import { HeroPromptToAppV19 } from "./HeroPromptToAppV19";
 import { HeroGlowWord } from "./HeroGlowWord";
 
-// Renders the heading, swapping any occurrence of "client-facing" for
-// a client-side HeroGlowWord that owns the load-then-hover neon
-// ignite. Falls back to the raw string for unrelated headings so the
-// component stays safe for variant copy.
+// Renders the heading, swapping "client-facing" for the HeroGlowWord
+// that owns the neon ignite. Two parallel structures are emitted so
+// the wrap behavior can differ by breakpoint without touching the
+// other: the mobile copy glues "for client-facing" via a nowrap
+// group (no orphaned "for"), and the sm+ copy is flat so
+// `text-wrap: balance` can split the heading freely. Whichever copy
+// isn't active is `display: none`, so animations on the hidden
+// HeroGlowWord don't run twice and screen readers only see one.
 function renderHeading(heading) {
   if (typeof heading !== "string") return heading;
-  const parts = heading.split(/(client-facing)/i);
-  if (parts.length === 1) return heading;
-  return parts.map((part, i) =>
-    /^client-facing$/i.test(part) ? (
-      <HeroGlowWord key={i} text={part} />
-    ) : (
-      <span key={i}>{part}</span>
-    ),
+  const match = heading.match(/(\S+)\s(client-facing)/i);
+  if (!match) return heading;
+  const before = heading.slice(0, match.index);
+  const prevWord = match[1];
+  const word = match[2];
+  const after = heading.slice(match.index + match[0].length);
+  return (
+    <>
+      <span className="min-[480px]:hidden">
+        {before}
+        <span className="whitespace-nowrap">
+          {prevWord} <HeroGlowWord text={word} />
+        </span>
+        {after}
+      </span>
+      <span className="hidden min-[480px]:contents">
+        {before}
+        {prevWord} <HeroGlowWord text={word} />
+        {after}
+      </span>
+    </>
   );
 }
 
@@ -43,8 +60,8 @@ export function Hero({
         }}
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-start px-6 pt-32 text-left sm:items-center sm:text-center md:pt-36 lg:pt-40">
-        <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.1] tracking-[-0.03em] text-white sm:leading-[1.05] sm:[text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-start px-6 pt-32 text-left min-[480px]:items-center min-[480px]:text-center md:pt-36 lg:pt-40">
+        <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.1] tracking-[-0.03em] text-white min-[480px]:leading-[1.05] min-[480px]:[text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
           {renderHeading(heading)}
         </h1>
         <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">

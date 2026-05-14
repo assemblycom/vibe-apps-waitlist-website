@@ -5,7 +5,7 @@ export const HOME_CONTENT = {
   hero: {
     heading: "The AI app builder for client-facing experiences",
     subheading:
-      "Build apps that ship directly to your client portal, work with your existing contacts, and honor your team's permissions and brand.",
+      "Build apps that ship to your client portal, work with your existing contacts, and honor your team's permissions and brand.",
   },
 
   whyAssemblyStudio: {
