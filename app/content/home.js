@@ -74,7 +74,7 @@ export const HOME_CONTENT = {
         {
           u: "seamlessly integrates notifications",
           preview: {
-            side: "left",
+            side: "right",
             visual: "notifications",
             body: "Every app surfaces notifications the same way. In your portal, a counter appears next to the app name in the sidebar. Over email, clients get white-labeled notifications with magic-link actions for seamless login.",
           },
@@ -211,15 +211,11 @@ export const HOME_CONTENT = {
       "Early partners building client-ready apps on the Assembly platform, in days not months.",
     quotes: [
       {
-        segment: "Security",
-        body: [
-          "Assembly saves us from coding a whole portal solution… we can implement a ",
-          { link: "HIPAA compliant customer portal", href: "https://security.assembly.com" },
-          " with Assembly quickly if our clients need it.",
-        ],
-        name: "Rob Prochnow",
-        company: "Zen Aegis",
-        photo: "/testimonials/zen-aegis.jpg",
+        segment: "Enterprise",
+        body: "Assembly flows directly into our internal quality control processes. Instead of duplicating work across systems, everything is connected, saving our team time and ensuring we always have the most accurate, up-to-date information.",
+        name: "Phillip LaRue",
+        company: "Capital One",
+        photo: "/testimonials/capital-one.jpg",
       },
       {
         segment: "Accounting",
