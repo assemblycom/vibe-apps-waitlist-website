@@ -174,14 +174,23 @@ export function WaitlistModal({ open, onClose, content, email }) {
   }, [hydrated, completed]);
 
   // On open: play the success flash once, then settle into the main view.
+  // On Submit (phase becomes "submitted"): hold the final flash briefly
+  // then close so the user gets a beat of confirmation rather than the
+  // modal vanishing the instant they click.
   useEffect(() => {
     if (!open) {
       setPhase("success");
       return;
     }
-    const t = setTimeout(() => setPhase("main"), 1500);
-    return () => clearTimeout(t);
-  }, [open]);
+    if (phase === "success") {
+      const t = setTimeout(() => setPhase("main"), 1500);
+      return () => clearTimeout(t);
+    }
+    if (phase === "submitted") {
+      const t = setTimeout(() => onClose(), 1500);
+      return () => clearTimeout(t);
+    }
+  }, [open, phase, onClose]);
 
   // Body scroll lock + Escape-to-close while the modal is mounted.
   useEffect(() => {
@@ -252,7 +261,23 @@ export function WaitlistModal({ open, onClose, content, email }) {
       {/* Card — a single continuous surface. */}
       <div className="relative flex max-h-[90vh] w-full max-w-[560px] flex-col overflow-hidden rounded-[24px] border border-white/[0.06] bg-[#141414] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] [@media(pointer:coarse)]:max-h-[92vh] [@media(pointer:coarse)]:max-w-none [@media(pointer:coarse)]:rounded-b-none [@media(pointer:coarse)]:border-x-0 [@media(pointer:coarse)]:border-b-0 [@media(pointer:coarse)]:pb-[max(env(safe-area-inset-bottom),0.5rem)] [@media(pointer:coarse)]:shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.7)]">
         {phase === "success" ? (
-          <SuccessFlash returning={isReturning} />
+          <SuccessFlash
+            heading={
+              isReturning
+                ? "You're already on the list"
+                : "You're signed up"
+            }
+            subheading={
+              isReturning
+                ? "Lucky you — loading your progress…"
+                : "Locking in your spot…"
+            }
+          />
+        ) : phase === "submitted" ? (
+          <SuccessFlash
+            heading={content.submittedFlash.heading}
+            subheading={content.submittedFlash.subheading}
+          />
         ) : (
           <div
             data-lenis-prevent
@@ -333,7 +358,7 @@ export function WaitlistModal({ open, onClose, content, email }) {
             <div className="mt-7 flex flex-col items-center gap-3">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={() => setPhase("submitted")}
                 disabled={!allComplete}
                 className="inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium text-[#101010] transition-all duration-200 hover:bg-white/90 disabled:cursor-not-allowed disabled:bg-white/[0.08] disabled:text-white/40 disabled:hover:bg-white/[0.08] sm:w-auto sm:min-w-[180px]"
               >
@@ -355,8 +380,11 @@ export function WaitlistModal({ open, onClose, content, email }) {
   );
 }
 
-// Full-card success flash shown for ~1.2s right after the modal opens.
-function SuccessFlash({ returning }) {
+// Full-card flash. Used for the open beat ("You're signed up"), the
+// returning-user beat ("You're already on the list"), and the final
+// post-Submit beat ("You're all set"). Caller controls the copy so
+// the same logo build + fade-in animation carries all three states.
+function SuccessFlash({ heading, subheading }) {
   return (
     <div className="flex min-h-[320px] flex-col items-center justify-center px-8 py-12 text-center">
       <div
@@ -377,12 +405,10 @@ function SuccessFlash({ returning }) {
         }}
       >
         <h2 className="text-[1.5rem] font-normal leading-[1.1] tracking-[-0.025em] text-white [text-wrap:balance] md:text-[1.875rem] md:tracking-[-0.03em]">
-          {returning ? "You're already on the list" : "You're signed up"}
+          {heading}
         </h2>
         <p className="mt-2 text-[15px] leading-[1.55] text-white/55">
-          {returning
-            ? "Lucky you — loading your progress…"
-            : "Locking in your spot…"}
+          {subheading}
         </p>
       </div>
     </div>

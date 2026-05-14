@@ -316,6 +316,12 @@ export const HOME_CONTENT = {
       subtitle: "You're on the waitlist!",
     },
     allCompleteLabel: "All perks unlocked — you're on the next cohort.",
+    // Final flash shown after the user clicks Submit on the modal. Same
+    // visual treatment as the open flash, different copy.
+    submittedFlash: {
+      heading: "You're all set",
+      subheading: "Thanks for going the extra mile — we'll see you soon.",
+    },
     // Each follow-up is a single-click external action: opens a URL in
     // a new tab and marks the row complete. `prefillEmail` appends the
     // submitted email to the URL fragment as `#email=…` (Typeform's
