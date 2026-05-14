@@ -226,7 +226,7 @@ export function NarrativeBlock({ heading, callout, body }) {
             matching media query to suppress hover handlers there, so
             the underline-only fallback stays inert. */}
         <div
-          className="grid grid-cols-1 items-start gap-y-10 xl:grid-cols-[minmax(0,1fr)_minmax(0,640px)_minmax(0,1fr)] xl:gap-x-10 xl:gap-y-0"
+          className="grid grid-cols-1 items-start gap-y-10 min-[1200px]:grid-cols-[minmax(0,1fr)_minmax(0,640px)_minmax(0,1fr)] min-[1200px]:gap-x-10 min-[1200px]:gap-y-0"
           style={stageStyle(bodyDelayMs)}
         >
           {/* Left margin — only renders the DetailPanel when the
@@ -234,7 +234,7 @@ export function NarrativeBlock({ heading, callout, body }) {
               outer aside stays in the grid so the centered body
               column doesn't shift sideways as the panel appears and
               disappears. */}
-          <aside className="hidden xl:block">
+          <aside className="hidden min-[1200px]:block">
             <div className="sticky top-28">
               {activePreview && activePreview.side === "left" && (
                 <DetailPanel
@@ -262,7 +262,7 @@ export function NarrativeBlock({ heading, callout, body }) {
           </div>
 
           {/* Right margin — same pattern, mirrored. */}
-          <aside className="hidden xl:block">
+          <aside className="hidden min-[1200px]:block">
             <div className="sticky top-28">
               {activePreview && activePreview.side === "right" && (
                 <DetailPanel

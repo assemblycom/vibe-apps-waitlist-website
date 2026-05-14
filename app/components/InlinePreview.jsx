@@ -24,14 +24,13 @@ import { useEffect, useState } from "react";
 // ── Inline trigger ─────────────────────────────────────────────────
 //
 // Triggers only wire up hover/focus when the viewport is wide enough
-// to actually fit the side detail panels (xl, 1280px+) AND the device
-// has a real hover capability. Below that breakpoint, or on touch /
-// no-hover devices, we render just the underline — the editorial
-// emphasis still reads, but no panel work fires. NarrativeBlock
-// uses the same breakpoint to swap between split-column and single-
-// column layouts, so the two stay in sync.
+// to fit the side detail panels at full sizing (1200px is where the
+// max-w-6xl content container hits its 1152px cap — above that the
+// asides are a comfortable 216px wide; below 1200 they begin to
+// shrink). NarrativeBlock uses the same breakpoint to swap between
+// split-column and single-column layouts, so the two stay in sync.
 const TRIGGER_MEDIA_QUERY =
-  "(min-width: 1280px) and (hover: hover) and (pointer: fine)";
+  "(min-width: 1200px) and (hover: hover) and (pointer: fine)";
 
 export function InlineTrigger({
   text,
@@ -52,11 +51,11 @@ export function InlineTrigger({
   }, []);
 
   if (!canHover) {
-    return (
-      <span className="underline decoration-[#1A1A1A]/40 underline-offset-[3px]">
-        {text}
-      </span>
-    );
+    // Below the breakpoint there's no panel for the underline to point
+    // at, so the underline would just be decorative. Drop it and let
+    // the phrase read as plain body copy — keeps the prose calm on
+    // narrower viewports.
+    return <span>{text}</span>;
   }
 
   // The trigger is a single span — no portal, no positioning. The
