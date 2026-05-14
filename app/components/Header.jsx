@@ -209,6 +209,20 @@ export function Header() {
       // step with the bg fade.
       if (logo) {
         logo.style.filter = `invert(${tint})`;
+        // Mobile only: animate the width of the logo's overflow-clip
+        // container from icon-only (~24px) to the full lockup
+        // (~168px) as the dock progress `e` ramps up. On md+ the
+        // md:!w-auto class wins and our inline width is ignored — no
+        // need to clear it, but we do anyway so the inline value
+        // doesn't trail behind the breakpoint when the viewport
+        // crosses 768px mid-session.
+        if (typeof window !== "undefined" && window.innerWidth < 768) {
+          const MIN_W = 24;
+          const MAX_W = 168;
+          logo.style.width = `${MIN_W + (MAX_W - MIN_W) * e}px`;
+        } else {
+          logo.style.removeProperty("width");
+        }
       }
     };
 
@@ -275,20 +289,25 @@ export function Header() {
           aria-label={SITE.brand}
           className="inline-flex items-center transition-opacity duration-200 hover:opacity-80"
         >
-          {/* Wordmark changes by breakpoint: "Studio" only on mobile,
-              full "Assembly Studio" lockup from md: up. Logo color
-              flips via CSS filter (invert(1)) when the nav sits over
-              a light-tagged section — both SVGs are pure white, so
-              inverting them yields pure black. */}
-          <img
+          {/* Single SVG wordmark, width-clipped on mobile so only the
+              brand glyph shows at rest. As the user scrolls past the
+              hero, the clip expands and the "Assembly Studio" lockup
+              reveals to the right — driven by the same dock progress
+              `e` that materialises the pill. On md+ the wordmark is
+              always fully visible (md:!w-auto overrides the inline
+              clip width). Logo color flips via CSS filter (invert(1))
+              when the nav sits over a light-tagged section. */}
+          <span
             ref={logoRef}
-            src="/logos/web-logo.svg"
-            alt={SITE.brand}
-            className="h-6 w-auto"
-            style={{
-              filter: "invert(0)",
-            }}
-          />
+            className="inline-flex h-6 items-center overflow-hidden md:!w-auto"
+            style={{ filter: "invert(0)", width: "24px" }}
+          >
+            <img
+              src="/logos/web-logo.svg"
+              alt={SITE.brand}
+              className="block h-6 w-auto max-w-none flex-none"
+            />
+          </span>
         </a>
         <span
           ref={ctaRef}
