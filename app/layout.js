@@ -2,9 +2,9 @@ import "./globals.css";
 import { SmoothScroll } from "./components/SmoothScroll";
 
 export const metadata = {
-  title: "Assembly Studio: The platform layer for AI-native service firms",
+  title: "The AI app builder for client-facing experiences",
   description:
-    "Assembly Studio is the AI app layer on the Assembly platform. Describe your firm, ship client-facing apps with auth, CRM, billing and a portal already included. Get early access to the beta.",
+    "Build apps that ship directly to your client portal, work with your existing contacts, and honor your team's permissions and brand.",
 };
 
 export default function RootLayout({ children }) {
