@@ -44,7 +44,7 @@ export function Hero({
       />
 
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-start px-6 pt-32 text-left sm:items-center sm:text-center md:pt-36 lg:pt-40">
-        <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.1] tracking-[-0.03em] text-white [text-wrap:balance] sm:leading-[1.05] md:text-[3.25rem] md:tracking-[-0.035em]">
+        <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.1] tracking-[-0.03em] text-white sm:leading-[1.05] sm:[text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
           {renderHeading(heading)}
         </h1>
         <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
