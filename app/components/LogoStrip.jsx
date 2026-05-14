@@ -4,19 +4,35 @@ import { Reveal } from "./Reveal";
 // render identical-looking items without duplicating markup inline.
 // Text colors flip based on the surface the strip is sitting on
 // (`variant="light"` for the off-white chapter, `variant="dark"` for
-// the hero).
-function LogoItem({ name, variant }) {
+// the hero). When `href` is provided the wordmark becomes a link that
+// opens the company site in a new tab.
+function LogoItem({ name, href, variant }) {
   const base =
     variant === "dark"
       ? "text-white/40 hover:text-white/80"
       : "text-[#1A1A1A]/40 hover:text-[#1A1A1A]/80";
+  const label = (
+    <span
+      className={`whitespace-nowrap text-[14px] font-semibold tracking-[-0.01em] transition-colors duration-200 ${base}`}
+    >
+      {name}
+    </span>
+  );
   return (
     <div className="flex h-8 items-center justify-center">
-      <span
-        className={`whitespace-nowrap text-[14px] font-semibold tracking-[-0.01em] transition-colors duration-200 ${base}`}
-      >
-        {name}
-      </span>
+      {href ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${name} (opens in a new tab)`}
+          className="inline-flex items-center"
+        >
+          {label}
+        </a>
+      ) : (
+        label
+      )}
     </div>
   );
 }
@@ -40,7 +56,7 @@ function LogoMarquee({ logos, variant, ariaLabel }) {
       <div className="logo-marquee-track flex w-max items-center gap-x-12 md:gap-x-16">
         {logos.map((logo) => (
           <div key={`a-${logo.name}`} className="flex-none">
-            <LogoItem name={logo.name} variant={variant} />
+            <LogoItem name={logo.name} href={logo.href} variant={variant} />
           </div>
         ))}
         {/* Duplicate set — aria-hidden so SR users don't hear logos
@@ -51,7 +67,7 @@ function LogoMarquee({ logos, variant, ariaLabel }) {
             className="flex-none"
             aria-hidden="true"
           >
-            <LogoItem name={logo.name} variant={variant} />
+            <LogoItem name={logo.name} href={logo.href} variant={variant} />
           </div>
         ))}
       </div>
@@ -97,7 +113,7 @@ export function LogoStrip({ label, logos = [], variant = "light" }) {
       <div className="hidden items-center justify-center gap-x-10 gap-y-6 md:flex md:flex-wrap">
         {logos.map((logo, i) => (
           <Reveal key={logo.name} delay={i * 60}>
-            <LogoItem name={logo.name} variant={variant} />
+            <LogoItem name={logo.name} href={logo.href} variant={variant} />
           </Reveal>
         ))}
       </div>

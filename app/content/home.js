@@ -107,15 +107,18 @@ export const HOME_CONTENT = {
 
   logoStrip: {
     label: "Powered by Assembly, trusted by",
+    // Each logo links out to the company's site in a new tab.
     logos: [
-      { name: "Capital One" },
-      { name: "Collective" },
-      { name: "Ditto" },
-      { name: "Heritage Law Partners" },
-      { name: "Waymaker" },
-      { name: "ce" },
-      { name: "AURA" },
-      { name: "CEO Bankable" },
+      { name: "Capital One Travel", href: "https://capitalonetravel.com" },
+      { name: "Collective CPA", href: "https://mycollectivecpa.com/" },
+      { name: "AURA", href: "https://www.auraagncy.com/" },
+      { name: "Heritage Law Partners", href: "https://heritagelawpartners.com/" },
+      { name: "Creative Edge", href: "https://creativeedge.tv" },
+      { name: "Ditto", href: "https://dittoditto.io/" },
+      { name: "Waymaker", href: "https://waymakerfinance.com.au/" },
+      { name: "CoverPanda", href: "https://coverpanda.co/insurance" },
+      { name: "WizardPi", href: "https://www.wizardpi.co.uk/" },
+      { name: "Icarus", href: "https://icarusfc.com/" },
     ],
   },
 
