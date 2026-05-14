@@ -141,12 +141,12 @@ function HomeView() {
     {
       title: "New point of contact",
       body: "Maya Patel will be your day-to-day lead going forward.",
-      time: "Yesterday",
+      time: "1d",
     },
     {
       title: "Studio holiday hours",
       body: "We'll be offline Dec 24-26. Tickets answered first thing on the 27th.",
-      time: "May 5",
+      time: "5d",
     },
   ];
   return (

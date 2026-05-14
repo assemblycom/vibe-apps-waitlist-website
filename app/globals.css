@@ -490,6 +490,56 @@ html.lenis body {
   }
 }
 
+/* Hero "client-facing" — per-character neon ignite.
+   Each letter fades in while its glow pulses from purple to green,
+   then settles to the heading's default color with no shadow. The
+   stagger delay is set per-char inline from the JSX side. Letters
+   stay as inline-block so the staggered fade-in doesn't shift line
+   metrics, and the parent wraps the run in nowrap so the word never
+   breaks mid-letter. */
+.hero-glow-word {
+  display: inline;
+  white-space: nowrap;
+}
+.hero-glow-char {
+  display: inline-block;
+  opacity: 0;
+  animation: hero-neon-in 700ms ease forwards;
+  will-change: text-shadow, opacity, color;
+}
+@keyframes hero-neon-in {
+  0% {
+    opacity: 0;
+    text-shadow: none;
+    color: inherit;
+  }
+  30% {
+    opacity: 1;
+    text-shadow:
+      0 0 8px #8b99c8,
+      0 0 20px #8b99c8,
+      0 0 40px #8b99c8;
+    color: #ffffff;
+  }
+  60% {
+    text-shadow:
+      0 0 4px #d9ed92,
+      0 0 12px #d9ed92;
+    color: #ffffff;
+  }
+  100% {
+    opacity: 1;
+    text-shadow: none;
+    color: inherit;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow-char {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 /* NarrativeBlock — mobile progressive read.
    On phones each word is dimmed by default; JS lifts opacity to 1 as
    the word crosses the reader's eye line. Desktop renders normally

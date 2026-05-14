@@ -1,6 +1,24 @@
 import { EmailCTA } from "./EmailCTA";
 import { LogoStrip } from "./LogoStrip";
 import { HeroPromptToAppV19 } from "./HeroPromptToAppV19";
+import { HeroGlowWord } from "./HeroGlowWord";
+
+// Renders the heading, swapping any occurrence of "client-facing" for
+// a client-side HeroGlowWord that owns the load-then-hover neon
+// ignite. Falls back to the raw string for unrelated headings so the
+// component stays safe for variant copy.
+function renderHeading(heading) {
+  if (typeof heading !== "string") return heading;
+  const parts = heading.split(/(client-facing)/i);
+  if (parts.length === 1) return heading;
+  return parts.map((part, i) =>
+    /^client-facing$/i.test(part) ? (
+      <HeroGlowWord key={i} text={part} />
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  );
+}
 
 export function Hero({
   eyebrow,
@@ -25,9 +43,9 @@ export function Hero({
         }}
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 text-center md:pt-36 lg:pt-40">
-        <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.05] tracking-[-0.03em] text-white [text-wrap:balance] md:text-[3.25rem] md:tracking-[-0.035em]">
-          {heading}
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-start px-6 pt-32 text-left sm:items-center sm:text-center md:pt-36 lg:pt-40">
+        <h1 className="mb-6 max-w-[820px] text-[2.125rem] font-normal leading-[1.1] tracking-[-0.03em] text-white [text-wrap:balance] sm:leading-[1.05] md:text-[3.25rem] md:tracking-[-0.035em]">
+          {renderHeading(heading)}
         </h1>
         <p className="mb-8 max-w-[620px] text-[1.0625rem] leading-[1.55] text-white/55 [text-wrap:pretty]">
           {subheading}
