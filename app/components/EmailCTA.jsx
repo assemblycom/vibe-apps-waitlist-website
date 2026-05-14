@@ -18,6 +18,28 @@ import { HOME_CONTENT } from "../content/home";
 // email shape" signal without pulling in a validator library.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Specific, warmer copy depending on *what* is missing so the user knows
+// how to fix the input instead of just being told it's wrong. Falls
+// through to a friendly generic suggestion when nothing more specific
+// applies.
+function validationMessage(value) {
+  if (!value) return "Pop your email in to save your spot.";
+  if (!value.includes("@")) {
+    return "Looks like that's missing an @ — try name@firm.com.";
+  }
+  const [local, ...rest] = value.split("@");
+  const domain = rest.join("@");
+  if (!local) return "Add the bit before the @ (like name@firm.com).";
+  if (!domain) return "Almost there — finish the domain (like @firm.com).";
+  if (!domain.includes(".") || domain.endsWith(".")) {
+    return "Add a .com (or similar) to finish your email.";
+  }
+  if (!EMAIL_RE.test(value)) {
+    return "Hmm, that doesn't look quite right — try name@firm.com.";
+  }
+  return "";
+}
+
 export function EmailCTA() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -26,12 +48,9 @@ export function EmailCTA() {
   const onSubmit = (e) => {
     e.preventDefault();
     const trimmed = email.trim();
-    if (!trimmed) {
-      setError("Add your email to continue.");
-      return;
-    }
-    if (!EMAIL_RE.test(trimmed)) {
-      setError("That doesn't look like a valid email.");
+    const message = validationMessage(trimmed);
+    if (message) {
+      setError(message);
       return;
     }
     setError("");
@@ -51,11 +70,7 @@ export function EmailCTA() {
   // own dark-theme message instead of the default white tooltip.
   const onInvalid = (e) => {
     e.preventDefault();
-    setError(
-      email.trim()
-        ? "That doesn't look like a valid email."
-        : "Add your email to continue.",
-    );
+    setError(validationMessage(email.trim()));
   };
 
   return (
