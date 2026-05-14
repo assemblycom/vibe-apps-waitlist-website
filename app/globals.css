@@ -490,6 +490,28 @@ html.lenis body {
   }
 }
 
+/* NarrativeBlock — mobile progressive read.
+   On phones each word is dimmed by default; JS lifts opacity to 1 as
+   the word crosses the reader's eye line. Desktop renders normally
+   at every width — `hover: none` rules out a desktop browser resized
+   narrow, and the width cap rules out tablets in landscape. The
+   transition smooths small per-frame jumps when scrolling slowly;
+   fast scrolls override it because JS keeps setting fresh values
+   each frame. */
+@media (max-width: 767px) and (hover: none) and (pointer: coarse) {
+  .srt-word {
+    opacity: 0.22;
+    transition: opacity 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: opacity;
+  }
+}
+@media (max-width: 767px) and (hover: none) and (pointer: coarse) and (prefers-reduced-motion: reduce) {
+  .srt-word {
+    opacity: 1;
+    transition: none;
+  }
+}
+
 /* HeroLayeredStack — pill cycler.
    Each pill follows the same 6s loop, with N pills offset by 6/N
    seconds via animation-delay so at any frame one is at the front

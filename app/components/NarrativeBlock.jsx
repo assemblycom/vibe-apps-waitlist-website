@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   InlineTrigger,
   DetailPanel,
@@ -55,34 +55,53 @@ function resolvePreview(seg) {
   };
 }
 
+// Split a run of plain text into per-word spans so the mobile
+// scroll-tied reveal can address each word individually. Whitespace
+// returns as raw text nodes between spans so layout (line-breaking,
+// kerning) is unaffected on desktop.
+function wrapWords(text, keyPrefix) {
+  return text.split(/(\s+)/).map((tok, i) => {
+    if (tok === "") return null;
+    if (/^\s+$/.test(tok)) return tok;
+    return (
+      <span key={`${keyPrefix}-${i}`} className="srt-word">
+        {tok}
+      </span>
+    );
+  });
+}
+
 // Render a paragraph supporting plain strings and segment arrays. A
 // segment of `{ u: "text" }` renders as an underlined editorial
 // emphasis; if it also carries a `preview` payload, it becomes an
 // InlineTrigger that activates the side detail panel on hover/focus.
-function renderParagraph(p, { activeKey, onActivate, onDeactivate }) {
-  if (typeof p === "string") return p;
+// Inline triggers / underlined phrases reveal as a single unit on
+// mobile so their visual emphasis stays intact.
+function renderParagraph(p, { activeKey, onActivate, onDeactivate }, pIdx) {
+  if (typeof p === "string") return wrapWords(p, `p${pIdx}`);
   if (!Array.isArray(p)) return p;
   return p.map((seg, i) => {
-    if (typeof seg === "string") return seg;
+    if (typeof seg === "string") return wrapWords(seg, `p${pIdx}s${i}`);
     if (seg && typeof seg === "object" && "u" in seg) {
       if (seg.preview) {
         const resolved = resolvePreview(seg);
         const key = `${seg.u}-${i}`;
         return (
-          <InlineTrigger
-            key={i}
-            text={seg.u}
-            preview={{ ...resolved, _key: key }}
-            isActive={activeKey === key}
-            onActivate={(p) => onActivate(p, key)}
-            onDeactivate={onDeactivate}
-          />
+          <span key={i} className="srt-word">
+            <InlineTrigger
+              text={seg.u}
+              preview={{ ...resolved, _key: key }}
+              isActive={activeKey === key}
+              onActivate={(p) => onActivate(p, key)}
+              onDeactivate={onDeactivate}
+            />
+          </span>
         );
       }
       return (
         <span
           key={i}
-          className="underline decoration-[#1A1A1A]/40 underline-offset-[3px]"
+          className="srt-word underline decoration-[#1A1A1A]/40 underline-offset-[3px]"
         >
           {seg.u}
         </span>
@@ -159,6 +178,116 @@ export function NarrativeBlock({ heading, callout, body }) {
   };
 
   useEffect(() => () => cancelClose(), []);
+
+  // Mobile-only progressive reading reveal. Each word starts dimmed and
+  // brightens to full opacity as it crosses the reader's eye line
+  // (~62% of viewport height). Words above the eye line stay full so
+  // re-reading isn't punished; words below stay dim until scrolled to.
+  // Desktop is left untouched — the underline + side-panel treatment
+  // already carries the section visually.
+  const bodyRef = useRef(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    // Match the CSS gate exactly so the JS-driven opacities don't get
+    // out of sync with the dim-default styles. `hover: none` +
+    // `pointer: coarse` ensures a desktop browser narrowed to phone
+    // width never activates the effect.
+    const mql = window.matchMedia(
+      "(max-width: 767px) and (hover: none) and (pointer: coarse)",
+    );
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+
+    let words = [];
+    let centers = [];
+    let scheduled = false;
+    let rafId = 0;
+
+    const reset = () => {
+      words.forEach((w) => {
+        w.style.opacity = "";
+      });
+    };
+
+    const measure = () => {
+      if (!bodyRef.current) return;
+      words = Array.from(bodyRef.current.querySelectorAll(".srt-word"));
+      const scrollY = window.scrollY || window.pageYOffset;
+      centers = words.map((w) => {
+        const r = w.getBoundingClientRect();
+        return r.top + scrollY + r.height / 2;
+      });
+    };
+
+    const update = () => {
+      scheduled = false;
+      const vh = window.innerHeight || 1;
+      const scrollY = window.scrollY || window.pageYOffset;
+      // Eye line sits a bit below center — feels like a natural read
+      // position on a phone where the thumb anchors the lower half.
+      const eyeY = scrollY + vh * 0.62;
+      // Reveal band: words within this many px below the eye line are
+      // partially brightened so the transition feels gradual, not a
+      // hard cutoff. Smaller band = snappier reveal.
+      const band = vh * 0.32;
+      const DIM = 0.22;
+      for (let i = 0; i < words.length; i++) {
+        const dist = centers[i] - eyeY;
+        let o;
+        if (dist <= 0) o = 1;
+        else if (dist >= band) o = DIM;
+        else o = DIM + (1 - DIM) * (1 - dist / band);
+        words[i].style.opacity = o.toFixed(3);
+      }
+    };
+
+    const schedule = () => {
+      if (scheduled) return;
+      scheduled = true;
+      rafId = requestAnimationFrame(update);
+    };
+
+    const onResize = () => {
+      measure();
+      schedule();
+    };
+
+    let attached = false;
+    const attach = () => {
+      if (attached) return;
+      attached = true;
+      measure();
+      update();
+      window.addEventListener("scroll", schedule, { passive: true });
+      window.addEventListener("resize", onResize);
+    };
+    const detach = () => {
+      if (!attached) return;
+      attached = false;
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(rafId);
+      reset();
+    };
+
+    const apply = () => {
+      if (mql.matches && !reduceMotion.matches) attach();
+      else detach();
+    };
+
+    apply();
+    // matchMedia.addEventListener exists in all modern browsers; the
+    // legacy addListener fallback isn't worth carrying.
+    mql.addEventListener?.("change", apply);
+    reduceMotion.addEventListener?.("change", apply);
+
+    return () => {
+      mql.removeEventListener?.("change", apply);
+      reduceMotion.removeEventListener?.("change", apply);
+      detach();
+    };
+  }, []);
 
   const stageStyle = (delay = 0) => ({
     opacity: visible ? 1 : 0,
@@ -246,17 +375,17 @@ export function NarrativeBlock({ heading, callout, body }) {
             </div>
           </aside>
 
-          <div className="mx-auto w-full max-w-[640px]">
+          <div ref={bodyRef} className="mx-auto w-full max-w-[640px]">
             {paragraphs.map((p, i) => (
               <p
                 key={i}
                 className="mb-5 text-[1rem] leading-[1.6] text-[#1A1A1A]/55 last:mb-0"
               >
-                {renderParagraph(p, {
-                  activeKey,
-                  onActivate,
-                  onDeactivate,
-                })}
+                {renderParagraph(
+                  p,
+                  { activeKey, onActivate, onDeactivate },
+                  i,
+                )}
               </p>
             ))}
           </div>
