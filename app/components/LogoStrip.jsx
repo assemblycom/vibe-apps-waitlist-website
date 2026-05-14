@@ -72,7 +72,7 @@ export function LogoStrip({ label, logos = [], variant = "light" }) {
     return (
       <>
         {label && (
-          <p className="mono mb-6 text-center text-[11px] uppercase tracking-[0.08em] text-white/40 md:mb-8">
+          <p className="mono mb-6 text-center text-[11px] uppercase tracking-[0.03em] text-white/40 md:mb-8">
             {label}
           </p>
         )}
@@ -83,7 +83,7 @@ export function LogoStrip({ label, logos = [], variant = "light" }) {
 
   const strip = (
     <>
-      <p className="mono mb-6 text-center text-[11px] uppercase tracking-[0.08em] text-[#1A1A1A]/45 md:mb-8">
+      <p className="mono mb-6 text-center text-[11px] uppercase tracking-[0.03em] text-[#1A1A1A]/45 md:mb-8">
         {label}
       </p>
 

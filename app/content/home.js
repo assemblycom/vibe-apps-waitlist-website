@@ -106,7 +106,7 @@ export const HOME_CONTENT = {
   },
 
   logoStrip: {
-    label: "Used by early teams in alpha",
+    label: "Powered by Assembly, trusted by",
     logos: [
       { name: "Capital One" },
       { name: "Collective" },
