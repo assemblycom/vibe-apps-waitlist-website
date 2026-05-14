@@ -692,8 +692,11 @@ function ResultPhase({ active, paused }) {
 const DESIGN_W = 832;
 const DESIGN_H = (DESIGN_W * 2) / 3;
 // Phone zoom — match the other story visuals so the trio scales as one.
+// Above 1.0 on mobile so inner type renders at a readable size; the
+// right/bottom of the chrome crops further off-card in exchange. 1.5
+// keeps the main canvas mostly visible.
 const MOBILE_BREAK = 540;
-const MOBILE_ZOOM = 1.18;
+const MOBILE_ZOOM = 1.5;
 
 // ── Top-level: drive phase progression, gate on in-view ──────────────
 export function ThreeStepsVisual() {
@@ -721,7 +724,11 @@ export function ThreeStepsVisual() {
       const w = rect.width;
       const h = rect.height;
       if (w <= 0) return;
-      const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
+      // Zoom is gated on the *viewport* width so narrow desktop columns
+      // don't accidentally trip the mobile bump.
+      const isMobile =
+        typeof window !== "undefined" && window.innerWidth < MOBILE_BREAK;
+      const zoom = isMobile ? MOBILE_ZOOM : 1;
       const scale = (w / DESIGN_W) * zoom;
       // Visible center in design coords — divide container px by scale so
       // the slot lands at the true center of the *visible* window (matters
@@ -736,7 +743,15 @@ export function ThreeStepsVisual() {
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
-    return () => ro.disconnect();
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", update);
+    }
+    return () => {
+      ro.disconnect();
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", update);
+      }
+    };
   }, []);
 
   // In-view detection — scroll-listener fallback matches the rest of
@@ -773,7 +788,7 @@ export function ThreeStepsVisual() {
   return (
     <div
       ref={ref}
-      className="font-inter relative aspect-[4/3] w-full overflow-hidden rounded-[12px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:aspect-[3/2] sm:rounded-[22px]"
+      className="font-inter relative aspect-[1/1] w-full overflow-hidden rounded-[12px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] min-[540px]:aspect-[3/2] sm:rounded-[22px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <div

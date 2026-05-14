@@ -1020,7 +1020,11 @@ const DESIGN_H = (DESIGN_W * 2) / 3;
 // Phone zoom — same nudge as ClientPortalVisual so the family reads as
 // one product. Right/bottom peek absorbs the extra crop.
 const MOBILE_BREAK = 540;
-const MOBILE_ZOOM = 1.18;
+// Bumped above 1.0 on mobile so the inner type renders at a readable
+// size — the right/bottom edge of the chrome crops further off-card
+// in exchange. 1.5 keeps the main canvas mostly visible while making
+// type ~30% larger than the original 1.18 setting.
+const MOBILE_ZOOM = 1.5;
 
 // ── Top-level: drive phase loop, gate on in-view ────────────────────────
 export function StudioAppCardVisual() {
@@ -1035,19 +1039,31 @@ export function StudioAppCardVisual() {
 
   // Top-left anchored scale — sidebar's left padding stays put across
   // zoom levels; the mobile zoom expands toward the right/bottom peek.
+  // Zoom is gated on the *viewport* width (not the container) so that
+  // narrow desktop columns don't accidentally trip the mobile bump.
   useEffect(() => {
     if (!ref.current) return;
     const el = ref.current;
     const update = () => {
       const w = el.getBoundingClientRect().width;
       if (w <= 0) return;
-      const zoom = w < MOBILE_BREAK ? MOBILE_ZOOM : 1;
+      const isMobile =
+        typeof window !== "undefined" && window.innerWidth < MOBILE_BREAK;
+      const zoom = isMobile ? MOBILE_ZOOM : 1;
       setScale((w / DESIGN_W) * zoom);
     };
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
-    return () => ro.disconnect();
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", update);
+    }
+    return () => {
+      ro.disconnect();
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", update);
+      }
+    };
   }, []);
 
   // In-view detection — scroll-listener fallback to work inside the
@@ -1122,7 +1138,7 @@ export function StudioAppCardVisual() {
   return (
     <div
       ref={ref}
-      className="font-inter relative aspect-[4/3] w-full overflow-hidden rounded-[12px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] sm:aspect-[3/2] sm:rounded-[22px]"
+      className="font-inter relative aspect-[1/1] w-full overflow-hidden rounded-[12px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] min-[540px]:aspect-[3/2] sm:rounded-[22px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <div
