@@ -195,6 +195,46 @@ body::-webkit-scrollbar {
   animation: studio-shimmer 2.2s linear infinite;
 }
 
+/* Hero "generating" text shimmer — light highlight sweeps across the
+   "Hold on, we're generating your app…" line while the build phase
+   is active. Uses background-clip: text so the shimmer rides on the
+   glyphs themselves rather than a block overlay. Background-size is
+   200% with the highlight centered, and position animates within the
+   0%–100% safe range so the gradient always fully covers the text
+   (avoiding transparent / white-out frames). */
+@keyframes hero-text-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+.hero-text-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    rgba(16, 16, 16, 0.6) 0%,
+    rgba(16, 16, 16, 0.6) 35%,
+    rgba(16, 16, 16, 1) 50%,
+    rgba(16, 16, 16, 0.6) 65%,
+    rgba(16, 16, 16, 0.6) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: hero-text-shimmer 2.4s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-text-shimmer {
+    animation: none;
+    color: rgba(16, 16, 16, 0.65);
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
 /* ── Waitlist progress shimmer ──
    Brand-gradient fill for the waitlist-modal progress bar. Horizontal wind
    of the canonical brand vertical gradient (see GradientReveal) — periwinkle

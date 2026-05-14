@@ -37,7 +37,10 @@ const SIDEBAR_ACTIVE_BG = "#e9ebee";
 // data visible). Sidebar highlights Dashboard for phase 0 and CRM for
 // the company-drill-in phases.
 const PHASES = [
-  { id: "dashboard", duration: 4200 },
+  // Dashboard reads first, then the cursor slides into the sidebar and
+  // clicks the CRM row to hand off to the CRM phase — keeps the
+  // transition feeling like a real interaction rather than a jump cut.
+  { id: "dashboard", duration: 3600 },
   { id: "crm", duration: 4800 },
   { id: "messages", duration: 4200 },
   { id: "onboarding", duration: 4800 },
@@ -877,8 +880,15 @@ const NAV = [
 function StudioSurface({ phaseIndex, cursorPhase }) {
   const activePhase = PHASES[phaseIndex].id;
   // Sidebar follows the flow: Dashboard lights up only during the
-  // analytics intro; every CRM-drill-in phase keeps CRM active.
-  const activeSidebar = activePhase === "dashboard" ? "dashboard" : "crm";
+  // analytics intro; every CRM-drill-in phase keeps CRM active. The
+  // CRM row promotes early — as soon as the dashboard-phase cursor
+  // presses, the sidebar highlight slides over to CRM (before the
+  // phase actually transitions ~600ms later), so the click reads as
+  // a real navigation.
+  const dashboardClickCommit =
+    activePhase === "dashboard" && cursorPhase === "clicking";
+  const activeSidebar =
+    activePhase === "dashboard" && !dashboardClickCommit ? "dashboard" : "crm";
 
   return (
     <div
@@ -930,6 +940,24 @@ function StudioSurface({ phaseIndex, cursorPhase }) {
         <div className="relative min-w-0 flex-1 bg-white">
           <MainCanvas phaseId={activePhase} cursorPhase={cursorPhase} />
         </div>
+
+        {/* Dashboard-phase cursor — overlays the sidebar and lands on
+            the CRM row. Coordinates measured from the flex container's
+            top-left (sidebar starts at x=0). Sidebar pt 10 + brand row
+            30 + gap 6 + dashboard row 26 + gap 6 = 78px to CRM row top;
+            row is 26px tall → centre ~91. Cursor tip sits inside the
+            row's icon column. Slides in from the right (over the
+            dashboard) so the motion reads as "moving from the
+            analytics into the nav". */}
+        {activePhase === "dashboard" && (
+          <AnimatedCursor
+            phase={cursorPhase}
+            x={28}
+            y={82}
+            enterOffsetX={140}
+            enterOffsetY={20}
+          />
+        )}
       </div>
     </div>
   );
@@ -1006,15 +1034,15 @@ export function StudioAppCardVisual() {
   // completes one full revolution per video loop.
   const loopMs = PHASES.reduce((s, p) => s + p.duration, 0);
 
-  // Cursor choreography — runs for both CRM (clicks a company row) and
-  // Messages (clicks the Onboarding tab). The target differs per phase
-  // but the animation states are identical: entering → hovering → click
-  // just before the phase transitions, so the click "causes" the next
-  // phase in the narrative.
+  // Cursor choreography — runs for dashboard (clicks CRM sidebar row),
+  // CRM (clicks a company row), and Messages (clicks the Onboarding
+  // tab). The target differs per phase but the animation states are
+  // identical: entering → hovering → click just before the phase
+  // transitions, so the click "causes" the next phase in the narrative.
   useEffect(() => {
     if (!inView) return;
     const activeId = PHASES[phase].id;
-    if (activeId !== "crm" && activeId !== "messages") {
+    if (activeId === "onboarding") {
       setCursorPhase("hidden");
       return;
     }
@@ -1024,8 +1052,14 @@ export function StudioAppCardVisual() {
     if (paused) return;
     const timers = [];
     setCursorPhase("entering");
-    if (activeId === "crm") {
-      // CRM phase (4200ms): click ~3600ms in — phase flips at 4200ms.
+    if (activeId === "dashboard") {
+      // Dashboard (3600ms): viewer reads the analytics first, then the
+      // cursor slides into the sidebar and clicks the CRM row to hand
+      // off to the next phase.
+      timers.push(setTimeout(() => setCursorPhase("hovering"), 1500));
+      timers.push(setTimeout(() => setCursorPhase("clicking"), 3000));
+    } else if (activeId === "crm") {
+      // CRM phase (4800ms): click ~3600ms in — phase flips at 4800ms.
       timers.push(setTimeout(() => setCursorPhase("hovering"), 700));
       timers.push(setTimeout(() => setCursorPhase("clicking"), 3600));
     } else {

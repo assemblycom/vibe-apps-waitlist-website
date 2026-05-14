@@ -333,15 +333,15 @@ function DateChip({ label }) {
 // like it runs off the right edge (matches Figma reference where a
 // real thread extends past the visible width).
 function MessageRow({ initials, avatarBg, avatarFg, name, time, children }) {
-  // Cap the content column so body text wraps within the visible card
-  // area. The inner portal surface is wider than the outer card's
-  // overflow-clip, so without a max-width the message text wraps offscreen
-  // and the visible portion reads as broken mid-sentence lines.
+  // No max-width on the content column — the main canvas is w-[120%] of
+  // the outer card, so wrapping at the canvas width lets long lines run
+  // off the visible right edge. Matches the third value-prop (Studio
+  // Messages) where the thread reads as extending past the frame.
   return (
     <div className="px-4 py-1.5">
       <div className="flex items-start gap-2">
         <Avatar initials={initials} bg={avatarBg} fg={avatarFg} />
-        <div className="min-w-0 max-w-[520px] flex-1">
+        <div className="min-w-0 flex-1">
           <div className="mb-0.5 flex items-center gap-1.5 text-[11px] leading-[1.4]">
             <span className="font-medium text-[#212b36]">{name}</span>
             <span className="text-[#6b6f76]">{time}</span>
