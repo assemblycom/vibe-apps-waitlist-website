@@ -6,12 +6,20 @@ const CHAR_STAGGER_MS = 55;
 
 // Per-character neon ignite on "client-facing". Plays once on mount
 // (CSS-driven, staggered via inline animation-delay) and re-plays on
-// hover by clearing + re-applying the animation on each char. Stays
-// inert on touch since `:hover` never fires there.
+// hover (desktop) or tap (touch). Uses pointerdown so a finger tap
+// fires the replay immediately instead of waiting for a synthesized
+// mouse event that mobile Safari only sometimes emits.
 export function HeroGlowWord({ text }) {
   const ref = useRef(null);
+  const lastReplayRef = useRef(0);
 
   const replay = () => {
+    // Coalesce rapid double-fires (pointerdown + synthesized mouseenter
+    // on the same tap) so the animation isn't reset twice in one frame.
+    const now = Date.now();
+    if (now - lastReplayRef.current < 120) return;
+    lastReplayRef.current = now;
+
     const chars = ref.current?.querySelectorAll(".hero-glow-char");
     if (!chars || !chars.length) return;
     // Touch only `animationName` (not the `animation` shorthand) so the
@@ -36,6 +44,7 @@ export function HeroGlowWord({ text }) {
       className="hero-glow-word"
       aria-label={text}
       onMouseEnter={replay}
+      onPointerDown={replay}
     >
       {Array.from(text).map((c, j) => (
         <span

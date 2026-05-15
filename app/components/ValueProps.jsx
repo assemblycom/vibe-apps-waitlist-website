@@ -171,19 +171,29 @@ function SideMenu({ items, activeIndex, allCompleted, visible, onSelect }) {
 // the viewport.
 function MobileNav({ items, activeIndex, visible, onSelect }) {
   const buttonRefs = useRef([]);
+  const scrollerRef = useRef(null);
   const [portalTarget, setPortalTarget] = useState(null);
 
   useEffect(() => {
     if (typeof document !== "undefined") setPortalTarget(document.body);
   }, []);
 
-  // Keep the active tab visible: scroll it into the horizontal
-  // scroller's center whenever activeIndex changes.
+  // Keep the active tab visible: scroll the horizontal tab strip itself
+  // (not the button via scrollIntoView, which can also nudge ancestor
+  // scrolls and clash with a page-level smooth-scroll already in flight).
+  // No-op when the active button already fits in the visible band.
   useEffect(() => {
+    const scroller = scrollerRef.current;
     const btn = buttonRefs.current[activeIndex];
-    if (btn && typeof btn.scrollIntoView === "function") {
-      btn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-    }
+    if (!scroller || !btn) return;
+    const sRect = scroller.getBoundingClientRect();
+    const bRect = btn.getBoundingClientRect();
+    const fullyVisible =
+      bRect.left >= sRect.left && bRect.right <= sRect.right;
+    if (fullyVisible) return;
+    const target =
+      btn.offsetLeft - scroller.clientWidth / 2 + btn.offsetWidth / 2;
+    scroller.scrollTo({ left: target, behavior: "smooth" });
   }, [activeIndex]);
 
   if (!portalTarget) return null;
@@ -196,6 +206,7 @@ function MobileNav({ items, activeIndex, visible, onSelect }) {
       aria-hidden={!visible}
     >
       <div
+        ref={scrollerRef}
         className={clsx(
           "no-scrollbar flex gap-1 overflow-x-auto px-4 pt-2",
           visible ? "pointer-events-auto" : "",
@@ -240,7 +251,11 @@ function ValuePropPanel({ id, item, visual, sectionRef, index }) {
       id={id}
       ref={sectionRef}
       data-section-index={index}
-      className="py-12 md:py-24"
+      // scroll-mt clears the fixed Header pill (top:12 + pill height
+      // ~56px) plus breathing room when a tab tap scroll-to-section
+      // parks here. Without it the heading lands inside the dead zone
+      // behind the pill on mobile where py-12 alone isn't enough.
+      className="scroll-mt-24 py-12 md:scroll-mt-28 md:py-24"
     >
       <div className="flex flex-col gap-10">
         <div className="max-w-3xl">
@@ -270,11 +285,18 @@ export function ValueProps({ items = [] }) {
   // check can never mark the last item as done on its own.
   const [allCompleted, setAllCompleted] = useState(false);
   const sectionRefs = useRef([]);
+  // Set on tab tap. While the programmatic page scroll is in flight,
+  // sections pass through the IntersectionObserver "active band" and
+  // would otherwise flip activeIndex through every intermediate index
+  // — which made the highlighted pill hop 0→1→2 mid-scroll and read as
+  // jitter. We lock activeIndex to the target until the scroll settles.
+  const lockedTargetRef = useRef(null);
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.IntersectionObserver) return;
     const observer = new IntersectionObserver(
       (entries) => {
+        if (lockedTargetRef.current != null) return;
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
@@ -349,7 +371,42 @@ export function ValueProps({ items = [] }) {
   const handleSelect = (i) => {
     const el = document.getElementById(sectionId(i));
     if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Lock the highlight to the tapped target so the pill doesn't hop
+    // through intermediate sections as they cross the IO active band.
+    // The lock releases once scrolling has been idle for ~150ms — long
+    // enough for native smooth-scroll to settle, short enough that
+    // user-driven scroll after the tap reclaims the highlight.
+    lockedTargetRef.current = i;
+    setActiveIndex(i);
+    let idle;
+    const onScroll = () => {
+      clearTimeout(idle);
+      idle = setTimeout(() => {
+        window.removeEventListener("scroll", onScroll);
+        lockedTargetRef.current = null;
+      }, 150);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    // Safety unlock in case the scroll never fires (e.g. target already
+    // in view) so the IO can resume driving activeIndex.
+    setTimeout(() => {
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(idle);
+      lockedTargetRef.current = null;
+    }, 1200);
+    // Offset parks the section below the fixed Header pill
+    // (top:12 + ~56 height + breathing room). Lenis owns the scroll
+    // wrapper so native scrollIntoView doesn't actually move the page
+    // and CSS scroll-margin-top isn't honored — we drive Lenis directly
+    // and pass the offset explicitly. Native fallback keeps the CSS
+    // scroll-margin-top route working when Lenis isn't running
+    // (reduced motion).
+    const offset = -96;
+    if (window.__lenis) {
+      window.__lenis.scrollTo(el, { offset });
+    } else {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   return (
