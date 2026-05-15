@@ -20,8 +20,12 @@ import { PlayPauseToggle } from "./PlayPauseToggle";
 // Shared with ClientPortalVisual.jsx so the two animations read as one
 // family. Any new size needs to slot into this scale, not invent a new one.
 
+// Card background. Three-stop vertical fade: white → periwinkle → lime.
+// Peak blue sits at 50% (was 74.6%) so the periwinkle strip is taller
+// and reads as the dominant color. Continuous (no flat plateau) so the
+// stops blend without producing a visible band/line at the seam.
 const CARD_GRADIENT = [
-  "linear-gradient(180deg, rgba(255,255,255,0) 12.397%, rgb(139,153,200) 74.611%, rgb(217,237,146) 100%)",
+  "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgb(139,153,200) 50%, rgb(217,237,146) 100%)",
   "linear-gradient(90deg, rgb(255,255,255) 0%, rgb(255,255,255) 100%)",
 ].join(", ");
 
@@ -45,8 +49,7 @@ const RESULT_LOADING_MS = 800;
 
 // Matches the inner-card treatment used across value-prop visuals so
 // the whole set reads as one family.
-const INNER_CARD =
-  "rounded-[12px] border border-[#dfe1e4] bg-[#fbfbfb] shadow-[0_10px_30px_-15px_rgba(0,0,0,0.15)]";
+const INNER_CARD = "rounded-[12px] bg-[#fbfbfb]";
 
 // ── Phase wrapper: grid-stack crossfade with soft scale ──────────────
 function Phase({ visible, children }) {
@@ -788,7 +791,7 @@ export function ThreeStepsVisual() {
   return (
     <div
       ref={ref}
-      className="font-inter relative aspect-[1/1] w-full overflow-hidden rounded-[12px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] min-[540px]:aspect-[3/2] sm:rounded-[22px]"
+      className="font-inter relative aspect-[1/1] w-full overflow-hidden rounded-[12px] min-[540px]:aspect-[3/2] sm:rounded-[22px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <div

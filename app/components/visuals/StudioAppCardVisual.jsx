@@ -19,13 +19,16 @@ import { PlayPauseToggle } from "./PlayPauseToggle";
 //   caption 10px  — field labels, metadata, chips
 //   micro    9px  — counters, badges, dense table cells
 
+// Card background — matched across ThreeStepsVisual and ClientPortalVisual
+// so the three animation cards read as one family. See ThreeStepsVisual
+// for the rationale behind the longer-blue/continuous-stop shape.
 const CARD_GRADIENT = [
-  "linear-gradient(180deg, rgba(255,255,255,0) 12.397%, rgb(139,153,200) 74.611%, rgb(217,237,146) 100%)",
+  "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgb(139,153,200) 50%, rgb(217,237,146) 100%)",
   "linear-gradient(90deg, rgb(255,255,255) 0%, rgb(255,255,255) 100%)",
 ].join(", ");
 
 const INNER_CARD =
-  "rounded-tl-[14px] rounded-tr-[14px] border border-[#e6e6e6] bg-white shadow-[0_20px_50px_-25px_rgba(16,16,16,0.35)]";
+  "rounded-tl-[14px] rounded-tr-[14px] bg-white";
 
 // Studio sidebar — neutral greys (this is the internal view, not the
 // client portal). Palette matches ThreeStepsVisual's result phase.
@@ -1248,7 +1251,7 @@ export function StudioAppCardVisual() {
   return (
     <div
       ref={ref}
-      className="font-inter relative aspect-[1/1] w-full overflow-hidden rounded-[12px] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.45)] min-[540px]:aspect-[3/2] sm:rounded-[22px]"
+      className="font-inter relative aspect-[1/1] w-full overflow-hidden rounded-[12px] min-[540px]:aspect-[3/2] sm:rounded-[22px]"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <div

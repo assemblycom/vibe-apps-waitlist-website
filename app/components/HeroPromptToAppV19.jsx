@@ -129,7 +129,7 @@ function typed(text, t) {
 // hero, so text/borders stay dark for legibility. Mirrors v15 views.
 
 const CARD =
-  "rounded border border-[#101010]/[0.10] bg-white shadow-[0_1px_2px_rgba(16,16,16,0.04)]";
+  "rounded border border-[#101010]/[0.10] bg-white";
 
 function HomeView() {
   const updates = [
