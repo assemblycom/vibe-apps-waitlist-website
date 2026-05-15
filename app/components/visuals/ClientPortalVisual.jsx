@@ -133,7 +133,7 @@ function SidebarItem({
         // brand palette rather than a harsh neutral grey. Square with
         // a small corner radius (matches the surrounding row
         // rounding).
-        <span className="flex h-[14px] min-w-[16px] flex-shrink-0 items-center justify-center rounded-[3px] bg-[#bdd180] px-1 text-[10px] font-medium leading-none text-[#2a3d0a]">
+        <span className="flex h-[14px] min-w-[16px] flex-shrink-0 items-center justify-center rounded-[3px] bg-[#c6d68a] px-1 text-[10px] font-medium leading-none text-[#2a3d0a]">
           {badge}
         </span>
       )}

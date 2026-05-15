@@ -604,7 +604,7 @@ function ResultPhase({ active, paused }) {
                   </span>
                   {item.badge && (
                     <span
-                      className="flex h-[14px] min-w-[16px] flex-shrink-0 items-center justify-center rounded-[3px] bg-[#bdd180] px-1 text-[10px] font-medium leading-none text-[#2a3d0a] transition-all duration-[350ms] ease-out"
+                      className="flex h-[14px] min-w-[16px] flex-shrink-0 items-center justify-center rounded-[3px] bg-[#c6d68a] px-1 text-[10px] font-medium leading-none text-[#2a3d0a] transition-all duration-[350ms] ease-out"
                       style={{
                         opacity: showBadge ? 1 : 0,
                         transform: `scale(${showBadge ? 1 : 0.85})`,
