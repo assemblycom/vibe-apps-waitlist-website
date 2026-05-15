@@ -32,18 +32,16 @@ const INNER_CARD =
 const SIDEBAR_BG = "#f8f9fb";
 const SIDEBAR_ACTIVE_BG = "#e9ebee";
 
-// Animation loop: Dashboard (analytics) → CRM (companies) → click into
-// a company's Messages tab (default) → click Onboarding tab (response
-// data visible). Sidebar highlights Dashboard for phase 0 and CRM for
-// the company-drill-in phases.
+// Animation loop: CRM (companies) → click into a company's Messages tab
+// (default) → click Onboarding tab → click Notifications in the sidebar
+// → notification center with an unread item from the onboarding app.
+// Sidebar highlights CRM for the company-drill-in phases, then swaps
+// to Notifications for the final phase.
 const PHASES = [
-  // Dashboard reads first, then the cursor slides into the sidebar and
-  // clicks the CRM row to hand off to the CRM phase — keeps the
-  // transition feeling like a real interaction rather than a jump cut.
-  { id: "dashboard", duration: 3600 },
   { id: "crm", duration: 4800 },
   { id: "messages", duration: 4200 },
-  { id: "onboarding", duration: 4800 },
+  { id: "onboarding", duration: 6000 },
+  { id: "notifications", duration: 4800 },
 ];
 
 // ── Studio sidebar item — matches ThreeStepsVisual / ClientPortalVisual
@@ -100,156 +98,6 @@ function PanelHeader({ title, trailing }) {
   );
 }
 
-// ── Dashboard panel (phase 0) ───────────────────────────────────────────
-// Three simple stat cards + a lightweight onboarding-progress list so
-// the homepage reads as "where the team starts their day" without
-// looking like a data dump.
-function StatCard({ label, value, delta, trend }) {
-  // trend: "up" (green ↑), "down" (red ↓), or undefined.
-  const deltaColor =
-    trend === "up" ? "#3d7d2d" : trend === "down" ? "#c4452d" : "#6b6f76";
-  const arrow = trend === "up" ? "↑" : trend === "down" ? "↓" : null;
-  return (
-    <div className="rounded-[5px] border border-[#eef0f2] bg-white px-2.5 py-2">
-      <div className="text-[9px] text-[#6b6f76]">{label}</div>
-      <div className="mt-0.5 flex items-baseline gap-1">
-        <span className="text-[13px] font-semibold leading-none text-[#101010]">
-          {value}
-        </span>
-        {delta && (
-          <span
-            className="flex items-baseline gap-[2px] text-[9px] font-medium"
-            style={{ color: deltaColor }}
-          >
-            {arrow && <span aria-hidden="true">{arrow}</span>}
-            {delta}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// Growth trend chart — line stays near zero through most of April with
-// small humps, then climbs steeply from early May. Y-axis shows 0/50/100
-// on the left; X-axis labels every 3 days from Apr 12 → May 6. Shape
-// mirrors the dashboard reference.
-function TrendChart() {
-  const xLabels = [
-    "Apr 12",
-    "Apr 15",
-    "Apr 18",
-    "Apr 21",
-    "Apr 24",
-    "Apr 27",
-    "Apr 30",
-    "May 3",
-    "May 6",
-  ];
-  // 9 data points evenly spaced across viewBox width 200 (step = 25).
-  // Y is inverted (0 = top). Lower y = higher on chart.
-  // Flat-ish along the bottom with small humps, then steep climb at end.
-  const ys = [52, 52, 50, 46, 50, 46, 44, 30, 10];
-  const xs = ys.map((_, i) => i * 25);
-  const line = xs.map((x, i) => `${i === 0 ? "M" : "L"}${x} ${ys[i]}`).join(" ");
-  const area = `${line} L200 55 L0 55 Z`;
-  // Horizontal gridlines for the 0/50/100 marks. Y=55 is the baseline
-  // (value 0), Y=30 ≈ 50, Y=5 ≈ 100. Keeps the math simple for a small
-  // sparkline-sized chart.
-  const yTicks = [
-    { label: "100", y: 5 },
-    { label: "50", y: 30 },
-    { label: "0", y: 55 },
-  ];
-
-  return (
-    <div className="mt-2">
-      <div className="flex">
-        {/* Y-axis labels */}
-        <div className="relative mr-1 h-[58px] w-[18px] flex-shrink-0">
-          {yTicks.map((t) => (
-            <span
-              key={t.label}
-              className="absolute right-0 -translate-y-1/2 text-[9px] text-[#6b6f76]"
-              style={{ top: `${(t.y / 60) * 100}%` }}
-            >
-              {t.label}
-            </span>
-          ))}
-        </div>
-        {/* Chart area */}
-        <div className="relative h-[58px] flex-1">
-          <svg
-            viewBox="0 0 200 60"
-            preserveAspectRatio="none"
-            className="absolute inset-0 h-full w-full"
-            aria-hidden="true"
-          >
-            {/* Horizontal gridlines aligned with Y labels */}
-            {yTicks.map((t) => (
-              <line
-                key={t.label}
-                x1="0"
-                y1={t.y}
-                x2="200"
-                y2={t.y}
-                stroke="#f0f1f3"
-                strokeWidth="0.5"
-              />
-            ))}
-            {/* Area fill under the curve */}
-            <path d={area} fill="rgba(61,125,45,0.08)" />
-            {/* Trend line */}
-            <path
-              d={line}
-              fill="none"
-              stroke="#3d7d2d"
-              strokeWidth="1.25"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-          </svg>
-        </div>
-      </div>
-      {/* X-axis labels — offset by Y-axis gutter so ticks align under chart */}
-      <div className="mt-1 flex pl-[22px]">
-        <div className="flex flex-1 justify-between text-[9px] text-[#6b6f76]">
-          {xLabels.map((l) => (
-            <span key={l}>{l}</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DashboardPanel() {
-  return (
-    <div className="flex h-full flex-col">
-      <PanelHeader title="Dashboard" />
-      <div className="flex-1 overflow-hidden px-5 py-3">
-        {/* Date + greeting */}
-        <div className="mb-0.5 text-[10px] text-[#6b6f76]">Monday, May 27</div>
-        <div className="mb-3 text-[13px] font-semibold text-[#101010]">
-          Good morning, John 👋
-        </div>
-
-        {/* Stat cards + trend chart wrapped in a single outer container */}
-        <div className="mb-3 rounded-[6px] border border-[#eef0f2] bg-white p-2">
-          <div className="grid grid-cols-3 gap-1.5">
-            <StatCard label="Clients" value="2,000" delta="10%" trend="up" />
-            <StatCard label="Active clients" value="1467" delta="45%" trend="up" />
-            <StatCard label="Active subscriptions" value="280" delta="-100%" trend="down" />
-          </div>
-
-          {/* Trend chart */}
-          <TrendChart />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── CRM → Companies list panel (phase 1) ────────────────────────────────
 // Matches the Assembly CRM reference: sub-tabs Companies | Contacts,
 // row per company with a small colored company avatar + name, a single
@@ -260,20 +108,31 @@ function DashboardPanel() {
 // Rendered over a specific target (CRM row, Onboarding tab, etc.) and
 // driven by `cursorPhase`:
 //   hidden    → invisible
-//   entering  → faded in, offset from target (eases toward it)
+//   entering  → at offset from target, scale = `enterScale` (so a
+//               handoff cursor can carry over the previous click's
+//               pressed scale 0.72, avoiding a scale-pop on mount)
+//   settled   → at offset, scale 1.0 (a quick "finger lifted" release
+//               after the carry-over click pose)
 //   hovering  → on target, full size
-//   clicking  → on target, pressed (scale down)
+//   clicking  → on target, pressed (scale 0.72)
 // Position is configured via `x`/`y` (final hover coords in px from the
 // absolutely-positioned parent), and `enterOffsetX`/`enterOffsetY`
-// (how far off-target the cursor starts during the `entering` phase).
-function AnimatedCursor({ phase, x, y, enterOffsetX = 60, enterOffsetY = 90 }) {
-  // Clicking uses a much shorter transition and a more pronounced
-  // scale-down (0.72 vs resting 1.0) so the press reads as a crisp
-  // tap — without any ring/ripple or extra chrome.
+// (how far off-target the cursor starts during entering/settled).
+function AnimatedCursor({
+  phase,
+  x,
+  y,
+  enterOffsetX = 60,
+  enterOffsetY = 90,
+  enterScale = 0.95,
+}) {
+  // "Settled" uses a click-release-length transition (140ms) so the
+  // scale-up from a carry-over press feels like a finger lifting off,
+  // not a slow glide.
   const durationClass =
     phase === "hidden"
       ? "duration-[200ms]"
-      : phase === "clicking"
+      : phase === "clicking" || phase === "settled"
       ? "duration-[140ms]"
       : "duration-[900ms]";
   return (
@@ -289,7 +148,9 @@ function AnimatedCursor({ phase, x, y, enterOffsetX = 60, enterOffsetY = 90 }) {
         top: `${y}px`,
         transform:
           phase === "hidden" || phase === "entering"
-            ? `translate(${enterOffsetX}px, ${enterOffsetY}px) scale(0.95)`
+            ? `translate(${enterOffsetX}px, ${enterOffsetY}px) scale(${enterScale})`
+            : phase === "settled"
+            ? `translate(${enterOffsetX}px, ${enterOffsetY}px) scale(1)`
             : phase === "clicking"
             ? "translate(0, 0) scale(0.72)"
             : "translate(0, 0) scale(1)",
@@ -494,23 +355,10 @@ function CompaniesPanel({ cursorPhase, active }) {
           })}
         </div>
 
-        {/* Cursor — anchored to the target row's center (company name).
-            Only mounted when the CRM phase is actually on-screen.
-            Otherwise the panel stays mounted (for crossfade) but its
-            cursor would silently animate alongside the dashboard cursor
-            and then jump back into the entering offset when CRM
-            became active — producing visible back-and-forth jitter.
-            Enters from the right with no vertical offset so the slide
-            is purely horizontal (no "down then up" pump). */}
-        {active && (
-          <AnimatedCursor
-            phase={cursorPhase}
-            x={70}
-            y={58}
-            enterOffsetX={80}
-            enterOffsetY={0}
-          />
-        )}
+        {/* CRM cursor moved out of CompaniesPanel — see StudioSurface for
+            its render. The wrapper here has overflow-hidden, which would
+            clip a cursor that needs to enter from the sidebar area to
+            the left of the table. */}
       </div>
     </div>
   );
@@ -540,7 +388,7 @@ function ChevronRight() {
   );
 }
 
-function CompanyHeader({ activeTab, pressingTab, textActiveTab }) {
+function CompanyHeader({ activeTab, pressingTab, textActiveTab, visible }) {
   // `textActiveTab` controls only which tab gets the dark text colour;
   // `activeTab` drives the sliding underline. Splitting them lets the
   // underline begin its slide on the click while the type colour holds
@@ -558,13 +406,19 @@ function CompanyHeader({ activeTab, pressingTab, textActiveTab }) {
   // Single underline element that translates between tab targets so the
   // active line slides on tab change instead of jump-cutting. Position
   // is measured from each tab's actual rendered width so it matches
-  // even as the type scale or copy changes.
+  // even as the type scale or copy changes. The `visible` dep forces a
+  // re-measure when the detail panel transitions from display:none →
+  // visible (Messages/Onboarding phase begins) — otherwise the first
+  // measurement runs while the panel is hidden and offsetLeft/Width
+  // both return 0, leaving the underline collapsed to 0px and never
+  // appearing under the active tab.
   const tabRefs = useRef({});
   const [underline, setUnderline] = useState({ left: 0, width: 0 });
   useLayoutEffect(() => {
+    if (!visible) return;
     const el = tabRefs.current[activeTab];
     if (el) setUnderline({ left: el.offsetLeft, width: el.offsetWidth });
-  }, [activeTab]);
+  }, [activeTab, visible]);
   return (
     <>
       {/* Crumb / title row */}
@@ -834,6 +688,175 @@ function CompanyOnboardingBody() {
   );
 }
 
+// ── Notifications panel (phase 4) ───────────────────────────────────────
+// Mirrors the Copilot notifications design from Figma: a 300px inbox
+// list on the left (header + add buttons + stacked notification rows)
+// and an empty-state column on the right with a bell icon, the title
+// "Notifications", an unread-count line, and a "Learn more" affordance.
+// The top item is selected (subtle highlight) AND unread (dot indicator
+// on the right of the title) — it's the "Intake form submitted" event
+// raised by the Onboarding app the user was just viewing, so the
+// transition from Onboarding → Notifications reads as cause-and-effect.
+function BellIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#212b36"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+    </svg>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#6b6f76"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
+function NotificationRow({ title, name, time, avatar, unread, selected }) {
+  return (
+    <div
+      className={clsx(
+        "flex items-center border-b border-[#eef0f2] px-4 py-2.5",
+        selected && "bg-[#f4f6f8]",
+      )}
+    >
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center justify-between gap-2">
+          <span
+            className={clsx(
+              "truncate text-[11px] text-[#212b36]",
+              unread ? "font-medium" : "font-normal",
+            )}
+          >
+            {title}
+          </span>
+          {unread && (
+            <span
+              aria-hidden="true"
+              className="flex h-[6px] w-[6px] flex-shrink-0 rounded-full bg-[#212b36]"
+            />
+          )}
+        </div>
+        <div className="mt-0.5 flex items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-1.5">
+            <ContactChip {...avatar} />
+            <span className="truncate text-[10px] text-[#6b6f76]">{name}</span>
+          </div>
+          <span className="flex-shrink-0 text-[10px] text-[#6b6f76]">{time}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NotificationsPanel() {
+  // First row: the unread "Intake form submitted" event tied to Bernard
+  // Simons (same contact who completed the onboarding forms in the
+  // previous phase). Below it, "Invoice was paid" from the same client.
+  // The remaining rows mirror the Figma seed list so the inbox doesn't
+  // feel sparse.
+  const bernard = { initials: "BS", ...CONTACT_AVATARS[2] };
+  const jennifer = { initials: "JR", ...CONTACT_AVATARS[3] };
+  const items = [
+    {
+      title: "Intake form submitted",
+      name: "Bernard Simons",
+      avatar: bernard,
+      time: "2m",
+      unread: true,
+      selected: true,
+    },
+    {
+      title: "Invoice was paid",
+      name: "Bernard Simons",
+      avatar: bernard,
+      time: "1h",
+    },
+    {
+      title: "Contract was signed",
+      name: "Bernard Simons",
+      avatar: bernard,
+      time: "3h",
+    },
+    {
+      title: "Task was completed",
+      name: "Bernard Simons",
+      avatar: bernard,
+      time: "1d",
+    },
+    {
+      title: "Meeting was scheduled",
+      name: "Jennifer Rocha",
+      avatar: jennifer,
+      time: "2d",
+    },
+  ];
+
+  return (
+    <div className="flex h-full">
+      {/* Left list column */}
+      <div className="flex w-[300px] flex-shrink-0 flex-col border-r border-[#eef0f2]">
+        <div className="flex h-[44px] items-center border-b border-[#eef0f2] px-4">
+          <span className="text-[11px] font-medium text-[#212b36]">
+            Notifications
+          </span>
+        </div>
+        <div className="flex-1 overflow-hidden">
+          {items.map((item, i) => (
+            <NotificationRow key={i} {...item} />
+          ))}
+        </div>
+      </div>
+
+      {/* Right empty-state column — anchored near the visual centre of
+          the *visible* card, not the oversized StudioSurface (which
+          extends 34% below the card). Top offset is tuned so the bell +
+          copy land roughly at the card's vertical midline. */}
+      <div className="relative flex flex-1 justify-center bg-white">
+        <div className="absolute top-[170px] flex flex-col items-start gap-3 px-6">
+          <div className="flex items-center justify-center rounded-[6px] bg-[#eff1f4] p-1.5">
+            <BellIcon />
+          </div>
+          <div className="flex flex-col gap-1">
+            <p className="text-[18px] font-medium leading-[24px] text-[#212b36]">
+              Notifications
+            </p>
+            <p className="text-[12px] leading-[18px] text-[#6b6f76]">
+              1 unread notification
+            </p>
+          </div>
+          <span className="text-[12px] font-medium text-[#212b36]">
+            Learn more
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main canvas switcher ────────────────────────────────────────────────
 function MainCanvas({ phaseId, cursorPhase }) {
   // Company detail — Messages tab by default, Onboarding once the
@@ -844,9 +867,9 @@ function MainCanvas({ phaseId, cursorPhase }) {
   const bodyTab = phaseId === "onboarding" ? "onboarding" : "messages";
   const activeTab = clickCommit ? "onboarding" : bodyTab;
   const pressingTab = clickCommit ? "onboarding" : null;
-  const showDashboard = phaseId === "dashboard";
   const showCRM = phaseId === "crm";
   const showDetail = phaseId === "messages" || phaseId === "onboarding";
+  const showNotifications = phaseId === "notifications";
   // All three top-level panels stay mounted (React keeps them in the
   // tree, no unmount/mount), but only the active one is rendered.
   // Hard cut — real app navigation replaces the screen instantly,
@@ -856,11 +879,11 @@ function MainCanvas({ phaseId, cursorPhase }) {
     clsx("absolute inset-0", active ? "" : "hidden");
   return (
     <div className="relative h-full">
-      <div className={panelClasses(showDashboard)}>
-        <DashboardPanel />
-      </div>
       <div className={panelClasses(showCRM)}>
         <CompaniesPanel cursorPhase={cursorPhase} active={showCRM} />
+      </div>
+      <div className={panelClasses(showNotifications)}>
+        <NotificationsPanel />
       </div>
       <div className={panelClasses(showDetail)}>
         <div className="relative flex h-full flex-col">
@@ -868,6 +891,7 @@ function MainCanvas({ phaseId, cursorPhase }) {
             activeTab={activeTab}
             textActiveTab={bodyTab}
             pressingTab={pressingTab}
+            visible={showDetail}
           />
           {/* Messages/Onboarding bodies stay mounted but hard-cut on
               tab change — matches real tab-switch behaviour (instant)
@@ -895,11 +919,26 @@ function MainCanvas({ phaseId, cursorPhase }) {
           {/* Messages-phase cursor — aimed at the Onboarding tab label
               in the CompanyHeader tab row. Tab row sits below the 40px
               crumb, py-2 adds ~8px of top padding → tab text center ~y
-              52. Horizontally: px-4 (16) + "Messages" label (~56) +
+              48. Horizontally: px-4 (16) + "Messages" label (~56) +
               gap-4 (16) puts the Onboarding tab start around x 88.
-              Cursor tip sits slightly inside the label. */}
+              Enter offset is tuned so the cursor appears at the exact
+              screen position where the CRM-phase cursor clicked the
+              Acme Legal row. CRM table area sits 79px below the panel
+              top (PanelHeader 44 + sub-tabs 35), so the CRM click at
+              (70, 58) inside the table is at StudioSurface (270, 137),
+              which is CompanyDetail (70, 137) — offsets are (-30, +89)
+              relative to the (100, 48) Onboarding-tab target. Keeps the
+              CRM → Messages handoff continuous: no vertical teleport
+              between the row click and the new entry. */}
           {phaseId === "messages" && (
-            <AnimatedCursor phase={cursorPhase} x={100} y={48} />
+            <AnimatedCursor
+              phase={cursorPhase}
+              x={100}
+              y={48}
+              enterOffsetX={-30}
+              enterOffsetY={89}
+              enterScale={0.72}
+            />
           )}
         </div>
       </div>
@@ -921,22 +960,24 @@ const NAV = [
   { id: "onboarding", label: "Onboarding", iconSrc: "/Icons/on-boarding.svg", sectionLabel: "Apps" },
   { id: "helpdesk", label: "Helpdesk", iconSrc: "/Icons/helpdesk.svg" },
   { id: "schedule", label: "Schedule Call", iconSrc: "/Icons/call.svg", iconSize: 13 },
-  { id: "marketplace", label: "Marketplace", iconSrc: "/Icons/marketplace.svg", sectionLabel: "Workspace" },
-  { id: "settings", label: "Settings", iconSrc: "/Icons/Settings.svg" },
+  { id: "app-library", label: "App Library", iconSrc: "/Icons/marketplace.svg", sectionLabel: "Preferences" },
+  { id: "customization", label: "Customization", iconSrc: "/Icons/Settings.svg" },
 ];
 
 function StudioSurface({ phaseIndex, cursorPhase }) {
   const activePhase = PHASES[phaseIndex].id;
-  // Sidebar follows the flow: Dashboard lights up only during the
-  // analytics intro; every CRM-drill-in phase keeps CRM active. The
-  // CRM row promotes early — as soon as the dashboard-phase cursor
-  // presses, the sidebar highlight slides over to CRM (before the
-  // phase actually transitions ~600ms later), so the click reads as
-  // a real navigation.
-  const dashboardClickCommit =
-    activePhase === "dashboard" && cursorPhase === "clicking";
+  // Sidebar follows the flow: CRM stays active across the CRM list +
+  // company-detail phases (Messages / Onboarding). When the onboarding
+  // phase's cursor presses the Notifications sidebar row, the highlight
+  // slides over to Notifications early — well before the phase
+  // transition actually fires — so the click reads as a real
+  // navigation rather than a jump cut.
+  const onboardingClickCommit =
+    activePhase === "onboarding" && cursorPhase === "clicking";
   const activeSidebar =
-    activePhase === "dashboard" && !dashboardClickCommit ? "dashboard" : "crm";
+    activePhase === "notifications" || onboardingClickCommit
+      ? "notifications"
+      : "crm";
 
   return (
     <div
@@ -989,21 +1030,50 @@ function StudioSurface({ phaseIndex, cursorPhase }) {
           <MainCanvas phaseId={activePhase} cursorPhase={cursorPhase} />
         </div>
 
-        {/* Dashboard-phase cursor — overlays the sidebar and lands on
-            the CRM row. Coordinates measured from the flex container's
-            top-left (sidebar starts at x=0). Sidebar pt 10 + brand row
-            30 + gap 6 + dashboard row 26 + gap 6 = 78px to CRM row top;
-            row is 26px tall → centre ~91. Cursor tip sits inside the
-            row's icon column. Slides in from the right (over the
-            dashboard) so the motion reads as "moving from the
-            analytics into the nav". */}
-        {activePhase === "dashboard" && (
+        {/* CRM-phase cursor — target is the Acme Legal row inside the
+            table. Surface coords: PanelHeader (44) + sub-tabs (35) +
+            table row centre puts the first row centre at y≈137 from
+            CompaniesPanel top; with the sidebar 200px wide the row is
+            at surface x≈270. Enter offset positions the cursor at the
+            sidebar CRM row (28, 91) — so on the loop wrap from
+            Notifications, the cursor reads as having just navigated
+            into CRM from the sidebar (no popping in mid-table, no
+            sliding from off-card). On first run it reads the same
+            way: cursor at CRM in the nav, then moving into the table.
+            enterScale 0.72 carries over Onboarding's clicking pose
+            so loop wraps have no scale jump. */}
+        {activePhase === "crm" && (
+          <AnimatedCursor
+            phase={cursorPhase}
+            x={270}
+            y={137}
+            enterOffsetX={-242}
+            enterOffsetY={-46}
+            enterScale={0.72}
+          />
+        )}
+
+        {/* Onboarding-phase cursor — overlays the sidebar and lands on
+            the Notifications row. Coordinates measured from the flex
+            container's top-left (sidebar starts at x=0). Sidebar pt 10
+            + brand row ~30 + gap 6 + Dashboard 26 + gap 6 + CRM 26 +
+            gap 6 = 110px to Notifications row top; row ~26px tall →
+            centre ~123. Cursor tip sits inside the row's icon column.
+            Enter offset is tuned so the cursor appears at roughly the
+            same screen position where the Messages-phase cursor just
+            clicked the Onboarding tab (sidebar 200px + tab x≈100,
+            tab y≈48 → StudioSurface ≈ (300, 48)). The hovering
+            transition then sweeps it diagonally down-and-left to the
+            Notifications sidebar row — one continuous, deliberate
+            motion rather than a teleport. */}
+        {activePhase === "onboarding" && (
           <AnimatedCursor
             phase={cursorPhase}
             x={28}
-            y={82}
-            enterOffsetX={140}
-            enterOffsetY={20}
+            y={114}
+            enterOffsetX={272}
+            enterOffsetY={-66}
+            enterScale={0.72}
           />
         )}
       </div>
@@ -1086,10 +1156,21 @@ export function StudioAppCardVisual() {
 
   // Drive phase progression. Paused freezes the current phase; on
   // resume the timer restarts for the current phase's full duration.
+  // setCursorPhase is called in the same callback as setPhase so React
+  // batches both state updates into one render — the new phase's
+  // cursor mounts directly with cursorPhase="entering" (or "hidden"
+  // for notifications), never with the stale "clicking" value left
+  // over from the prior phase. Without this, the new cursor renders
+  // for one frame at its target (translate(0,0) of "clicking") before
+  // the layout effect catches up — producing a visible jump from the
+  // target back to the entering offset.
   useEffect(() => {
     if (!inView || paused) return;
     const t = setTimeout(() => {
-      setPhase((p) => (p + 1) % PHASES.length);
+      const nextIdx = (phase + 1) % PHASES.length;
+      const nextId = PHASES[nextIdx].id;
+      setCursorPhase(nextId === "notifications" ? "hidden" : "entering");
+      setPhase(nextIdx);
     }, PHASES[phase].duration);
     return () => clearTimeout(t);
   }, [phase, inView, paused]);
@@ -1098,15 +1179,27 @@ export function StudioAppCardVisual() {
   // completes one full revolution per video loop.
   const loopMs = PHASES.reduce((s, p) => s + p.duration, 0);
 
-  // Cursor choreography — runs for dashboard (clicks CRM sidebar row),
-  // CRM (clicks a company row), and Messages (clicks the Onboarding
-  // tab). The target differs per phase but the animation states are
-  // identical: entering → hovering → click just before the phase
-  // transitions, so the click "causes" the next phase in the narrative.
-  useEffect(() => {
+  // Cursor choreography — runs for CRM (clicks a company row), Messages
+  // (clicks the Onboarding tab), and Onboarding (clicks the Notifications
+  // sidebar row). The notifications phase itself has no cursor — the
+  // viewer reads the inbox and the loop restarts. Animation states are
+  // identical across phases: entering → hovering → click just before
+  // the phase transitions, so the click "causes" the next phase.
+  //
+  // Uses useLayoutEffect (not useEffect) so the *initial* cursorPhase
+  // for each new phase is committed before the first paint. Otherwise
+  // the freshly-mounted cursor renders one frame with the stale
+  // cursorPhase from the previous phase — e.g. CRM ends in "clicking",
+  // Messages mounts with cursorPhase still "clicking" which places the
+  // cursor at translate(0,0) on its *target* (the Onboarding tab) for
+  // a single frame, then jumps back to the entering offset when the
+  // post-paint effect fires. That stale frame triggers the CSS
+  // transition from target → entering offset, producing a visible
+  // "down then up" motion before the choreography catches up.
+  useLayoutEffect(() => {
     if (!inView) return;
     const activeId = PHASES[phase].id;
-    if (activeId === "onboarding") {
+    if (activeId === "notifications") {
       setCursorPhase("hidden");
       return;
     }
@@ -1115,22 +1208,39 @@ export function StudioAppCardVisual() {
     // out a click that never triggers a phase transition.
     if (paused) return;
     const timers = [];
-    setCursorPhase("entering");
-    if (activeId === "dashboard") {
-      // Dashboard (3600ms): viewer reads the analytics first, then the
-      // cursor slides into the sidebar and clicks the CRM row to hand
-      // off to the next phase.
-      timers.push(setTimeout(() => setCursorPhase("hovering"), 1500));
-      timers.push(setTimeout(() => setCursorPhase("clicking"), 3000));
-    } else if (activeId === "crm") {
-      // CRM phase (4800ms): click ~3600ms in — phase flips at 4800ms.
-      timers.push(setTimeout(() => setCursorPhase("hovering"), 700));
+    if (activeId === "crm") {
+      // CRM phase (4800ms) — also the loop wrap from Notifications.
+      // Cursor mounts at the CRM sidebar row at scale 0.72 (matching
+      // Onboarding's last clicking pose, so loop wraps have no scale
+      // jump). Releases to scale 1.0 over 140ms ("finger lifting off"),
+      // holds briefly so the CRM-row-active sidebar state reads, then
+      // slides into the table to land on Acme Legal and click.
+      setCursorPhase("entering");
+      timers.push(setTimeout(() => setCursorPhase("settled"), 140));
+      timers.push(setTimeout(() => setCursorPhase("hovering"), 900));
       timers.push(setTimeout(() => setCursorPhase("clicking"), 3600));
-    } else {
-      // Messages phase (4200ms): cursor appears later so viewer has
-      // time to read the thread before it moves up to click Onboarding.
+    } else if (activeId === "messages") {
+      // Messages phase (4200ms): cursor mounts at the previous CRM
+      // click position (enterScale 0.72 carries the press over so
+      // there's no scale-pop between cursors), then "releases" to
+      // scale 1.0 over ~140ms (settled), holds briefly so the viewer
+      // reads Jennifer's note, slides up to the Onboarding tab, and
+      // clicks. Real-life motion: press → release → reach for next.
+      setCursorPhase("entering");
+      timers.push(setTimeout(() => setCursorPhase("settled"), 140));
       timers.push(setTimeout(() => setCursorPhase("hovering"), 2000));
       timers.push(setTimeout(() => setCursorPhase("clicking"), 3600));
+    } else {
+      // Onboarding phase (6000ms): same press-carry-over pattern. Cursor
+      // mounts at the Messages click pos (scale 0.72), releases (140ms),
+      // reads the forms list for ~3s, slides diagonally down-and-left
+      // to the Notifications sidebar row, settles ~900ms, then clicks.
+      // Phase holds another 1.2s post-click so the sidebar highlight
+      // commits before the panel swaps.
+      setCursorPhase("entering");
+      timers.push(setTimeout(() => setCursorPhase("settled"), 140));
+      timers.push(setTimeout(() => setCursorPhase("hovering"), 3000));
+      timers.push(setTimeout(() => setCursorPhase("clicking"), 4800));
     }
     return () => timers.forEach((t) => clearTimeout(t));
   }, [phase, inView, paused]);
