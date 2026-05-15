@@ -306,7 +306,7 @@ export function NarrativeBlock({ heading, callout, body }) {
     <section
       ref={ref}
       data-nav-theme="light"
-      className="relative bg-[#F5F5F0] pt-10 pb-24 md:pt-24 md:pb-40"
+      className="relative bg-[#F5F5F0] pt-10 pb-24 md:pt-24 md:pb-32"
     >
       <div className="mx-auto max-w-6xl px-6">
         {/* Headline — kept centered (original treatment) so the

@@ -708,20 +708,20 @@ function ScheduleCallPanel() {
               src="/Icons/clock-three.svg"
               alt=""
               aria-hidden="true"
-              width={12}
-              height={12}
+              width={10}
+              height={10}
               className="flex-shrink-0"
             />
             30 min
           </div>
-          <div className="flex items-start gap-1.5 text-[11px] leading-[1.45] text-[#6b6f76]">
+          <div className="flex items-center gap-1.5 text-[11px] leading-[1.45] text-[#6b6f76]">
             <img
               src="/Icons/video.svg"
               alt=""
               aria-hidden="true"
               width={12}
               height={12}
-              className="mt-[2px] flex-shrink-0"
+              className="flex-shrink-0"
             />
             <span>Video link sent on confirmation.</span>
           </div>

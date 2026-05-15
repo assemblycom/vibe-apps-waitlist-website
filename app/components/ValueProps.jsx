@@ -246,6 +246,11 @@ function MobileNav({ items, activeIndex, visible, onSelect }) {
 // eyebrow, heading, body, then a wide visual below. Consistent per
 // item so the rhythm doesn't break between panels.
 function ValuePropPanel({ id, item, visual, sectionRef, index }) {
+  // The first panel uses a tighter top padding so the chapter opens
+  // closer to the spacer above — without it the gap between the
+  // NarrativeBlock and the "Describe an app" heading reads as dead
+  // space. Inter-panel spacing (between panel N and N+1) is unchanged.
+  const isFirst = index === 0;
   return (
     <section
       id={id}
@@ -255,7 +260,13 @@ function ValuePropPanel({ id, item, visual, sectionRef, index }) {
       // ~56px) plus breathing room when a tab tap scroll-to-section
       // parks here. Without it the heading lands inside the dead zone
       // behind the pill on mobile where py-12 alone isn't enough.
-      className="scroll-mt-24 py-12 md:scroll-mt-28 md:py-24"
+      className={clsx(
+        "scroll-mt-24 pb-12 md:scroll-mt-28 md:pb-24",
+        // First panel opens the dark chapter — gets breathing room
+        // above the heading so it lands as a deliberate chapter break,
+        // not jammed against the color seam.
+        isFirst ? "pt-12 md:pt-20" : "pt-12 md:pt-24",
+      )}
     >
       <div className="flex flex-col gap-10">
         <div className="max-w-3xl">
