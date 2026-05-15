@@ -52,7 +52,7 @@ export const HOME_CONTENT = {
         " client experience.",
       ],
       [
-        "Describe what you want — a client onboarding wizard, an approvals workflow, a client community space. From there, Assembly Studio generates an app that works with your ",
+        "Describe what you want — an onboarding wizard, an approvals workflow, a community space. Assembly Studio generates an app that works with your ",
         {
           u: "existing contacts and team",
           preview: {
@@ -72,14 +72,14 @@ export const HOME_CONTENT = {
         },
         ", and ",
         {
-          u: "seamlessly integrates notifications",
+          u: "integrates notifications",
           preview: {
             side: "right",
             visual: "notifications",
             body: "Every app surfaces notifications the same way. In your portal, a counter appears next to the app name in the sidebar. Over email, clients get white-labeled notifications with magic-link actions for seamless login.",
           },
         },
-        ". Every app deploys straight into your portal, not as a standalone tool on a separate URL, but as a native part of your client experience. Authentication, permissions, client identity, branding — all handled automatically.",
+        ". Every app deploys to your portal, not as a standalone tool on a separate URL, but as a native part of your client experience.",
       ],
       [
         "And you don't have to build everything yourself. Assembly ships with a ",
@@ -100,7 +100,7 @@ export const HOME_CONTENT = {
             body: "In addition to building apps from scratch and using apps from our library, you can also embed best-of-breed products like Calendly, Airtable, Databox, and 1000s of others to deliver a unified client experience.",
           },
         },
-        " that lets you turn on features with one click — for client messaging, payments, proposals, project management, and more. Don't rebuild the 80% that's been perfected over years of iteration. Focus on the 20% that makes you different.",
+        " that lets you turn on features with one click — for client messaging, payments, proposals, project management, and more.",
       ],
     ],
   },

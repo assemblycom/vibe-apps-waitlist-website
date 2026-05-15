@@ -475,23 +475,24 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
   const sent = phase !== "running" || cycleT >= SEND;
 
   // Number of apps "installed" in the sidebar — accumulates across the
-  // cycle so each new app pops in only after its own send beat.
+  // cycle so each new app's labeled row pops in only after its own
+  // generate beat completes (REVEAL_END). Before that, the sidebar
+  // shows a nameless skeleton square in its place so it reads as
+  // "still building" — the labeled, selected row replaces it once the
+  // main view is ready.
   let installed;
   if (phase === "reset") {
     installed = 0;
   } else if (phase === "hold" || phase === "idle") {
     installed = APPS.length;
   } else {
-    // An app is "installed" (label revealed in sidebar) only once its
-    // generate beat completes. Before that it shows as a skeleton row.
     installed = cycleT >= REVEAL_END ? cycleIndex + 1 : cycleIndex;
   }
 
   // The app currently being generated — rendered as a skeleton row in
-  // the sidebar only while the composer shows "Hold on, we're
-  // generating your app…" (between TYPE_END and REVEAL_END). During
-  // typing nothing extra appears; once generation completes the row
-  // swaps to its real labeled form.
+  // the sidebar between TYPE_END and REVEAL_END (the same window where
+  // the composer shows "Hold on, we're generating your app…" and the
+  // tab label shimmers).
   const installingApp =
     phase === "running" && cycleT >= TYPE_END && cycleT < REVEAL_END
       ? APPS[cycleIndex]
@@ -508,9 +509,16 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
   const shimmerCycle = (now % 1800) / 1800;
   const shimmerX = -120 + shimmerCycle * 340;
 
+  // During the install window (between TYPE_END and REVEAL_END) we
+  // drop the highlight off the previously-built app so the user
+  // doesn't read "two selected" — the sidebar reads as "the last app
+  // has handed off, the next one is loading" until the new view is
+  // ready and its row takes over the selected state at REVEAL_END.
   const activeAppId =
     phase === "reset"
       ? "home"
+      : generating
+      ? null
       : installed === 0
       ? "home"
       : APPS[installed - 1].id;
@@ -619,7 +627,11 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
                   <span
                     className={[
                       "transition-colors duration-300",
-                      isBuilt ? "text-[#101010]/85" : "text-[#101010]/20",
+                      isActive && generating
+                        ? "hero-text-shimmer"
+                        : isBuilt
+                        ? "text-[#101010]/85"
+                        : "text-[#101010]/20",
                     ].join(" ")}
                   >
                     {a.label}
@@ -628,7 +640,7 @@ export function HeroPromptToAppV19({ borderless = false, progressHeader = false 
                     <span
                       aria-hidden="true"
                       className={[
-                        `absolute -bottom-[1px] z-10 origin-left ${borderless ? "h-[1px] bg-[#404040]" : "h-[2px] bg-[#101010]"}`,
+                        `absolute -bottom-[1px] z-10 origin-left ${borderless ? "h-[1.5px] bg-[#a3a3a3]" : "h-[2px] bg-[#101010]"}`,
                         // For the first tab in non-borderless mode, extend
                         // the bar left into the strip's px-3 gutter so
                         // progress starts flush at the frame edge. In
