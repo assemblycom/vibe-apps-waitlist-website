@@ -99,18 +99,34 @@ const FINAL_HOLD = 1200;
 const IDLE_HOLD = 5200;
 const RESET_FADE = 600;
 
-function useCycleClock() {
+// `startDelay` lets the parent gate the cycle so the typing/composer
+// doesn't compete with the headline glow on first paint. While the
+// delay is active, `now` stays at 0 — every consumer below already
+// treats t=0 as the pre-type idle beat, so the composer sits on its
+// placeholder until the glow finishes and the clock starts ticking.
+function useCycleClock(startDelay = 0) {
   const [now, setNow] = useState(0);
   useEffect(() => {
     let raf;
-    const start = performance.now();
-    const tick = () => {
-      setNow(performance.now() - start);
+    let timer;
+    const begin = () => {
+      const start = performance.now();
+      const tick = () => {
+        setNow(performance.now() - start);
+        raf = requestAnimationFrame(tick);
+      };
       raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, []);
+    if (startDelay > 0) {
+      timer = setTimeout(begin, startDelay);
+    } else {
+      begin();
+    }
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      if (timer) clearTimeout(timer);
+    };
+  }, [startDelay]);
   return now;
 }
 
@@ -427,8 +443,8 @@ function SidebarRow({ iconSrc, iconClass, label, active, muted, style, skeleton,
 
 // ── Component ────────────────────────────────────────────────────
 
-export function HeroPromptToAppV19({ borderless = false, progressHeader = false } = {}) {
-  const now = useCycleClock();
+export function HeroPromptToAppV19({ borderless = false, progressHeader = false, startDelay = 0 } = {}) {
+  const now = useCycleClock(startDelay);
   // Clicking a tab anchors the cycle to start fresh at that app's
   // running beat — the cycle keeps progressing from there instead of
   // freezing.

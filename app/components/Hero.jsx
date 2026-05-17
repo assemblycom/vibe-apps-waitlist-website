@@ -71,7 +71,13 @@ export function Hero({
       </div>
 
       <div className="relative z-10 w-full overflow-hidden px-4 pt-8 md:px-6 md:pt-12 lg:px-10 lg:pt-16">
-        <HeroPromptToAppV19 borderless />
+        {/* startDelay holds the cycle so the typing demo doesn't compete
+            with the headline's per-character glow on first paint —
+            "client-facing" finishes igniting (~1.4s for the stagger +
+            per-char animation) and then the composer below starts
+            typing. Reduced-motion users skip the glow entirely, so
+            this delay still applies but reads as a brief idle beat. */}
+        <HeroPromptToAppV19 borderless startDelay={1500} />
       </div>
 
       {alphaLogos && alphaLogos.length > 0 && (
