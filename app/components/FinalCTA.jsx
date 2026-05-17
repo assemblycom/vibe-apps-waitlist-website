@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { EmailCTA } from "./EmailCTA";
+import { HeroGlowWord } from "./HeroGlowWord";
 
 // Final-CTA scroll reveal, fiasco.design-style — but applied to the
 // original dark section design, not a lime card. The content (heading,
@@ -102,7 +103,11 @@ export function FinalCTA({ heading, subheading }) {
         className="mx-auto max-w-3xl px-6 text-center"
       >
         <h3 className="mb-5 text-[1.875rem] font-normal leading-[1.05] tracking-[-0.025em] text-white [text-wrap:balance] md:text-[2.625rem] md:tracking-[-0.03em]">
-          {heading}
+          {typeof heading === "string" ? (
+            <HeroGlowWord text={heading} playOnInView />
+          ) : (
+            heading
+          )}
         </h3>
         {subheading && (
           <p className="mx-auto mb-8 max-w-xl text-[1.0625rem] leading-[1.55] text-white/55">
