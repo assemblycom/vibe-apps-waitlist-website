@@ -91,6 +91,11 @@ export function HeroGlowWord({ text, playOnInView = false }) {
           className="hero-glow-char"
           style={{
             animationDelay: `${j * CHAR_STAGGER_MS}ms`,
+            // Space chars inside `display: inline-block` collapse to
+            // zero width under normal whitespace handling — preserve
+            // them so multi-word phrases like "Reserve your spot"
+            // render with their gaps.
+            ...(c === " " ? { whiteSpace: "pre" } : {}),
             // Pre-reveal state for `playOnInView`: the chars sit in
             // their final appearance (visible white at full opacity,
             // no glow) so the heading reads normally while waiting,
