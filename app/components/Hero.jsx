@@ -85,7 +85,7 @@ export function Hero({
           <div className="mx-auto w-full max-w-[620px] px-6">
             {alphaLabel && (
               <p
-                className="mb-3 text-center text-[10px] uppercase tracking-[0.18em] text-white/45"
+                className="mb-3 text-center text-[10px] uppercase tracking-[0.1em] text-white/45"
                 style={{
                   fontFamily:
                     '"ABC Diatype Mono", ui-monospace, monospace',

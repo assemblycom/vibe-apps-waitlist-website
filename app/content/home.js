@@ -106,7 +106,7 @@ export const HOME_CONTENT = {
   },
 
   logoStrip: {
-    label: "Powered by Assembly, trusted by",
+    label: "Powered by Assembly, trusted by",
     // Each logo links out to the company's site in a new tab.
     logos: [
       { name: "Capital One Travel", href: "https://capitalonetravel.com" },
