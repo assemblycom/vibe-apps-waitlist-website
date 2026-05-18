@@ -111,10 +111,10 @@ function StepRow({ id, title, effort, reward, subtitle, done, clickable, onActio
               clickable ? "group-hover:bg-white/[0.14]" : ""
             }`}
           >
-            {reward}
             {clickable && (
-              <ArrowOutIcon className="ml-1.5 h-3 w-3 text-white/60" />
+              <ArrowOutIcon className="mr-1.5 h-2 w-2 text-white/55" />
             )}
+            {reward}
           </span>
         )}
       </button>
