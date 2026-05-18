@@ -10,11 +10,10 @@ const CHAR_STAGGER_MS = 55;
 // immediately instead of waiting for a synthesized mouse event that
 // mobile Safari only sometimes emits.
 //
-// `playOnInView` switches the component into a one-shot reveal mode:
+// `playOnInView` switches the component into a deferred-reveal mode:
 // the chars render in their default visible state until the element
-// scrolls into view, then the ignite plays exactly once. Hover/tap
-// replay is disabled in that mode so it stays a single-fire payoff
-// instead of becoming a re-triggerable easter egg.
+// scrolls into view (or is hovered/tapped first), then the ignite
+// plays. Hover/tap replay stays active afterwards.
 export function HeroGlowWord({ text, playOnInView = false }) {
   const ref = useRef(null);
   const lastReplayRef = useRef(0);
@@ -31,6 +30,15 @@ export function HeroGlowWord({ text, playOnInView = false }) {
     const now = Date.now();
     if (now - lastReplayRef.current < 120) return;
     lastReplayRef.current = now;
+
+    // First interaction in `playOnInView` mode: flip the gate so React
+    // drops the `animation-name: none` override and the CSS rule's
+    // ignite plays from the top. No reflow trick needed — the
+    // transition from `none` to the real name auto-starts it.
+    if (!playing) {
+      setPlaying(true);
+      return;
+    }
 
     const chars = ref.current?.querySelectorAll(".hero-glow-char");
     if (!chars || !chars.length) return;
@@ -74,15 +82,13 @@ export function HeroGlowWord({ text, playOnInView = false }) {
     return () => obs.disconnect();
   }, [playOnInView]);
 
-  const interactive = !playOnInView;
-
   return (
     <span
       ref={ref}
       className="hero-glow-word"
       aria-label={text}
-      onMouseEnter={interactive ? replay : undefined}
-      onPointerDown={interactive ? replay : undefined}
+      onMouseEnter={replay}
+      onPointerDown={replay}
     >
       {Array.from(text).map((c, j) => (
         <span
