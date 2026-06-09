@@ -272,18 +272,19 @@ function VerticalAccordion({ quotes, activeIndex, onActivate, isLight = false })
                       {quote.name}
                     </div>
                   )}
-                  {quote.title && (
+                  {(quote.title || quote.company) && (
                     <div className={`mono truncate text-[11px] ${isLight ? "text-[#1A1A1A]/55" : "text-white/55"}`}>
-                      {quote.title}
+                      {quote.title || quote.company}
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Active-only — quote + attribution, fades in after expand */}
+              {/* Active-only — quote body. Attribution lives in the
+                  always-visible header above so we don't repeat it here. */}
               <div
                 aria-hidden={!isActive}
-                className="mt-5 flex flex-1 flex-col justify-between overflow-hidden"
+                className="mt-5 flex flex-1 flex-col overflow-hidden"
                 style={{
                   opacity: isActive ? 1 : 0,
                   transition: `opacity 350ms ${EASE} ${
@@ -294,11 +295,6 @@ function VerticalAccordion({ quotes, activeIndex, onActivate, isLight = false })
                 <blockquote className={`text-[1rem] leading-[1.55] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
                   “{renderBody(quote.body, isLight)}”
                 </blockquote>
-                {attribution && (
-                  <div className={`mono mt-4 text-[12px] leading-[1.4] ${isLight ? "text-[#1A1A1A]/55" : "text-white/55"}`}>
-                    {attribution}
-                  </div>
-                )}
               </div>
             </div>
           </article>
