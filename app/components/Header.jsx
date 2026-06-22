@@ -211,15 +211,21 @@ export function Header() {
         logo.style.filter = `invert(${tint})`;
         // Mobile only: animate the width of the logo's overflow-clip
         // container from icon-only (~24px) to the full lockup
-        // (~168px) as the dock progress `e` ramps up. On md+ the
-        // md:!w-auto class wins and our inline width is ignored — no
-        // need to clear it, but we do anyway so the inline value
-        // doesn't trail behind the breakpoint when the viewport
-        // crosses 768px mid-session.
+        // (~200px) as the dock progress `e` ramps up. On truly tiny
+        // viewports (<360px — older iPhone SE 1st gen, folded
+        // foldables) skip the reveal entirely and stay icon-only so
+        // the wordmark doesn't crowd the pill. On md+ the md:!w-auto
+        // class wins and our inline width is ignored — no need to
+        // clear it, but we do anyway so the inline value doesn't
+        // trail behind the breakpoint when the viewport crosses
+        // 768px mid-session.
         if (typeof window !== "undefined" && window.innerWidth < 768) {
           const MIN_W = 24;
-          const MAX_W = 168;
-          logo.style.width = `${MIN_W + (MAX_W - MIN_W) * e}px`;
+          const MAX_W = 200;
+          const revealWordmark = window.innerWidth >= 360;
+          logo.style.width = revealWordmark
+            ? `${MIN_W + (MAX_W - MIN_W) * e}px`
+            : `${MIN_W}px`;
         } else {
           logo.style.removeProperty("width");
         }
