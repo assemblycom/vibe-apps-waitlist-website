@@ -1,3 +1,13 @@
 {
-  "name": "assembly-studio-waitlist"
+  "name": "assembly-studio-waitlist",
+  "rewrites": [
+    {
+      "source": "/docs",
+      "destination": "https://assembly-ff8b9417.mintlify.site/docs"
+    },
+    {
+      "source": "/docs/:match*",
+      "destination": "https://assembly-ff8b9417.mintlify.site/docs/:match*"
+    }
+  ]
 }
